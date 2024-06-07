@@ -77,6 +77,13 @@ Mord - Most of the work creating LT.Surge and Erika overworld sprites
 
 pret discord and pret in general for their original disassembly work on Red / Blue
 
-## FORK CHANGES
+## Fork Changes
 
-The goal of this fork is only to add the caught pokeball indicator when in a battle with a wild mon. Credits to the Pokemon Yellow Legacy team, as the code/changes were taken directly from them.
+The goal of this fork is only to add the caught pokeball indicator when in a battle with a wild mon.
+
+## Fork Credits
+
+Vortyne and everyone who contrubuted to pureRGB, a simple amazing gen 1 hack. 
+
+cRz-Shadows and SmithPlayPokemon for Pokemon Yellow Legacy, code and graphics for the caught ball indicator were taken from their romhack.
+
