@@ -41,8 +41,10 @@ DEF rLCDC_DEFAULT EQU %11100011
 
 	ld sp, wStack
 
-	ld hl, WRAM0_Begin
-	ld bc, WRAM1_End - WRAM0_Begin
+	ld hl, STARTOF(WRAM0)
+	; PureRGBnote: WRAMX is the interchangeable second wram set on GBC. If we add it with WRAM0 it will have the original size of WRAM of the game.
+	; on PureRGB another wram bank is used on GBC for the GBC fade animation function's storage so WRAMX was introduced to the code.
+	ld bc, SIZEOF(WRAM0) + SIZEOF(WRAMX)
 .loop
 ; PureRGBnote: OPTIMIZED
 	xor a
@@ -56,8 +58,8 @@ DEF rLCDC_DEFAULT EQU %11100011
 
 	call ClearVram
 
-	ld hl, HRAM_Begin
-	ld bc, hHRAMend - HRAM_Begin ; shinpokerednote: gbcnote: don't clear hgbc
+	ld hl, STARTOF(HRAM)
+	ld bc, SIZEOF(HRAM) - 1 ; shinpokerednote: gbcnote: the -1 means don't clear hGBC
 	call FillMemory
 
 	call ClearSprites
@@ -129,8 +131,8 @@ ENDC
 	jp PrepareTitleScreen
 
 ClearVram::
-	ld hl, VRAM_Begin
-	ld bc, VRAM_End - VRAM_Begin
+	ld hl, STARTOF(VRAM)
+	ld bc, SIZEOF(VRAM)
 	xor a
 	jp FillMemory
 
