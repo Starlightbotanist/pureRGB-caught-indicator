@@ -96,6 +96,10 @@ SpriteSheetPointerTable:
 	overworld_sprite AgathaSittingSprite, 12          ; SPRITE_AGATHA_SITTING
 	overworld_sprite GiovanniSittingSprite, 12        ; SPRITE_GIOVANNI_SITTING
 	overworld_sprite BlueSittingSprite, 12            ; SPRITE_BLUE_SITTING
+	overworld_sprite LavaSuitSprite, 12               ; SPRITE_LAVA_SUIT
+	overworld_sprite MonsterSwimmingSprite, 12        ; SPRITE_MONSTER_SWIMMING
+	overworld_sprite GravelerSprite, 12                ; SPRITE_GRAVELER
+	overworld_sprite NothingSprite, 12                 ; SPRITE_NOTHING
 	overworld_sprite PokeBallSprite, 4                ; SPRITE_POKE_BALL
 	overworld_sprite FossilSprite, 4                  ; SPRITE_FOSSIL
 	overworld_sprite BoulderSprite, 4                 ; SPRITE_BOULDER
@@ -109,4 +113,5 @@ SpriteSheetPointerTable:
 	overworld_sprite PokeballSprite2, 4     	      ; SPRITE_POKE_BALL2
 	overworld_sprite DarkChannelerSprite, 4           ; SPRITE_DARK_CHANNELER
 	overworld_sprite BoomboxSprite, 4                 ; SPRITE_BOOMBOX
+	overworld_sprite NothingSprite, 4                 ; SPRITE_NOTHING_STILL
 	assert_table_length NUM_SPRITES

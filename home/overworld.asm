@@ -1,8 +1,3 @@
-HandleMidJump::
-; Handle the player jumping down
-; a ledge in the overworld.
-	farjp _HandleMidJump
-
 EnterMap::
 ; Load a new map.
 	ld a, A_BUTTON | B_BUTTON | SELECT | START | D_RIGHT | D_LEFT | D_UP | D_DOWN
@@ -20,6 +15,9 @@ EnterMap::
 	res 5, [hl] ; unset the "battle just happened" flag
 	call z, ResetUsingStrengthSurfOutOfBattleBits
 	call nz, MapEntryAfterBattle
+	ld hl, wCurrentMapScriptFlags
+	set 5, [hl]
+	set 6, [hl]
 	ld hl, wd732
 	ld a, [hl]
 	and 1 << 4 | 1 << 3 ; fly warp or dungeon warp
@@ -32,9 +30,6 @@ EnterMap::
 	ld hl, wd72d
 	res 5, [hl]
 	call UpdateSprites
-	ld hl, wCurrentMapScriptFlags
-	set 5, [hl]
-	set 6, [hl]
 	xor a
 	ld [wJoyIgnore], a
 
@@ -46,7 +41,15 @@ OverworldLoopLessDelay::
 	call LoadGBPal
 	ld a, [wd736]
 	bit 6, a ; jumping down a ledge?
-	call nz, HandleMidJump
+	jr z, .notMidJump
+	; Handle the player jumping down
+	; a ledge in the overworld.
+	callfar HandleMidJump
+.notMidJump
+	CheckFlag FLAG_MAP_HAS_OVERWORLD_ANIMATION
+	jr z, .noAnimation
+	callfar CheckOverworldAnimation
+.noAnimation
 	ld a, [wWalkCounter]
 	and a
 	jp nz, .moveAhead ; if the player sprite has not yet completed the walking animation
@@ -126,11 +129,10 @@ OverworldLoopLessDelay::
 	ld a, [wEnteringCableClub]
 	and a
 	jr z, .checkForOpponent
-	dec a
-	ld a, 0
+	xor a
 	ld [wEnteringCableClub], a
-	jr z, .changeMap
 ; XXX can this code be reached?
+;	jr z, .changeMap
 ;	predef LoadSAV
 ;	ld a, [wCurMap]
 ;	ld [wDestinationMap], a
@@ -274,7 +276,7 @@ OverworldLoopLessDelay::
 	ld [wPlayerMovingDirection], a ; save direction
 	call UpdateSprites
 	ld a, [wWalkBikeSurfState]
-	cp $02 ; surfing
+	cp SURFING
 	jr z, .surfing
 ; not surfing
 	call CollisionCheckOnLand
@@ -315,6 +317,8 @@ OverworldLoopLessDelay::
 	ld a, [wd736]
 	bit 7, a ; spinning?
 	jr nz, .spinnerSpeed ; PureRGBnote: CHANGED: faster spin tile movement
+	CheckFlag FLAG_FAST_AUTO_MOVEMENT
+	jr nz, .spinnerSpeed
 	ld a, [wWalkBikeSurfState]
 	dec a ; riding a bike?
 	jr nz, .normalPlayerSpriteAdvancement
@@ -824,6 +828,8 @@ LoadPlayerSpriteGraphics::
 	jp z, LoadBikePlayerSpriteGraphics
 	dec a
 	jp z, LoadSurfingPlayerSpriteGraphics
+	dec a
+	jp z, LoadLavaSuitSpriteGraphics
 	jp LoadWalkingPlayerSpriteGraphics
 
 IsBikeRidingAllowed::
@@ -1819,6 +1825,7 @@ JoypadOverworld::
 
 ; if done simulating button presses
 .doneSimulating
+	ResetFlag FLAG_FAST_AUTO_MOVEMENT
 	xor a
 	ld [wSimulatedJoypadStatesIndex], a
 	ld [wSimulatedJoypadStatesEnd], a
@@ -1878,10 +1885,15 @@ CollisionCheckOnWater::
 	and a
 	ret
 .stopSurfing
-	xor a
+	ld a, [wCurMapTileset]
+	cp VOLCANO
+	ld a, WALKING
+	jr nz, .stopSurfToWalking
+	ld a, WEARING_LAVA_SUIT
+.stopSurfToWalking
 	ld [wWalkBikeSurfState], a
+	call nz, PlayDefaultMusic ; play default music if walking but not if lava suit
 	call LoadPlayerSpriteGraphics
-	call PlayDefaultMusic
 	jr .noCollision
 
 ; function to run the current map's script
@@ -1921,22 +1933,33 @@ RunMapScript::
 	jp MapFadeAfterBattle
 ;;;;;;;;;;
 
+LoadLavaSuitSpriteGraphics::
+	ld de, LavaSuitSprite
+	lb bc, BANK(LavaSuitSprite), $0c
+	jr LoadPlayerSpriteGraphicsArbitrary
+
 LoadWalkingPlayerSpriteGraphics::
 	ld de, RedSprite
 	jr LoadPlayerSpriteGraphicsCommon
 
 LoadSurfingPlayerSpriteGraphics::
+	ld a, [wCurMapTileset]
+	cp VOLCANO
 	ld de, SeelSprite
-	jr LoadPlayerSpriteGraphicsCommon
+	jr nz, LoadPlayerSpriteGraphicsCommon
+	ld de, MonsterSwimmingSprite
+	lb bc, BANK(MonsterSwimmingSprite), $0c
+	jr LoadPlayerSpriteGraphicsArbitrary
 
 LoadBikePlayerSpriteGraphics::
 	ld de, RedBikeSprite
-
 LoadPlayerSpriteGraphicsCommon::
+	lb bc, BANK(RedSprite), $0c
+LoadPlayerSpriteGraphicsArbitrary::
+	push bc
 	ld hl, vNPCSprites
 	push de
 	push hl
-	lb bc, BANK(RedSprite), $0c
 	call CopyVideoData
 	pop hl
 	pop de
@@ -1947,7 +1970,7 @@ LoadPlayerSpriteGraphicsCommon::
 	inc d
 .noCarry
 	set 3, h
-	lb bc, BANK(RedSprite), $0c
+	pop bc
 	jp CopyVideoData
 
 ; function to load data from the map header

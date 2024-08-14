@@ -18,7 +18,8 @@ SpriteOptionsHeader:
 	dw SpriteOptionsLeftRightFuncs
 	dw DisplayOptionMenu
 	dw DisplayBattleOptions
-	dw SpriteOptionsAButton
+	dw SpriteOptionsAorSelectButton
+	dw SpriteInfoTextJumpTable
 	; fall through
 DisplaySpriteOptions:
 	ld hl, SpriteOptionsHeader
@@ -62,6 +63,11 @@ DrawSpriteOptionsMenu:
 	ld de, 1
 	jp DrawTileLineIncrement
 
+SpriteOptionsAorSelectButton:
+	ld a, [hJoy5]
+	bit BIT_A_BUTTON, a
+	jp z, OptionsPageAorSelectButtonDefault
+	; fall through
 SpriteOptionsAButton:
 	ld a, [SpriteOptionsYCoordVariableOffsetList + 4]
 	ld b, a
@@ -129,6 +135,7 @@ SetSpriteOptionsFromCursorPositions:
 	ld de, EditPrompt ; reload the EDIT prompt tiles
 	ld hl, vChars1 tile $40
 	lb bc, BANK(EditPrompt), 3
+	; TODO: fix info prompt needing reload
 	call CopyVideoData
 	jp GBPalNormal
 
@@ -141,3 +148,20 @@ FrontSpriteCursorFunc:
 	ld a, 9
 	ld [wOptions3CursorX], a
 	ret
+
+SpriteInfoTextJumpTable:
+	dw BackSpriteText
+	dw IconsOptionText
+	dw FrontSpriteText
+
+BackSpriteText:
+	text_far _BackSpriteText
+	text_end
+
+IconsOptionText:
+	text_far _IconsOptionText
+	text_end
+
+FrontSpriteText:
+	text_far _FrontSpriteText
+	text_end

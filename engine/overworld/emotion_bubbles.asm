@@ -1,6 +1,6 @@
 ; PureRGBnote: ADDED: the emotion bubble code was split into three functions that differ in how long the bubble shows.
 ; also, added a new heart bubble
-EmotionBubble:
+EmotionBubble::
 	call EmotionBubbleCommon
 	ld c, 60
 	rst _DelayFrames
@@ -32,7 +32,8 @@ EmotionBubbleCommon:
 	ld a, [wWhichEmotionBubble]
 	cp HEART_BUBBLE
 	lb bc, BANK(EmotionBubbles), 4
-	jr nz, .gotBank
+	jr c, .gotBank
+	; new emotion bubbles are all in the same bank
 	lb bc, BANK(LoveEmote), 4
 .gotBank
 	call CopyVideoData
@@ -95,6 +96,7 @@ EmotionBubblesPointerTable:
 	dw QuestionEmote
 	dw HappyEmote
 	dw LoveEmote
+	dw SleepingEmote
 
 EmotionBubblesOAM:
 	dbsprite  0, -1,  0,  0, $f9, 0

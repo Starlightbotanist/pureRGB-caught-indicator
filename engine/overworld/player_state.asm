@@ -56,18 +56,13 @@ CheckForceBikeOrSurf::
 	jr nz, .loop ; incorrect x-coord, check next item
 	ld a, [wCurMap]
 	cp SEAFOAM_ISLANDS_B3F
-	ld a, SCRIPT_SEAFOAMISLANDSB3F_MOVE_OBJECT
-	ld [wSeafoamIslandsB3FCurScript], a
 	jr z, .forceSurfing
-	ld a, [wCurMap]
 	cp SEAFOAM_ISLANDS_B4F
-	ld a, SCRIPT_SEAFOAMISLANDSB4F_MOVE_OBJECT
-	ld [wSeafoamIslandsB4FCurScript], a
 	jr z, .forceSurfing
 	;force bike riding
 	ld hl, wd732
 	set 5, [hl]
-	ld a, $1
+	ld a, BIKING
 	ld [wWalkBikeSurfState], a
 	ld [wWalkBikeSurfStateCopy], a
 	jp ForceBikeOrSurf
@@ -77,7 +72,7 @@ CheckForceBikeOrSurf::
 	inc hl
 	jr .loop
 .forceSurfing
-	ld a, $2
+	ld a, SURFING
 	ld [wWalkBikeSurfState], a
 	ld [wWalkBikeSurfStateCopy], a
 	jp ForceBikeOrSurf

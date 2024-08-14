@@ -321,6 +321,7 @@ MainInBattleLoop:
 	call SaveScreenTilesToBuffer1
 	xor a
 	ld [wFirstMonsNotOutYet], a
+	callfar VolcanoBattleInit
 	ld a, [wPlayerBattleStatus2]
 	and (1 << NEEDS_TO_RECHARGE) ; check if the player is needs to recharge
 	jr nz, .selectEnemyMove
@@ -858,7 +859,13 @@ FaintEnemyPokemon:
 	ld a, d
 	and a
 	ret z
+	CheckEitherEventSet EVENT_FIGHT_ROUTE16_SNORLAX, EVENT_FIGHT_ROUTE12_SNORLAX
+	ld hl, EnemyMonWasDefeatedText
+	jr nz, .doDefeatText
+	CheckEvent EVENT_BATTLING_VOLCANO_MAGMAR
+	jr nz, .doDefeatText
 	ld hl, EnemyMonFaintedText
+.doDefeatText
 	rst _PrintText
 	call PrintEmptyString
 	call SaveScreenTilesToBuffer1
@@ -908,6 +915,10 @@ FaintEnemyPokemon:
 
 EnemyMonFaintedText:
 	text_far _EnemyMonFaintedText
+	text_end
+
+EnemyMonWasDefeatedText:
+	text_far _EnemyMonWasDefeatedText
 	text_end
 
 EndLowHealthAlarm:
@@ -1724,6 +1735,8 @@ TryRunningFromBattle:
 	dec a
 .playSound
 	ld [wBattleResult], a
+	ld hl, wBattleFunctionalFlags
+	set 1, [hl] ; indicates we ran from battle rather than caught the pokemon
 	ld a, SFX_RUN
 	call PlaySoundWaitForCurrent
 	ld hl, GotAwayText
@@ -1891,6 +1904,7 @@ SendOutMon:
 	call PlayCry
 	call PrintEmptyString
 	jp SaveScreenTilesToBuffer1
+	
 
 ; show 2 stages of the player mon getting smaller before disappearing
 AnimateRetreatingPlayerMon:
@@ -3676,6 +3690,13 @@ CheckPlayerStatusConditions:
 	; clear thrashing, charging up, and trapping moves such as warp (already cleared for confusion damage)
 	and ~((1 << THRASHING_ABOUT) | (1 << CHARGING_UP) | (1 << USING_TRAPPING_MOVE)) ; PureRGBnote: CHANGED: bide code removed since its effect was changed
 	ld [hl], a
+	; PureRGBnote: FIXED: in link battles only, the player doesn't stay invulnerable when they hurt themselves in confusion
+	; or get fully paralyzed while using dig/fly. In normal battles ONLY the player can have this happen because it's funny.
+	ld a, [wLinkState]
+	cp LINK_STATE_BATTLING
+	jr nz, .dontClearInvulFlag
+	res INVULNERABLE, [hl]
+.dontClearInvulFlag
 	ld a, [wPlayerMoveEffect]
 	cp FLY_EFFECT
 	jr z, .FlyOrChargeEffect
@@ -6297,8 +6318,10 @@ CheckEnemyStatusConditions:
 .monHurtItselfOrFullyParalysed
 	ld hl, wEnemyBattleStatus1
 	ld a, [hl]
-	; clear thrashing about, charging up, and multi-turn moves such as wrap ; PureRGBnote: CHANGED: bide effect changed so don't need that code
-	and ~((1 << THRASHING_ABOUT) | (1 << CHARGING_UP) | (1 << USING_TRAPPING_MOVE))
+	; clear thrashing about, charging up, and multi-turn moves such as wrap 
+	; PureRGBnote: CHANGED: bide effect changed so don't need that code
+	; PureRGBnote: CHANGED: invulnerability flag cleared so opponents don't get stuck in invulnerable state
+	and ~((1 << THRASHING_ABOUT) | (1 << CHARGING_UP) | (1 << USING_TRAPPING_MOVE) | (1 << INVULNERABLE))
 	ld [hl], a
 	ld a, [wEnemyMoveEffect]
 	cp FLY_EFFECT
@@ -7321,6 +7344,12 @@ DetermineWildOpponent:
 	callfar TryDoWildEncounter
 	ret nz
 InitBattleCommon:
+	ld a, [wCurMap]
+	cp CINNABAR_VOLCANO
+	jr nz, .notVolcano
+	ld hl, wFlags_D733
+	set 1, [hl] ; prevents surf music from playing when returning from a battle on lava
+.notVolcano
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; shinpokerednote: ADDED: store PKMN Levels at the beginning of the Battle.
 	farcall StorePKMNLevels
@@ -7444,6 +7473,7 @@ _InitBattleCommon:
 	ld a, [wIsInBattle]
 	dec a ; is it a wild battle?
 	call z, DrawEnemyHUDAndHPBar ; draw enemy HUD and HP bar if it's a wild battle
+	callfar VolcanoInitMagmarBattle
 	call StartBattle
 	callfar EndOfBattle
 	pop af
