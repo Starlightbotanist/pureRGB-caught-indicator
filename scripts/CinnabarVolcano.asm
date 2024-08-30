@@ -343,6 +343,10 @@ CheckOverworldAnimation::
 	ld [wOverworldAnimationCooldown], a
 	jr LavaFloodReset
 .notVolcano
+	cp DIGLETTS_CAVE
+	jr nz, .notDiglettsCave
+	jpfar DiglettsCaveDiglettAnimation
+.notDiglettsCave
 	xor a
 	ld [wOverworldAnimationCounter], a
 	ResetFlag FLAG_MAP_HAS_OVERWORLD_ANIMATION
@@ -2368,6 +2372,8 @@ BlaineLeavesVolcano:
 	db NPC_MOVEMENT_DOWN
 	db -1
 
+FarNPCSpriteQuickSpin:
+	ld a, d
 ; input a = which sprite
 NPCSpriteQuickSpin:
 	ld d, 8

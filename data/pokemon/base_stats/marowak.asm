@@ -42,6 +42,7 @@
 	SLAM,\ ; FILTHY SLAM
 	KARATE_CHOP,\
 	MEDITATE,\
+	LIGHT_SCREEN,\
 	ROCK_SLIDE,\
 	GLARE,\
 	SUBSTITUTE,\
@@ -49,6 +50,10 @@
 	STRENGTH
 	; end
 
-	dw BANK(MarowakPicFront), BANK(MarowakPicBack)
+	db BANK(MarowakPicFront)
+	db 0
+	db BANK(MarowakPicBack)
+	db BANK(MarowakPicBackSW)
 
-	dw 1, MarowakPicBack
+	dw 0, MarowakPicBack
+

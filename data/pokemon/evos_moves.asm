@@ -157,7 +157,7 @@ EvosMovesPointerTable:
 	dw WeezingEvosMoves
 	dw PersianEvosMoves
 	dw MarowakEvosMoves
-	dw MissingNo92EvosMoves
+	dw WeezingEvosMoves ; floating weezing
 	dw HaunterEvosMoves
 	dw AbraEvosMoves
 	dw AlakazamEvosMoves
@@ -476,9 +476,9 @@ CuboneEvosMoves:
 	db EVOLVE_LEVEL, 28, MAROWAK
 	db 0
 ; Learnset
-	db 14, DEFENSE_CURL
+	db 14, FOCUS_ENERGY
 	db 18, SCREECH
-	db 22, FOCUS_ENERGY
+	db 22, LIGHT_SCREEN
 	db 25, COMET_PUNCH
 	db 27, HEADBUTT
 	db 30, DIG
@@ -610,6 +610,7 @@ ScytherEvosMoves:
 	db 17, WING_ATTACK
 	db 19, FOCUS_ENERGY
 	db 23, PIN_MISSILE
+	db 25, DOUBLE_TEAM
 	db 27, FURY_ATTACK
 	db 32, SWORDS_DANCE
 	db 38, TWINEEDLE
@@ -638,7 +639,7 @@ BlastoiseEvosMoves:
 	db 0
 ; Learnset
 	db 8, BUBBLE
-	db 11, DEFENSE_CURL
+	db 11, LIGHT_SCREEN
 	db 14, WATER_GUN
 	db 19, BITE
 	db 24, GLARE
@@ -715,7 +716,7 @@ OnixEvosMoves:
 	db 15, BIND
 	db 17, ROAR
 	db 19, SCREECH
-	db 22, DEFENSE_CURL
+	db 22, LIGHT_SCREEN
 	db 25, RAGE
 	db 29, CLAMP
 	db 31, MIRROR_MOVE
@@ -794,10 +795,10 @@ GravelerEvosMoves:
 	db EVOLVE_LEVEL, 37, GOLEM
 	db 0
 ; Learnset
-	db 11, DEFENSE_CURL
+	db 11, HARDEN
 	db 13, FURY_SWIPES ; DUST CLAW
 	db 16, ROCK_THROW
-	db 19, HARDEN
+	db 19, DEFENSE_CURL
 	db 21, SELFDESTRUCT
 	db 28, ROCK_SLIDE
 	db 31, BARRAGE
@@ -853,7 +854,7 @@ MrMimeEvosMoves:
 	db 31, SEISMIC_TOSS
 	db 35, MEDITATE
 	db 39, PSYCHIC_M
-	db 44, SWIFT
+	db 44, SONICBOOM
 	db 48, SUBSTITUTE
 	db 53, MIMIC
 	db 0
@@ -896,7 +897,9 @@ ArbokEvosMoves:
 	db 22, MEGA_DRAIN
 	db 26, SLAM ; FILTHY SLAM
 	db 30, WITHDRAW
+	db 33, ACID
 	db 36, LEECH_LIFE
+	db 38, ACID_ARMOR
 	db 43, SUPER_FANG
 	db 50, SKULL_BASH
 	db 54, HAZE
@@ -958,10 +961,10 @@ GolemEvosMoves:
 ; Evolutions
 	db 0
 ; Learnset
-	db 11, DEFENSE_CURL
+	db 11, HARDEN
 	db 13, FURY_SWIPES ; DUST CLAW
 	db 16, ROCK_THROW
-	db 19, HARDEN
+	db 19, DEFENSE_CURL
 	db 21, SELFDESTRUCT
 	db 28, ROCK_SLIDE
 	db 31, BARRAGE
@@ -1031,7 +1034,6 @@ MagnetonEvosMoves:
 	db 43, CONVERSION
 	db 47, THUNDER
 	db 52, SELFDESTRUCT
-	db 57, SWIFT
 	db 0
 
 KoffingEvosMoves:
@@ -1076,6 +1078,7 @@ MankeyEvosMoves:
 	db 39, COMET_PUNCH
 	db 45, COUNTER ; DRAIN PUNCH
 	db 51, EXPLOSION
+	db 54, SONICBOOM
 	db 0
 
 SeelEvosMoves:
@@ -1159,6 +1162,7 @@ FarfetchdEvosMoves:
 	db 24, SWIFT
 	db 27, SLASH
 	db 31, RAZOR_LEAF
+	db 35, SONICBOOM
 	db 40, POISON_GAS
 	db 45, WHIRLWIND
 	db 0
@@ -1364,7 +1368,7 @@ VulpixEvosMoves:
 	db 35, FLAMETHROWER
 	db 44, AMNESIA
 	db 50, PSYCHIC_M
-	db 56, SWIFT
+	db 56, SONICBOOM
 	db 60, FIRE_SPIN
 	db 0
 
@@ -1381,7 +1385,7 @@ NinetalesEvosMoves:
 	db 35, FLAMETHROWER
 	db 44, AMNESIA
 	db 50, PSYCHIC_M
-	db 56, SWIFT
+	db 56, SONICBOOM
 	db 60, FIRE_SPIN
 	db 0
 
@@ -1393,7 +1397,7 @@ PikachuEvosMoves:
 	db 9, THUNDER_WAVE
 	db 12, QUICK_ATTACK
 	db 16, FURY_SWIPES ; DUST CLAW
-	db 22, DEFENSE_CURL
+	db 22, LIGHT_SCREEN
 	db 26, THUNDERBOLT
 	db 36, WITHDRAW
 	db 45, THUNDER
@@ -1406,7 +1410,7 @@ RaichuEvosMoves:
 ; Learnset
 	db 12, QUICK_ATTACK
 	db 16, FURY_SWIPES ; DUST CLAW
-	db 22, DEFENSE_CURL
+	db 22, LIGHT_SCREEN
 	db 26, THUNDERBOLT
 	db 36, WITHDRAW
 	db 45, THUNDER
@@ -1566,7 +1570,7 @@ OmanyteEvosMoves:
 	db 30, WATERFALL
 	db 35, SPIKE_CANNON
 	db 39, BODY_SLAM
-	db 43, SWIFT
+	db 43, DEFENSE_CURL
 	db 48, HYDRO_PUMP
 	db 0
 
@@ -1579,7 +1583,7 @@ OmastarEvosMoves:
 	db 30, WATERFALL
 	db 35, SPIKE_CANNON
 	db 39, BODY_SLAM
-	db 43, SWIFT
+	db 43, DEFENSE_CURL
 	db 48, HYDRO_PUMP
 	db 0
 
@@ -1591,7 +1595,6 @@ JigglypuffEvosMoves:
 	db 9, DISABLE
 	db 13, DEFENSE_CURL
 	db 16, DOUBLESLAP
-	db 19, LOVELY_KISS
 	db 24, BODY_SLAM
 	db 32, RECOVER
 	db 37, DIZZY_PUNCH
@@ -1607,7 +1610,6 @@ WigglytuffEvosMoves:
 	db 9, DISABLE
 	db 13, DEFENSE_CURL
 	db 16, DOUBLESLAP
-	db 19, LOVELY_KISS
 	db 24, BODY_SLAM
 	db 32, RECOVER
 	db 37, DIZZY_PUNCH
@@ -1715,11 +1717,11 @@ ZubatEvosMoves:
 	db 25, CONFUSE_RAY
 	db 28, SWORDS_DANCE
 	db 30, SLUDGE
-	db 36, SUBMISSION
-	db 42, SKULL_BASH
-	db 49, SUPER_FANG
-	db 54, POISON_GAS
-	db 60, HAZE
+	db 37, SKULL_BASH
+	db 44, SUPER_FANG
+	db 50, POISON_GAS
+	db 55, HAZE
+	db 59, SONICBOOM
 	db 0
 
 EkansEvosMoves:
@@ -1734,7 +1736,9 @@ EkansEvosMoves:
 	db 23, MEGA_DRAIN
 	db 26, SLAM ; FILTHY SLAM
 	db 30, WITHDRAW
+	db 33, ACID
 	db 36, LEECH_LIFE
+	db 38, ACID_ARMOR
 	db 43, SUPER_FANG
 	db 50, SKULL_BASH
 	db 54, HAZE
@@ -1812,7 +1816,6 @@ BeedrillEvosMoves:
 	db 10, FOCUS_ENERGY
 	db 14, LIGHT_SCREEN
 	db 17, WING_ATTACK
-	db 19, ACID
 	db 22, TWINEEDLE
 	db 25, FURY_ATTACK
 	db 30, PIN_MISSILE
@@ -1860,6 +1863,7 @@ PrimeapeEvosMoves:
 	db 39, COMET_PUNCH
 	db 45, COUNTER ; DRAIN PUNCH
 	db 51, EXPLOSION
+	db 54, SONICBOOM
 	db 0
 
 DugtrioEvosMoves:
@@ -2033,11 +2037,11 @@ GolbatEvosMoves:
 	db 25, CONFUSE_RAY
 	db 28, SWORDS_DANCE
 	db 30, SLUDGE
-	db 36, SUBMISSION
-	db 42, SKULL_BASH
-	db 49, SUPER_FANG
-	db 54, POISON_GAS
-	db 60, HAZE
+	db 37, SKULL_BASH
+	db 44, SUPER_FANG
+	db 50, POISON_GAS
+	db 55, HAZE
+	db 59, SONICBOOM
 	db 0
 
 MewtwoEvosMoves:
@@ -2213,9 +2217,9 @@ MarowakEvosMoves:
 ; Evolutions
 	db 0
 ; Learnset
-	db 14, DEFENSE_CURL
+	db 14, FOCUS_ENERGY
 	db 18, SCREECH
-	db 22, FOCUS_ENERGY
+	db 22, LIGHT_SCREEN
 	db 25, COMET_PUNCH
 	db 27, HEADBUTT
 	db 30, DIG
@@ -2543,10 +2547,10 @@ GeodudeEvosMoves:
 	db EVOLVE_LEVEL, 24, GRAVELER
 	db 0
 ; Learnset
-	db 11, DEFENSE_CURL
+	db 11, HARDEN
 	db 13, FURY_SWIPES ; DUST CLAW
 	db 16, ROCK_THROW
-	db 19, HARDEN
+	db 19, DEFENSE_CURL
 	db 21, SELFDESTRUCT
 	db 28, ROCK_SLIDE
 	db 31, BARRAGE
@@ -2603,7 +2607,6 @@ MagnemiteEvosMoves:
 	db 43, CONVERSION
 	db 47, THUNDER
 	db 52, SELFDESTRUCT
-	db 57, SWIFT
 	db 0
 
 MissingNoAEEvosMoves:
@@ -2641,7 +2644,7 @@ SquirtleEvosMoves:
 	db 0
 ; Learnset
 	db 8, BUBBLE
-	db 11, DEFENSE_CURL
+	db 11, LIGHT_SCREEN
 	db 14, WATER_GUN
 	db 18, BITE
 	db 23, GLARE
@@ -2674,7 +2677,7 @@ WartortleEvosMoves:
 	db 0
 ; Learnset
 	db 8, BUBBLE
-	db 11, DEFENSE_CURL
+	db 11, LIGHT_SCREEN
 	db 14, WATER_GUN
 	db 18, BITE
 	db 23, GLARE
@@ -2834,7 +2837,7 @@ HardenedOnixEvosMoves:
 	db 15, BIND
 	db 17, ROAR
 	db 19, SCREECH
-	db 22, DEFENSE_CURL
+	db 22, LIGHT_SCREEN
 	db 25, RAGE
 	db 27, ROCK_SLIDE
 	db 29, CLAMP

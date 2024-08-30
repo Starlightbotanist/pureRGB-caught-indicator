@@ -157,7 +157,7 @@ AIMoveChoiceModification1:
 	call ReadMove
 	ld a, [wEnemyMoveNum]
 	cp MIRROR_MOVE
-	call z, .checkRemapMirrorMove ; we will treat mirror move as the move it will use if selected
+	call z, CheckRemapMirrorMove ; we will treat mirror move as the move it will use if selected
 	ld a, [wPlayerBattleStatus1]
 	bit INVULNERABLE, a
 	jp nz, .playerSemiInvulnerable
@@ -167,43 +167,36 @@ AIMoveChoiceModification1:
 	jp z, .checkAsleep
 	cp OHKO_EFFECT
 	jr z, .ohko
+	cp FIREWALL_EFFECT
+	jp z, .firewall
 	ld a, [wEnemyMovePower]
 	and a
 	jr nz, .nextMove
 	ld a, [wEnemyMoveEffect]
-	cp TELEPORT_EFFECT
-	jr z, .checkTeleportUsable
-	cp DISABLE_EFFECT
-	jr z, .checkDisabled
-	cp LEECH_SEED_EFFECT
-	jp z, .checkSeeded
-	cp FOCUS_ENERGY_EFFECT
-	jr z, .checkPumpedUp
-	cp LIGHT_SCREEN_EFFECT
-	jp z, .checkLightScreenUp
-	cp REFLECT_EFFECT
-	jp z, .checkReflectUp
-	cp MIST_EFFECT
-	jp z, .checkMistUp
-	cp CONFUSION_EFFECT
-	jp z, .checkConfused
-	cp HEAL_EFFECT
-	jp z, .checkFullHealth
-	cp WITHDRAW_EFFECT
-	jp z, .checkFullHealth
-	cp GROWTH_EFFECT
-	jp z, .checkFullHealth
-	ld a, [wEnemyMoveEffect]
 	push hl
 	push de
 	push bc
+	ld hl, PotentiallyPointlessMoveEffectsJumpTable
+	ld de, 3
+	call IsInArray
+	jr nc, .notInArray
+	inc hl
+	hl_deref
+	call hl_caller
+	pop bc
+	pop de
+	pop hl
+	jr c, .discourage
+	jr .nextMove
+.notInArray
+	ld a, [wEnemyMoveEffect]
 	ld hl, StatusAilmentMoveEffects
 	ld de, 1
 	call IsInArray
 	pop bc
 	pop de
 	pop hl
-	jr nc, .nextMove
+	jp nc, .nextMove
 .checkStatusImmunity
 	call CheckStatusImmunity
 	jr c, .discourage
@@ -214,10 +207,10 @@ AIMoveChoiceModification1:
 					   ; even if the player heals the status or switches out that turn
 	ld a, [wAIMoveSpamAvoider] ; set if we switched or healed this turn
 	cp 2 ; set to 2 if we switched
-	jp z, .nextMove ; if the AI thinks the player DOESNT have a status before they switch, we should avoid discouraging status moves
+	jr z, .nextMove ; if the AI thinks the player DOESNT have a status before they switch, we should avoid discouraging status moves
 	ld a, [wBattleMonStatus]
 	and a
-	jp z, .nextMove ; no need to discourage status moves if the player doesn't have a status
+	jr z, .nextMove ; no need to discourage status moves if the player doesn't have a status
 .discourage
 	ld a, [hl]
 	add 5 ; heavily discourage move
@@ -227,27 +220,13 @@ AIMoveChoiceModification1:
 	call WillOHKOMoveAlwaysFail
 	jp nc, .nextMove
 	jr .discourage
-.checkTeleportUsable
-	push hl
-	push de
-	push bc
-	callfar CheckCanForceSwitchEnemy
-	pop bc
-	pop de
-	pop hl 
-	jp nz, .checkFullHealth ; also make sure the pokemon isn't at full health as then teleport is kind of pointless to use
-	; disourage teleport if there is only one pokemon left in the AI trainer's party (would fail in that case)
-	jr .discourage
-.checkDisabled
-	ld a, [wPlayerDisabledMove] ; non-zero if the player has a disabled move
-	and a
-	jp z, .nextMove ; if it's zero don't do anything
-	jr .discourage ; otherwise discourage using disable while opponent is disabled already
-.checkPumpedUp
-	ld a, [wEnemyBattleStatus2]
-	bit GETTING_PUMPED, a
-	jr nz, .discourage ; if the enemy has used focus energy don't use again
-	jp .nextMove
+.playerSemiInvulnerable
+	ld a, [wEnemyMoveNum]
+	cp SWIFT
+	jp z, .notSemiInvulnerable ; swift will hit even invulnerable opponents so don't discourage
+	call CheckAIMoveIsPriority
+	jr c, .discourage ; discourage priority moves if player is invulnerable due to fly/dig
+	jr .notSemiInvulnerable
 .checkAsleep
 	ld a, [wAITargetMonType1]
 	cp NORMAL
@@ -258,38 +237,109 @@ AIMoveChoiceModification1:
 	ld a, [wAITargetMonStatus]
 	and SLP_MASK
 	jp nz, .nextMove ; if we just healed sleep or switched out a sleeping pokemon, 
-					 ; the AI shouldn't predict this perfectly when deciding whether to use dream eater
+	       ; the AI shouldn't predict this perfectly when deciding whether to use dream eater
 	ld a, [wBattleMonStatus]
 	and SLP_MASK
-	jr z, .discourage ; heavily discourage, if the player isn't asleep avoid using dream eater
+	jp nz, .nextMove
+	; heavily discourage, if the player isn't asleep avoid using dream eater
+	jr .discourage
+.firewall
+	; discourage firewall if opponent has a status that isn't burned since it will stay at 20 power in that case
+	ld a, [wAITargetMonStatus]
+	and a
+	jr nz, .aiThinksStatus
+	; ai doesn't think opponent has status on switching/healing
+	ld a, [wAIMoveSpamAvoider] ; set if we switched or healed this turn
+	cp 2 ; set to 2 if we switched
+	jr z, .firewallNext ; if we switched and opponent thinks no status, don't discourage firewall 
+	ld a, [wBattleMonStatus]
+	and a
+	jr z, .firewallNext ; if no status, don't discourage
+.aiThinksStatus
+	bit BRN, a
+	jr z, .discourage
+	; fall through
+.firewallNext
 	jp .nextMove
-.checkLightScreenUp
-	ld a, [wEnemyBattleStatus3]
-	bit HAS_LIGHT_SCREEN_UP, a
-	jr nz, .discourage ; if the enemy has a light screen up dont use the move again
-	jp .nextMove
-.checkReflectUp
-	ld a, [wEnemyBattleStatus3]
-	bit HAS_REFLECT_UP, a
-	jr nz, .discourage ; if the enemy has a reflect up dont use the move again
-	jp .nextMove
-.checkMistUp
+
+
+PotentiallyPointlessMoveEffectsJumpTable:
+	dbw TELEPORT_EFFECT, CheckTeleportUsable
+	dbw DISABLE_EFFECT, CheckDisabled
+	dbw LEECH_SEED_EFFECT, CheckSeeded
+	dbw FOCUS_ENERGY_EFFECT, CheckPumpedUp
+	dbw LIGHT_SCREEN_EFFECT, CheckLightScreenUp
+	dbw REFLECT_EFFECT, CheckReflectUp
+	dbw MIST_EFFECT, CheckMistUp
+	dbw CONFUSION_EFFECT, CheckConfused
+	dbw HEAL_EFFECT, CheckFullHealth
+	dbw WITHDRAW_EFFECT, CheckFullHealth
+	dbw GROWTH_EFFECT, CheckFullHealth
+	dbw DEFENSE_CURL_EFFECT, CheckDefenseCurlUp
+	dbw ACID_ARMOR_EFFECT, CheckBothReflectLightScreenUp
+	db -1
+
+StatusAilmentMoveEffects:
+	db SLEEP_EFFECT
+	db POISON_EFFECT
+	db PARALYZE_EFFECT
+	db -1 ; end
+
+CheckTeleportUsable:
+	callfar CheckCanForceSwitchEnemy
+	jr nz, CheckFullHealth ; also make sure the pokemon isn't at full health as then teleport is kind of pointless to use
+	; disourage teleport if there is only one pokemon left in the AI trainer's party (would fail in that case)
+	scf ; carry = discourage
+	ret
+
+CheckDisabled:
+	ld a, [wPlayerDisabledMove] ; non-zero if the player has a disabled move
+	and a
+	ret z ; don't discourage
+	scf ; otherwise discourage using disable while opponent is disabled already
+	ret
+
+CheckPumpedUp:
 	ld a, [wEnemyBattleStatus2]
+	and a
+	bit GETTING_PUMPED, a
+	ret z
+	scf ; discourage
+	ret
+
+CheckLightScreenUp:
+	ld a, [wEnemyBattleStatus3]
+	and a
+	bit HAS_LIGHT_SCREEN_UP, a
+	ret z
+	scf ; if the enemy has a light screen up dont use the move again
+	ret
+
+CheckReflectUp:
+	ld a, [wEnemyBattleStatus3]
+	and a
+	bit HAS_REFLECT_UP, a
+	ret z
+	scf ; if the enemy has a reflect up dont use the move again
+	ret
+
+CheckMistUp:
+	ld a, [wEnemyBattleStatus2]
+	and a
 	bit STAT_DOWN_IMMUNITY, a
-	jr nz, .discourage ; if the enemy has used mist, don't use it again
-	jp .nextMove
-.checkConfused
+	ret z
+	scf ; if the enemy has used mist, don't use it again
+	ret
+
+CheckConfused:
 	ld a, [wPlayerBattleStatus1]
+	and a
 	bit CONFUSED, a
-	jr nz, .discourage ; if the player is confused, don't use confusion-inflicting moves
-	jp .nextMove
-.checkSeeded
-	call CheckSeeded
-	jp nc, .nextMove
-	jp .discourage
-.checkFullHealth ; avoid using moves like recover at full health.
-	push hl
-	push de
+	ret z 
+	scf ; if the player is confused, don't use confusion-inflicting moves
+	ret
+
+CheckFullHealth: ; avoid using moves like recover at full health.
 	ld hl, wEnemyMonMaxHP
 	ld de, wEnemyMonHP
 	ld a, [de]
@@ -300,14 +350,13 @@ AIMoveChoiceModification1:
 	ld a, [de]
 	cp [hl]
 	jr nz, .notFullHealth
-	pop de
-	pop hl
-	jp .discourage
+	scf ; discourage
+	ret
 .notFullHealth
-	pop de
-	pop hl
-	jp .nextMove
-.checkRemapMirrorMove
+	and a
+	ret
+
+CheckRemapMirrorMove:
 	ld a, [wPlayerLastSelectedMove]
 	and a
 	jr nz, .skipDiscourageMirrorMove ; don't use mirror move if the player has never selected a move yet
@@ -316,25 +365,28 @@ AIMoveChoiceModification1:
 	ld [hl], a
 .skipDiscourageMirrorMove
 	jp GetMirrorMoveResultMove ; otherwise remap this move to the one it will use, and we'll check if it should be discouraged after
-.playerSemiInvulnerable
-	ld a, [wEnemyMoveNum]
-	cp SWIFT
-	jp z, .notSemiInvulnerable ; swift will hit even invulnerable opponents so don't discourage
-	call CheckAIMoveIsPriority
-	jp c, .discourage ; discourage priority moves if player is invulnerable due to fly/dig
-	jp .notSemiInvulnerable
 
-StatusAilmentMoveEffects:
-	db SLEEP_EFFECT
-	db POISON_EFFECT
-	db PARALYZE_EFFECT
-	db BURN_EFFECT
-	db -1 ; end
+CheckDefenseCurlUp:
+	ld a, [wEnemyBattleStatus1]
+	and a
+	bit DEFENSE_CURLED, a
+	ret z
+	scf ; if the enemy has a defense curl up dont use the move again
+	ret
+
+CheckBothReflectLightScreenUp:
+	ld a, [wEnemyBattleStatus3]
+	and a
+	bit HAS_REFLECT_UP, a
+	ret z
+	bit HAS_LIGHT_SCREEN_UP, a
+	ret z
+	scf ; discourage acid armor if it would fail
+	ret
 
 ;;;;;;;;;; PureRGBnote: ADDED: function for checking if the player can have leech seed applied and whether they already have it applied
 
 CheckSeeded:
-	push hl
 	ld a, [wPlayerBattleStatus2]
 	bit SEEDED, a
 	jr nz, .discourage ; if the enemy has used leech seed don't use again
@@ -351,11 +403,9 @@ CheckSeeded:
 	ld a, [hl]
 	cp GRASS
 	jr z, .discourage ; leech seed does not affect grass types
-	pop hl
 	and a
 	ret
 .discourage
-	pop hl
 	scf
 	ret	
 
@@ -372,9 +422,6 @@ CheckStatusImmunity:
 	jr z, .getMonTypes
 	cp PARALYZE_EFFECT
 	jr z, .checkParalyze
-	cp BURN_EFFECT
-	ld b, FIRE
-	jr z, .getMonTypes
 	jr .done
 .checkParalyze
 	ld a, [wEnemyMoveType]
@@ -520,12 +567,13 @@ Modifier2PreferredMoves:
 	db HAZE_EFFECT
 	db MIST_EFFECT
 	db MIMIC_EFFECT
+	db DEFENSE_CURL_EFFECT
 	db -1
 
 ; PureRGBnote: ADDED: function that does a couple of comparisons before deciding whether the player is "dangerous" or not
 ; used to help decide whether the opponent should use boosting moves for AI move choice 2 on the first turn,
 ; and also used to decide for some trainers whether to use boosting items like X Attack.
-IsPlayerPokemonDangerous:
+IsPlayerPokemonDangerous::
 	; check if player is asleep, paralyzed, frozen, or confused, if so, not considered dangerous
 	ld a, [wAITargetMonStatus]
 	bit FRZ, a
@@ -642,6 +690,8 @@ AIMoveChoiceModification3:
 	inc de
 	call ReadMove
 	ld a, [wEnemyMoveNum]
+	cp CONVERSION
+	jr z, .skipEffectivenessCheckAndEncourage
 	cp MIRROR_MOVE
 	call z, GetMirrorMoveResultMove ; we will treat mirror move as the move it will use if selected
 	ld a, [wEnemyMovePower]
@@ -671,6 +721,7 @@ AIMoveChoiceModification3:
 	jr nz, .checkSpecificEffects
 	call CheckHarderAIActive
 	jr z, .checkSpecificEffects ; only encourages 4x moves further once you've obtained the soulbadge
+.skipEffectivenessCheckAndEncourage
 	dec [hl] ; encourage 4x effective moves further
 .checkSpecificEffects ; we'll further encourage certain moves
 	call EncouragePriorityIfSlow
@@ -693,6 +744,8 @@ AIMoveChoiceModification3:
 	jr z, .done
 	call ReadMove
 	ld a, [wEnemyMoveEffect]
+	cp CONVERSION
+	jr z, .betterMoveFound ; Conversion is considered a better move
 	cp SUPER_FANG_EFFECT
 	jr z, .betterMoveFound ; Super Fang is considered to be a better move
 	cp SPECIAL_DAMAGE_EFFECT
@@ -903,14 +956,11 @@ AIMoveChoiceModification4:
 	; only use teleport to heal if health it less than 1/2
 	jr .checkWorthHealing
 
-
-
-
 Modifier4PreferredMoves:
 	db SLEEP_EFFECT
 	db POISON_EFFECT
 	db PARALYZE_EFFECT
-	db BURN_EFFECT
+	db FIREWALL_EFFECT ; todo: remove?
 	db CONFUSION_EFFECT
 	db -1 ; end
 
@@ -1456,19 +1506,6 @@ AIUseDireHit:
 	and a
 	ret
 
-; PureRGBnote: ADDED: if enemy HP is below a 1/[wUnusedC000], store 1 in wUnusedC000.
-; used for checking whether the hyper ball item should guarantee success on use
-AICheckIfHPBelowFractionStore::
-	ld a, [wUnusedC000]
-	call AICheckIfHPBelowFraction
-	jr c, .below
-	xor a
-	jr .done
-.below
-	ld a, 1
-.done
-	ld [wUnusedC000], a 
-	ret
 
 AICheckIfHPBelowFractionWrapped:
 	push hl
@@ -1480,10 +1517,26 @@ AICheckIfHPBelowFractionWrapped:
 	pop hl
 	ret
 
+
+FarCheckIfPlayerHPBelowFraction::
+	ld a, d
+	; fall through
+CheckIfPlayerHPBelowFraction::
+	ld hl, wBattleMonMaxHP
+	ld de, wBattleMonHP + 1
+	jr CheckIfHPBelowFractionCommon
+
+; PureRGBnote: ADDED: if enemy HP is below a 1/[wUnusedC000], store 1 in wUnusedC000.
+; used for checking whether the hyper ball item should guarantee success on use
+FarCheckIfEnemyHPBelowFraction::
+	ld a, d
+	; fall through
 AICheckIfHPBelowFraction:
+	ld hl, wEnemyMonMaxHP
+	ld de, wEnemyMonHP + 1
+CheckIfHPBelowFractionCommon:
 ; return carry if enemy trainer's current HP is below 1 / a of the maximum
 	ldh [hDivisor], a
-	ld hl, wEnemyMonMaxHP
 	ld a, [hli]
 	ldh [hDividend], a
 	ld a, [hl]
@@ -1494,7 +1547,8 @@ AICheckIfHPBelowFraction:
 	ld c, a
 	ldh a, [hQuotient + 2]
 	ld b, a
-	ld hl, wEnemyMonHP + 1
+	ld h, d
+	ld l, e ; hl = MonHP + 1
 	ld a, [hld]
 	ld e, a
 	ld a, [hl]

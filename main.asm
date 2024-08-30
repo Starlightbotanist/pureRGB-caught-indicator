@@ -360,6 +360,7 @@ INCLUDE "engine/overworld/wild_mons.asm"
 INCLUDE "engine/overworld/wild_mon_alt_palettes.asm"
 
 SECTION "Evos Moves", ROMX
+INCLUDE "engine/pokemon/get_mon_header.asm"
 ; PureRGBnote: MOVED: moved from battle engine 7
 INCLUDE "engine/pokemon/evos_moves.asm"
 INCLUDE "data/pokemon/base_stats.asm"
@@ -400,6 +401,10 @@ SECTION "Trade Graphics", ROMX
 
 INCLUDE "gfx/trade.asm"
 
+SECTION "Move Animation Tiles", ROMX
+
+INCLUDE "engine/battle/animations/move_animation_tiles.asm"
+
 SECTION "newCode", ROMX
 ; PureRGBnote: ADDED: new code
 INCLUDE "engine/gfx/front_sprite_toggler.asm"
@@ -411,6 +416,7 @@ INCLUDE "engine/menus/front_sprite_options.asm"
 INCLUDE "engine/menus/front_sprite_options2.asm"
 INCLUDE "engine/menus/front_sprite_options3.asm"
 INCLUDE "engine/menus/front_sprite_options4.asm"
+INCLUDE "engine/menus/front_sprite_options5.asm"
 INCLUDE "engine/gfx/mon_icons2.asm"
 INCLUDE "engine/overworld/select_button_functionality.asm"
 INCLUDE "engine/overworld/use_another_repel.asm"
@@ -443,3 +449,6 @@ INCLUDE "engine/battle/pp_tracker.asm"
 INCLUDE "engine/menus/world_options.asm"
 INCLUDE "engine/battle/volcano_battle_init.asm"
 INCLUDE "engine/gfx/enter_map_replace_tiles_check.asm"
+INCLUDE "engine/battle/move_effects/defense_curl_effect.asm"
+INCLUDE "engine/battle/remap_move_data.asm"
+INCLUDE "engine/battle/move_effects/conversion.asm"

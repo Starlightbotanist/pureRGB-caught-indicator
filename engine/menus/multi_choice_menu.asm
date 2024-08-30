@@ -468,3 +468,20 @@ ChampArenaMusicTextData::
 	li "TENSE"
 	db -1
 
+ConversionMenu::
+	dw TwoOptionMenu
+	db "ATTACK"
+	next "DEFENSE@"
+
+SSAnneFoodMenu::
+	dw ThreeOptionMenu
+	db "Barbecue Eel"
+	next "Prime Steak"
+	next "Salmon Salad@"
+
+RocketPasswordMenu::
+	dw FourOptionMenu
+	db "ROCKET"
+	next "BROCKET"
+	next "SPROCKET"
+	next "DENNIS@"

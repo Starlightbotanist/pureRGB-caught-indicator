@@ -6,7 +6,7 @@ ENDM
 AnimationIdSpecialEffects:
 	; animation id, effect routine address
 	anim_special_effect WHIRLWIND,             FlashScreenEveryFourFrameBlocks ; PureRGBnote: ADDED: special effect during WHIRLWIND
-	anim_special_effect MEGA_PUNCH,            AnimationFlashScreen
+	anim_special_effect MEGA_PUNCH,            MegaPunchSpecialEffect
 	anim_special_effect GUILLOTINE,            AnimationFlashScreen
 	anim_special_effect CRABHAMMER,            FlashScreenEveryFourFrameBlocks ; PureRGBnote: ADDED: special effect during CRABHAMMER
 	anim_special_effect MEGA_KICK,             AnimationFlashScreen
@@ -36,4 +36,5 @@ AnimationIdSpecialEffects:
 	anim_special_effect HYPERTOSS_ANIM,        DoBallTossSpecialEffects
 	anim_special_effect SAFARITOSS_ANIM,        DoBallTossSpecialEffects
 ;;;;;;;;;;
+	anim_special_effect KINESIS,               FirewallSpecialEffect
 	db -1 ; end

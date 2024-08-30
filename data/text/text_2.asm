@@ -1578,6 +1578,11 @@ _WhatText::
 	text "What?"
 	done
 
+_ViewModeText::
+	text "BOX viewer"
+	line "mode active."
+	done
+
 _DepositWhichMonText::
 	text "Deposit which"
 	line "#MON?"
@@ -1818,3 +1823,9 @@ _TextIDErrorText::
 _ContCharText::
 	text "<_CONT>@"
 	text_end
+
+_CantDepositSSTicketText::
+	text "You need that"
+	line "ticket while"
+	cont "on the S.S.ANNE!"
+	prompt

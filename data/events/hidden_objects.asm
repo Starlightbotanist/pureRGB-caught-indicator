@@ -101,6 +101,7 @@ HiddenObjectMaps:
 	db SECRET_LAB
 	db TYPE_GUYS_HOUSE
 	db CINNABAR_VOLCANO
+	db SILPH_CO_1F
 	db -1 ; end
 
 HiddenObjectPointers:
@@ -205,6 +206,7 @@ HiddenObjectPointers:
 	dw SecretLabHiddenObjects
 	dw TypeGuysHouseHiddenObjects
 	dw CinnabarVolcanoHiddenObjects
+	dw SilphCo1FHiddenObjects
 
 MACRO hidden_object
 	db \2 ; y coord
@@ -361,7 +363,9 @@ GameCornerHiddenObjects:
 	hidden_object 13, 13, ANY_FACING, StartSlotMachine
 	hidden_object 13, 14, ANY_FACING, StartSlotMachine
 	hidden_object 13, 15, ANY_FACING, StartSlotMachine
-	hidden_object 12, 15, ANY_FACING, StartSlotMachine
+	; PureRGBnote: FIXED: this machine is inaccessible due to the NPC in front, and is blocking obtaining the coins
+	; defined on its coordinate below, so remove it to make those coins accessible.
+	;hidden_object 12, 15, ANY_FACING, StartSlotMachine 
 	hidden_object 12, 14, ANY_FACING, StartSlotMachine
 	hidden_object 12, 13, ANY_FACING, StartSlotMachine
 	hidden_object 12, 12, ANY_FACING, StartSlotMachine
@@ -815,4 +819,8 @@ CinnabarVolcanoHiddenObjects:
 	hidden_object 48, 38, 0, VolcanoBombableRockFloor2
 	hidden_object 50, 50, 0, VolcanoBombableRockFloor3
 	hidden_object 48, 66, 0, VolcanoBombableRockFloor4
+	db -1
+
+SilphCo1FHiddenObjects:
+	hidden_object 37, 13, 0, SaffronAbandonedBuildingHeliumPipe
 	db -1

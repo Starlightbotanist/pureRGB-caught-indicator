@@ -207,6 +207,9 @@ AttackAnimationPointers:
 	dw ThrowBaitAnim
 	dw FlyAnimPart1
 	dw FirePillarAnim
+	dw RageEnemyAnim
+	dw ConversionDefenseModeAnim
+	dw ConversionAttackModeAnim
 	assert_table_length NUM_ATTACK_ANIMS
 	dw ZigZagScreenAnim
 
@@ -522,10 +525,10 @@ SupersonicAnim:
 	db -1 ; end
 
 SonicBoomAnim:
-	battle_anim ROAR, SUBANIM_1_SHOUT, 1, 6
-	battle_anim ROAR, SUBANIM_1_SHOUT, 1, 6
-	battle_anim GUST, SUBANIM_1_TORNADO, 1, 6
-	battle_anim NO_MOVE, SUBANIM_1_STAR_BIG, 1, 6
+	battle_anim DIG, SUBANIM_1_SHOUT, 1, 3
+	battle_anim DIG, SUBANIM_1_SHOUT, 1, 6
+	battle_anim LEECH_SEED, SUBANIM_0_SOUND_WAVE_SHOT, 0, 2
+	battle_anim EGG_BOMB, SUBANIM_1_EXPLOSION_SMALL_ENEMY, 0, 4
 	db -1 ; end
 
 DisableAnim:
@@ -895,6 +898,7 @@ QuickAttackAnim:
 	db -1 ; end
 
 RageAnim:
+	battle_anim TAIL_WHIP, SUBANIM_2_ANGER_SYMBOL, 2, 16
 	battle_anim RAGE, SUBANIM_0_STAR_TWICE, 0, 6
 	db -1 ; end
 
@@ -1078,9 +1082,8 @@ SludgeAnim:
 
 BoneClubAnim:
 	battle_anim NO_MOVE, SE_MOVE_MON_HORIZONTALLY
+	battle_anim NO_MOVE, SUBANIM_2_BONE_TOSS, 2, 3
 	battle_anim BONE_CLUB, SUBANIM_0_STAR_THRICE, 0, 8
-	battle_anim NO_MOVE, SE_SLIDE_ENEMY_MON_HALF_OFF
-	battle_anim NO_MOVE, SE_SHOW_ENEMY_MON_PIC
 	battle_anim NO_MOVE, SE_RESET_MON_POSITION
 	db -1 ; end
 
@@ -1287,12 +1290,10 @@ FurySwipesAnim:
 
 BonemerangAnim:
 	battle_anim NO_MOVE, SE_MOVE_MON_HORIZONTALLY
-	battle_anim BONEMERANG, SUBANIM_0_STAR_THRICE, 0, 6
-	battle_anim NO_MOVE, SE_SLIDE_ENEMY_MON_HALF_OFF
-	battle_anim NO_MOVE, SE_SHOW_ENEMY_MON_PIC
+	battle_anim BONEMERANG, SUBANIM_2_BONE_TOSS, 2, 3
+	battle_anim NO_MOVE, SUBANIM_0_STAR_THRICE, 0, 6
 	battle_anim NO_MOVE, SE_DELAY_ANIMATION_10
-	battle_anim NO_MOVE, SE_DELAY_ANIMATION_10
-	battle_anim NO_MOVE, SE_DELAY_ANIMATION_10
+	battle_anim NO_MOVE, SUBANIM_2_BONE_RECOVER, 2, 3
 	battle_anim DOUBLE_KICK, SE_RESET_MON_POSITION
 	db -1 ; end
 
@@ -1327,7 +1328,6 @@ ConversionAnim:
 	battle_anim CONVERSION, SE_DARK_SCREEN_FLASH
 	battle_anim NO_MOVE, SUBANIM_0_CIRCLE_1_SQUARE_CLOSING, 1, 3
 	battle_anim NO_MOVE, SUBANIM_0_CIRCLE_1_SQUARE_CLOSING, 1, 3
-	battle_anim NO_MOVE, SE_DARK_SCREEN_FLASH
 	db -1 ; end
 
 TriAttackAnim:
@@ -1422,19 +1422,19 @@ EnemyHUDShakeAnim:
 	db -1 ; end
 
 TradeBallDropAnim:
-	battle_anim NO_MOVE, SUBANIM_2_TRADE_BALL_DROP, 2, 6
+	battle_anim NO_MOVE, SUBANIM_2_TRADE_BALL_DROP, 0, 6
 	db -1 ; end
 
 TradeBallAppear1Anim:
-	battle_anim NO_MOVE, SUBANIM_2_TRADE_BALL_SHAKE, 2, 4
+	battle_anim NO_MOVE, SUBANIM_2_TRADE_BALL_SHAKE, 0, 4
 	db -1 ; end
 
 TradeBallAppear2Anim:
-	battle_anim NO_MOVE, SUBANIM_2_TRADE_BALL_APPEAR, 2, 6
+	battle_anim NO_MOVE, SUBANIM_2_TRADE_BALL_APPEAR, 0, 6
 	db -1 ; end
 
 TradeBallPoofAnim:
-	battle_anim NO_MOVE, SUBANIM_2_TRADE_BALL_POOF, 2, 6
+	battle_anim NO_MOVE, SUBANIM_2_TRADE_BALL_POOF, 0, 6
 	db -1 ; end
 
 XStatItemAnim:
@@ -1445,7 +1445,7 @@ XStatItemAnim:
 
 ShrinkingSquareAnim:
 	battle_anim NO_MOVE, SE_LIGHT_SCREEN_PALETTE
-	battle_anim NO_MOVE, SUBANIM_0_CIRCLE_1_SQUARE_CLOSING, 1, 6
+	battle_anim MIST, SUBANIM_0_CIRCLE_1_SQUARE_CLOSING, 1, 6
 	battle_anim NO_MOVE, SE_RESET_SCREEN_PALETTE
 	db -1 ; end
 
@@ -1526,4 +1526,20 @@ AmnesiaEnemyAnim:
 FirePillarAnim:
 	battle_anim FLAMETHROWER, SE_FIRE_EVERYWHERE
 	battle_anim BARRIER, SUBANIM_0_WATER_1_FIRE_BARRIER, 1, 3
+	db -1
+
+RageEnemyAnim:
+	battle_anim TAIL_WHIP, SUBANIM_2_ANGER_SYMBOL_ENEMY, 2, 16
+	battle_anim RAGE, SUBANIM_0_STAR_TWICE, 0, 6
+	db -1 ; end
+
+ConversionDefenseModeAnim:
+	battle_anim BARRIER, SUBANIM_1_BARRIER, 1, 1
+	battle_anim BARRIER, SUBANIM_1_BARRIER, 1, 1
+	battle_anim BARRIER, SUBANIM_1_BARRIER, 1, 1
+	battle_anim BARRIER, SUBANIM_1_BARRIER, 1, 1
+	db -1
+
+ConversionAttackModeAnim:
+	battle_anim NO_MOVE, SE_CROSSHAIR_SCANS_OPPONENT
 	db -1

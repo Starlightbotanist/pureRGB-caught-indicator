@@ -266,9 +266,9 @@ _HitWithRecoilText::
 	line "hit with recoil!"
 	prompt
 
-_ConvertedTypeText::
-	text "Converted type to"
-	line "<TARGET>'s!"
+_ConversionChooseModeText::
+	text "Convert to which"
+	line "mode?"
 	prompt
 
 _StatusChangesEliminatedText::
@@ -334,10 +334,24 @@ _DreamWasEatenText::
 	line "dream was eaten!"
 	prompt
 
+_ColosseumOpponentText::
 _TradeCenterOpponentText::
 	text "!"
 	done
 
-_ColosseumOpponentText::
-	text "!"
-	done
+_GuardedAgainstSuperEffectiveMovesText::
+	text "<USER>"
+	line "protected against"
+	para "super effective"
+	line "hits!"
+	prompt
+
+_AcidArmorLiquifiedText::
+	text "<USER>"
+	line "liquified!"
+	para "@"
+	; fall through
+_AllDamageHalvedText::
+	text "All damage to it"
+	line "is halved!"
+	prompt

@@ -195,6 +195,7 @@ PlayAnimation:
 	xor a
 	ldh [hROMBankTemp], a ; it looks like nothing reads this
 	ld [wSubAnimTransform], a
+	ld [wSubAnimStepCounter], a
 	ld a, [wAnimationID] ; get animation number
 	dec a
 	ld l, a
@@ -295,6 +296,9 @@ PlayAnimation:
 	vc_hook_blue Stop_reducing_move_anim_flashing_Bubblebeam_Hyper_Beam_Blizzard
 	pop hl
 	vc_hook Stop_reducing_move_anim_flashing_Guillotine
+	ld a, [wSubAnimStepCounter]
+	inc a
+	ld [wSubAnimStepCounter], a
 	jr .animationLoop
 
 LoadSubanimation:
@@ -394,32 +398,33 @@ LoadMoveAnimationTiles:
 	ld [wTempTilesetNumTiles], a ; number of tiles
 	ld a, [hli]
 	ld e, a
-	ld a, [hl]
+	ld a, [hli]
 	ld d, a ; de = address of tileset
+	ld b, [hl] ; bank of tileset
 	ld hl, vSprites tile $31
-	ld b, BANK(MoveAnimationTiles0) ; ROM bank
+	ld a, [wCurMap]
+	cp TRADE_CENTER
 	ld a, [wTempTilesetNumTiles]
+	jr nz, .load
+	ld a, 64 ; we load less tiles in the trade center
+.load
 	ld c, a ; number of tiles
 	jp CopyVideoData ; load tileset
 
 MACRO anim_tileset
 	db \1
 	dw \2
-	db -1 ; padding
+	db BANK(\2)
 ENDM
 
 MoveAnimationTilesPointers:
 	; number of tiles, gfx pointer
 	anim_tileset 79, MoveAnimationTiles0
 	anim_tileset 79, MoveAnimationTiles1
-	anim_tileset 64, MoveAnimationTiles2
+	anim_tileset  9, MoveAnimationTiles2
 
 MoveAnimationTiles0::
-MoveAnimationTiles2:
 	INCBIN "gfx/battle/move_anim_0.2bpp"
-
-MoveAnimationTiles1:
-	INCBIN "gfx/battle/move_anim_1.2bpp"
 
 MoveAnimationNoWaitingForSound:
 	push hl
@@ -506,7 +511,9 @@ ShareMoveAnimations:
 	cp AMNESIA
 	ld b, AMNESIA_ENEMY_ANIM ; PureRGBnote: CHANGED: amnesia has its own new animation
 	jr z, .replaceAnim
-
+	cp RAGE
+	ld b, RAGE_ENEMY_ANIM
+	jr z, .replaceAnim
 	cp REST
 	ld b, SLP_ANIM
 	ret nz
@@ -942,15 +949,70 @@ FlashScreenEveryFourFrameBlocks:
 	call z, AnimationFlashScreen
 	ret
 
+FirewallSpecialEffect:
+	ldh a, [hWhoseTurn]
+	and a
+	ld hl, wEnemyBattleStatus3
+	ld de, wEnemyMonStatus
+	jr z, .gotTurn
+	ld hl, wPlayerBattleStatus3
+	ld de, wBattleMonStatus
+.gotTurn
+	ld a, [de]
+	bit BRN, a
+	ret z
+	bit BOOSTED_FIREWALL, [hl]
+	jr nz, .endOfAnimCheck
+.notEndAnim
+	ld a, [wSubAnimCounter]
+	and 11
+	ret nz
+	call AnimationLightScreenPalette
+	rst _DelayFrame
+	call AnimationResetScreenPalette
+	rst _DelayFrame
+	ret
+.endOfAnimCheck
+	ld a, [wSubAnimCounter]
+	cp 1
+	jr nz, .notEndAnim
+	ld a, [wSubAnimStepCounter]
+	cp 3
+	jr nz, .notEndAnim
+	ld a, $20
+	ld [wFrequencyModifier], a
+	ld a, $00
+	ld [wTempoModifier], a
+	ld a, SFX_BATTLE_26
+	rst _PlaySound
+	ld hl, AnimationSpiralFireInwardFast
+	jp CallWithTurnFlipped
+
 ; used for Explosion and Selfdestruct
 DoExplodeSpecialEffects:
+	ldh a, [hWhoseTurn]
+	and a
+	ld a, [wPlayerMoveEffect]
+	jr z, .gotTurn
+	ld a, [wEnemyMoveEffect]
+.gotTurn
+	; if explosion/selfdestruct isn't powered up, the effect will be EXPLODE_RECOIL_EFFECT
+	cp EXPLODE_EFFECT
+	jr nz, .Delay2FramesEveryFourFrameBlocks
 	ld a, [wSubAnimCounter]
 	cp 1 ; is it the end of the subanimation?
 	jr nz, FlashScreenEveryFourFrameBlocks
-	ret
 	; if it's the end of the subanimation, make the attacking pokemon disappear
-	;hlcoord 1, 5
-	;jp AnimationHideMonPic ; make pokemon disappear
+	hlcoord 1, 5
+	jp AnimationHideMonPic ; make pokemon disappear
+.Delay2FramesEveryFourFrameBlocks
+	; makes sure the EXPLODE_RECOIL_EFFECT's animation is still a similar length to original but has no flashing
+	ld a, [wSubAnimCounter]
+	and 3
+	ret nz
+	rst _DelayFrame
+	rst _DelayFrame
+	ret
 
 ; flashes the screen when subanimation counter is 1 modulo 4
 DoBlizzardSpecialEffects:
@@ -1077,13 +1139,15 @@ TailWhipAnimationUnused:
 	ld a, 1
 	ld [wSubAnimCounter], a
 	ld c, 20
-	jp DelayFrames
+	rst _DelayFrames
+	ret
 
 INCLUDE "data/battle_anims/special_effect_pointers.asm"
 
 AnimationDelay10:
 	ld c, 10
-	jp DelayFrames
+	rst _DelayFrames
+	ret
 
 ; calls a function with the turn flipped from player to enemy or vice versa
 ; input - hl - address of function to call
@@ -1178,6 +1242,16 @@ AnimationFlashLightScreen:
 	ld a, %10010000 ; light screen colors
 	jr AnimationFlashScreenCommon
 
+MegaPunchSpecialEffect::
+	ldh a, [hWhoseTurn]
+	and a
+	ld a, [wPlayerMoveEffect]
+	jr z, .gotTurn
+	ld a, [wEnemyMoveEffect]
+.gotTurn
+	cp EXPLODE_RECOIL_EFFECT
+	ret z
+	; fall through
 AnimationFlashScreen:
 	ldh a, [rBGP]
 	push af ; save initial palette
@@ -1207,9 +1281,9 @@ AnimationDarkenMonPalette:
 	lb bc, $f9, $f4
 	jr SetAnimationBGPalette
 
-;AnimationUnusedPalette1:
-;	lb bc, $fe, $f8
-;	jr SetAnimationBGPalette
+AnimationUnusedPalette1:
+	lb bc, $fe, $f8
+	jr SetAnimationBGPalette
 
 ;AnimationUnusedPalette2:
 ;	lb bc, $ff, $ff
@@ -1727,15 +1801,28 @@ AnimationResetMonPosition:
 	jp AnimationShowMonPic
 
 ;;;;;;;;;; PureRGBnote: ADDED: new animation used for Horn Drill, Drill Peck, and when using a Master Ball
+AnimationSpiralFireInwardFast::
+	lb de, $72, 1
+	ld a, 1
+	ld [wUnusedC000], a
+	ld c, a
+	call AnimationSpiralBallsInward
+	xor a
+	ld [wUnusedC000], a
+	ret
+
+	
 AnimationSpiralBallsInwardFast:
 	ld d, $50 ; tile number
 AnimationSpiralBallsInwardFastDefault:
 	ld e, 2 ; delay
+	ld c, 0
 	jr AnimationSpiralBallsInward
 ;;;;;;;;;;
 
 AnimationSpiralBallsInwardDefault:
 	lb de, $7a, 5 ; tile number, delay
+	ld c, 0
 ; Creates an effect that looks like energy balls spiralling into the
 ; player mon's sprite.  Used in Focus Energy, for example.
 ; PureRGBnote: CHANGED: modified this function so the delay is customizable, and it can repeatedly play a sound effect while the animation is happening.
@@ -1767,9 +1854,9 @@ AnimationSpiralBallsInward:
 	ld [wSpiralBallsBaseY], a
 	ld [wSpiralBallsBaseX], a
 .next
+	ld a, c ; which tileset to use
 	; d still has the tile number stored
 	ld c, 3 ; number of balls
-	xor a
 	call InitMultipleObjectsOAM
 	ld hl, SpiralBallAnimationCoordinates
 .loop
@@ -3054,3 +3141,182 @@ SetMoveDexSeen:
 	res 0, [hl]
 	ret
 ;;;;;;;;;;
+
+AnimationCrosshairScansOpponent:
+	ld d, $36 ; crosshair tile
+	ld b, 0
+	ld a, 2 ; which tileset to use
+	ld c, 4 ; need 4 tiles for the crosshair
+	call InitMultipleObjectsOAM
+	; flip the crosshair tiles to make one
+	ld hl, wShadowOAMSprite01Attributes
+	set 5, [hl] ; horizontal flip
+	ld hl, wShadowOAMSprite02Attributes
+	set 6, [hl] ; vertical flip
+	ld hl, wShadowOAMSprite03Attributes
+	set 5, [hl] ; horizontal flip
+	set 6, [hl] ; vertical flip
+	; add the "data" tiles into oam too
+	ld hl, wShadowOAMSprite04TileID
+	ld [hl], $37
+	ld hl, wShadowOAMSprite05TileID
+	ld [hl], $37
+	ld hl, wShadowOAMSprite06TileID
+	ld [hl], $38
+	ldh a, [hWhoseTurn]
+	and a
+	lb bc, 110, 56 ; crosshair starting coords (used on opponent)
+	jr z, .gotTurn
+	lb bc, 24, 96 ; crosshair starting coords (used on player)
+.gotTurn
+	push bc
+	ld hl, wShadowOAMSprite00YCoord
+	ld [hl], c
+	inc hl
+	ld [hl], b
+	ld hl, wShadowOAMSprite01YCoord
+	ld a, b
+	add 8
+	ld [hl], c
+	inc hl
+	ld [hl], a
+	ld hl, wShadowOAMSprite02YCoord
+	ld a, c
+	add 8
+	ld [hl], a
+	inc hl
+	ld [hl], b
+	ld hl, wShadowOAMSprite03YCoord
+	ld [hl], a
+	ld a, b
+	add 8
+	inc hl
+	ld [hl], a
+	; show first data sprite
+	ld hl, wShadowOAMSprite04YCoord
+	pop bc
+	ld a, b
+	sub 16
+	ld b, a
+	push bc
+	ld [hl], c
+	inc hl
+	ld [hl], b
+	rst _DelayFrame
+	; default coord loaded for crosshair
+	; step 1 - make crosshair scan from bottom left to top right of sprite
+	ld b, 16 ; 16x2 pixels
+	ld hl, .diagonallyUpRight
+	ld de, wShadowOAMSprite04Attributes
+	call .functionForEachCrosshairTile
+	; show second data sprite
+	ld hl, wShadowOAMSprite06YCoord
+	pop bc
+	ld a, c
+	sub 8
+	ld c, a
+	push bc
+	ld [hl], c
+	inc hl
+	ld [hl], b
+	; step 2 - make crosshair scan down to bottom right of sprite
+	ld b, 8 ; 8x4 pixels
+	ld hl, .straightDown
+	ld de, wShadowOAMSprite06Attributes
+	call .functionForEachCrosshairTile
+	; show third data sprite
+	ld hl, wShadowOAMSprite05YCoord
+	pop bc
+	ld a, c
+	sub 8
+	ld [hl], a
+	inc hl
+	ld [hl], b
+	; step 3 - make crosshair scan from bottom right to top left
+	ld b, 16 ; 16x2 pixels
+	ld hl, .diagonallyUpLeft
+	ld de, wShadowOAMSprite05Attributes
+	call .functionForEachCrosshairTile
+	ld c, 20
+	rst _DelayFrames
+	call AnimationCleanOAM
+	call AnimationLightScreenPalette
+	ld c, 2
+	rst _DelayFrames
+	ld a, $01
+	ld [wFrequencyModifier], a
+	ld a, $80
+	ld [wTempoModifier], a
+	ld a, SFX_SILPH_SCOPE
+	rst _PlaySound
+	jp AnimationResetScreenPalette
+.functionForEachCrosshairTile
+	call .scanSound
+.loop
+	call .forEachCrossHairTile
+	rst _DelayFrame
+	call .forEachCrossHairTile
+	; flip the data tile provided every second frame
+	ld a, [de]
+	xor %01000000 ; vertical flip
+	ld [de], a
+	rst _DelayFrame
+	dec b
+	jr nz, .loop
+	ret
+.forEachCrossHairTile
+	push de
+	ld c, 4 ; 4 tiles to move
+	ld de, wShadowOAMSprite00YCoord
+.innerLoop
+	push hl
+	call hl_caller
+	pop hl
+	dec c
+	jr nz, .innerLoop
+	pop de
+	ret
+.diagonallyUpRight
+	ld h, d
+	ld l, e
+	dec [hl]
+	inc hl
+	inc [hl]
+	inc hl
+	inc hl
+	inc hl
+	ld d, h
+	ld e, l
+	ret
+.diagonallyUpLeft
+	ld h, d
+	ld l, e
+	dec [hl]
+	inc hl
+	dec [hl]
+	inc hl
+	inc hl
+	inc hl
+	ld d, h
+	ld e, l
+	ret
+.straightDown
+	ld h, d
+	ld l, e
+	inc [hl]
+	inc [hl]
+	inc hl
+	inc hl
+	inc hl
+	inc hl
+	ld d, h
+	ld e, l
+	ret
+.scanSound
+	ld a, $ff
+	ld [wFrequencyModifier], a
+	ld a, $00
+	ld [wTempoModifier], a
+	ld a, SFX_BATTLE_33
+	rst _PlaySound
+	ret

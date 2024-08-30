@@ -33,6 +33,7 @@
 	FIRE_BLAST,\
 	FLAMETHROWER,\
 	SLAM,\ ; FILTHY SLAM
+	LIGHT_SCREEN,\
 	SLUDGE,\
 	ROCK_SLIDE,\
 	GLARE,\
@@ -41,6 +42,10 @@
 	STRENGTH
 	; end
 
-	dw BANK(OnixPicFront), BANK(OnixPicBack)
+	db BANK(OnixPicFront)
+	db BANK(OnixPicFrontAlt)
+	db BANK(OnixPicBack)
+	db BANK(OnixPicBackSW)
 
 	dw OnixPicFrontAlt, OnixPicBack
+

@@ -8,12 +8,12 @@ CeruleanCity_Script:
 ; PureRGBnote: ADDED: function that will remove the cut tree if we deleted it with the tree deleter
 CeruleanCityReplaceCutTile:
 	ld hl, wCurrentMapScriptFlags
-	bit 5, [hl]
-	res 5, [hl]
-	jr nz, .replaceTile
 	bit 4, [hl]
 	res 4, [hl]
 	jr nz, .replaceTileNoRedraw
+	bit 5, [hl]
+	res 5, [hl]
+	jr nz, .replaceTile
 	ret
 .replaceTile
 	CheckEvent EVENT_DELETED_CERULEAN_TREE
@@ -159,6 +159,9 @@ CeruleanCityRivalBattleScript:
 	ld a, [wd730]
 	bit 0, a
 	ret nz
+	; reset rival's sprite movement facing byte otherwise he can look around weirdly after battle for a moment
+	ld hl, wMapSpriteData + ((CERULEANCITY_RIVAL - 1) * 2)
+	ld [hl], DOWN
 	xor a
 	ld [wJoyIgnore], a
 	ld a, TEXT_CERULEANCITY_RIVAL

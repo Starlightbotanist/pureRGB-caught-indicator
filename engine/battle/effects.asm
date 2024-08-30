@@ -172,24 +172,7 @@ BadlyPoisonedText:
 DrainHPEffect:
 	jpfar DrainHPEffect_
 
-;ExplodeEffect:
-;	ld hl, wBattleMonHP
-;	ld de, wPlayerBattleStatus2
-;	ldh a, [hWhoseTurn]
-;	and a
-;	jr z, .faintUser
-;	ld hl, wEnemyMonHP
-;	ld de, wEnemyBattleStatus2
-;.faintUser
-;	xor a
-;	ld [hli], a ; set the mon's HP to 0
-;	ld [hli], a
-;	inc hl
-;	ld [hl], a ; set mon's status to 0
-;	ld a, [de]
-;	res SEEDED, a ; clear mon's leech seed status
-;	ld [de], a
-;	ret
+; ExplodeEffect: ; PureRGBnote: MOVED: handled within remap_move_data.asm
 
 FreezeBurnParalyzeEffect:
 	xor a
@@ -1097,17 +1080,28 @@ TeleportWildPokemon::
 	cp d
 	ret
 
+
 TwoToFiveAttacksEffect:
+	ldh a, [hWhoseTurn]
+	and a
 	ld hl, wPlayerBattleStatus1
 	ld de, wPlayerNumAttacksLeft
 	ld bc, wPlayerNumHits
-	ldh a, [hWhoseTurn]
-	and a
+	ld a, [wPlayerMoveNum]
 	jr z, .twoToFiveAttacksEffect
 	ld hl, wEnemyBattleStatus1
 	ld de, wEnemyNumAttacksLeft
 	ld bc, wEnemyNumHits
+	ld a, [wEnemyMoveNum]
 .twoToFiveAttacksEffect
+	cp DOUBLESLAP
+	jr nz, .notDoubleSlap
+	push hl
+	push bc
+	callfar DoubleSlapModifierPart2
+	pop bc
+	pop hl
+.notDoubleSlap
 	bit ATTACKING_MULTIPLE_TIMES, [hl] ; is mon attacking multiple times?
 	ret nz
 	set ATTACKING_MULTIPLE_TIMES, [hl] ; mon is now attacking multiple times
@@ -1162,12 +1156,17 @@ FlinchSideEffect:
 	ret nz
 	ld hl, wEnemyBattleStatus1
 	ld de, wPlayerMoveEffect
+	ld bc, wPlayerMoveNum
 	ldh a, [hWhoseTurn]
 	and a
 	jr z, .flinchSideEffect
 	ld hl, wPlayerBattleStatus1
 	ld de, wEnemyMoveEffect
+	ld bc, wEnemyMoveNum
 .flinchSideEffect
+	ld a, [bc]
+	cp SONICBOOM
+	jr z, .sonicBoom
 	ld a, [de]
 	cp FLINCH_SIDE_EFFECT1
 	ld b, 10 percent + 1 ; chance of flinch (FLINCH_SIDE_EFFECT1)
@@ -1177,8 +1176,21 @@ FlinchSideEffect:
 	call BattleRandom
 	cp b
 	ret nc
+.flinch
 	set FLINCHED, [hl] ; set mon's status to flinching
 	jp ClearHyperBeam
+.sonicBoom
+	; sonic boom always flinches if it's used the first turn a pokemon is out
+	ldh a, [hWhoseTurn]
+	and a
+	ld a, [wPlayerTurnCount]
+	jr z, .gotTurn
+	ld a, [wEnemyTurnCount]
+.gotTurn
+	cp 1 ; the count will be 1 on first turn mon is out
+	ret nz
+	jr .flinch
+
 
 OneHitKOEffect:
 	jpfar OneHitKOEffect_
@@ -1313,7 +1325,10 @@ RecoilEffect:
 	jpfar DefaultRecoilEffect_
 
 BigRecoilEffect:
-	jpfar BigRecoilEffect_ ; PureRGBnote: ADDED: recoil effect that does 1/2 of the damage done to the user.
+	jpfar BigRecoilEffect_ ; PureRGBnote: ADDED: recoil effect that does 1/2 of the damage done to the user
+
+ExplodeRecoilEffect:
+	jpfar ExplodeRecoilEffect_ ; PureRGBnote: ADDED: same as bigrecoileffect, but if it misses does 1/4 the health of the user in recoil still
 
 ConfusionSideEffect:
 	call BattleRandom
@@ -1379,8 +1394,8 @@ ConfusionEffectFailed:
 	rst _DelayFrames
 	jp ConditionalPrintButItFailed
 
-BurnEffect:
-	jpfar BurnEffect_
+FirewallEffect:
+	jpfar FirewallEffect_
 
 ParalyzeEffect:
 	jpfar ParalyzeEffect_
@@ -1421,13 +1436,18 @@ ClearHyperBeam:
 	;set USING_RAGE, [hl] ; mon is now in "rage" mode
 	;ret
 
+ConversionEffect:
+	callfar ConversionEffect_
+	ret nc
+	jp ExecuteReplacedMove
+
 MimicEffect:
 	ld c, 50
 	rst _DelayFrames
 	call MoveHitTest
 	ld a, [wMoveMissed]
 	and a
-	jp nz, .mimicMissed
+	jp nz, MimicMissed
 	ldh a, [hWhoseTurn]
 	and a
 	ld hl, wBattleMonMoves
@@ -1440,7 +1460,7 @@ MimicEffect:
 	ld a, [wEnemyBattleStatus1]
 .enemyTurn
 	bit INVULNERABLE, a
-	jr nz, .mimicMissed
+	jr nz, MimicMissed
 .getRandomMove
 	push hl
 	call BattleRandom
@@ -1464,7 +1484,7 @@ MimicEffect:
 .letPlayerChooseMove
 	ld a, [wEnemyBattleStatus1]
 	bit INVULNERABLE, a
-	jr nz, .mimicMissed
+	jr nz, MimicMissed
 	ld a, [wCurrentMenuItem]
 	push af
 	ld a, $1
@@ -1503,12 +1523,14 @@ MimicEffect:
 	pop af
 	ld [hl], a
 	call ReloadMoveData
+	; fall through
+ExecuteReplacedMove::
 	ldh a, [hWhoseTurn]
 	and a
 	jp z, CheckIfPlayerNeedsToChargeUp
 	jp CheckIfEnemyNeedsToChargeUp
 ;;;;;;;;;;
-.mimicMissed
+MimicMissed:
 	ld c, 50
 	rst _DelayFrames
 	jp PrintButItFailedText_
@@ -1904,3 +1926,7 @@ IsStatMaxed:
 .maxed
 	scf
 	ret
+
+DefenseCurlEffect:
+	jpfar _DefenseCurlEffect
+

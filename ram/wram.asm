@@ -491,7 +491,8 @@ wLinkBattleRandomNumberListIndex:: db
 ; number of times remaining that AI action can occur
 wAICount:: db
 
-	ds 2
+wPlayerTurnCount:: db
+wEnemyTurnCount:: db
 
 wEnemyMoveListIndex:: db
 
@@ -541,7 +542,9 @@ wPlayerMonMinimized:: db
 wEnemyNumHits:: ; db
 
 ; the amount of damage accumulated by the enemy while biding
-wEnemyBideAccumulatedDamage:: dw ; PureRGBnote: CHANGED: bide effect changed to normal buff move, so this is unused
+;wEnemyBideAccumulatedDamage:: dw ; PureRGBnote: CHANGED: bide effect changed to normal buff move, so this is unused
+wPlayerConversionMode:: db
+	ds 1
 
 	ds 8
 	
@@ -1171,8 +1174,8 @@ NEXTU
 ;;;;;;;;;; PureRGBnote: ADDED: new wram variables
 wTempLevelStore::
 wItemFinderItemDirection::db 
-wSawItemFinderText::db ; the "yes, an item is nearby!" text will only display once per game restart
-wItemDuplicationActive:: db ; after seeing the old man catch pokemon, this flag is enabled until the game restarts - allows missingno item dupe glitch
+wSawItemFinderText::db ; the "yes, an item is nearby!" text will only display once per game restart TODO: make a flag
+wItemDuplicationActive:: db ; after seeing the old man catch pokemon, this flag is enabled until the game restarts - allows missingno item dupe glitch TODO: make a flag
 
 ; set to 1 if you healed this turn, 2 if you switched out this turn (prevents ai from spamming certain moves in some cases)
 wAIMoveSpamAvoider:: db
@@ -1182,7 +1185,8 @@ wChampArenaChallenger:: db ; which challenger we're currently fighting in the ch
 wAITargetMonType1:: db ; the type of the pokemon the AI should think it's attacking (stays as the previous pokemon when you switch pokemon)
 wAITargetMonType2:: db ; the type of the pokemon the AI should think it's attacking (stays as the previous pokemon when you switch pokemon)
 wAITargetMonStatus:: db ; the current status of the pokemon the AI should think it's attacking (set when healing a pokemon's status or switching it out)
-ds 6 ; unused 6 bytes
+wStoredMovedexListIndex:: db
+ds 5 ; unused 6 bytes
 ;;;;;;;;;;
 ENDU
 
@@ -1399,7 +1403,7 @@ wPlayerStatsToDouble:: db
 ; always 0
 wPlayerStatsToHalve:: db
 
-; bit 0 - bide (PureRGBnote: CHANGED: now unused)
+; bit 0 - protected against super effective moves (PureRGBnote: CHANGED: used to be for bide)
 ; bit 1 - thrash / petal dance
 ; bit 2 - attacking multiple times (e.g. double kick)
 ; bit 3 - flinch
@@ -1412,10 +1416,10 @@ wPlayerBattleStatus1:: db
 ; bit 0 - X Accuracy effect 
 ; bit 1 - protected by "mist"
 ; bit 2 - focus energy effect
-; bit 3 - unused
+; bit 3 - immune to psychic moves (triggered by haze)
 ; bit 4 - has a substitute
 ; bit 5 - need to recharge
-; bit 6 - rage (PureRGBnote: CHANGED: now never set)
+; bit 6 - immune to normal/fighting moves (triggered by mist)
 ; bit 7 - leech seeded
 wPlayerBattleStatus2:: db
 
@@ -1424,6 +1428,7 @@ wPlayerBattleStatus2:: db
 ; bit 2 - reflect
 ; bit 3 - transformed
 ; bit 4 - PureRGBnote: ADDED: already acted this turn (used when an enemy switches or uses an item)
+; bit 5 - has been hit by firewall already once while burned
 wPlayerBattleStatus3:: db
 
 ; always 0
@@ -1571,7 +1576,7 @@ UNION
 
 w2CharStringBuffer:: ds 3 ; don't use this buffer during attack animations
 NEXTU
-ds 1
+wSubAnimStepCounter:: db
 ; the address _of the address_ of the current subanimation entry
 wSubAnimAddrPtr:: dw
 ENDU
@@ -1687,8 +1692,10 @@ wMonHMoves:: ds NUM_MOVES
 wMonHGrowthRate:: db
 wMonHLearnset:: flag_array NUM_TMS + NUM_HMS
 ; PureRGBnote: ADDED: new properties in the pokemon header - these take up new space in WRAM.
-wMonHPicBank:: dw ; shifts
-wMonHBackPicBank:: dw ; shifts
+wMonHPicBank:: db ; shifts
+wMonHAltPicBank:: db ; shifts
+wMonHBackPicBank:: db ; shifts
+wMonHSpaceWorldBackPicBank:: db ; shifts
 wMonHAltFrontSprite:: dw ; shifts
 wMonHAltBackSprite:: dw ; shifts
     ds 1 ; unused byte
@@ -2069,10 +2076,9 @@ wBagItems:: ds BAG_ITEM_CAPACITY * 2 + 1 ; now holds 30 items
 wWildMonPalettes:: ds 3 ; flag array for the current map: which wild pokemon should use alt palettes
 
 wColorSwapsUsed:: db ; how many times the player has used the color changer NPC
-wBoosterChipActive:: db ; whether the player gets boosted EXP from the effects of the boosterchip ; TODO: change to event flag
 
-; 50 bytes remaining in union
-; unused save file 50 bytes
+; 51 bytes remaining in union
+; unused save file 51 bytes
 
 ENDU
 ;;;;;;;;;;

@@ -7,7 +7,7 @@ MoveEffectPointerTable:
 	dw FreezeBurnParalyzeEffect  ; BURN_SIDE_EFFECT1
 	dw FreezeBurnParalyzeEffect  ; FREEZE_SIDE_EFFECT
 	dw FreezeBurnParalyzeEffect  ; PARALYZE_SIDE_EFFECT1
-	dw NULL                      ; EXPLODE_EFFECT ; unused
+	dw DoRet                     ; EXPLODE_EFFECT
 	dw DrainHPEffect             ; DREAM_EATER_EFFECT
 	dw NULL                      ; MIRROR_MOVE_EFFECT
 	dw StatModifierUpEffect      ; ATTACK_UP1_EFFECT
@@ -30,7 +30,7 @@ MoveEffectPointerTable:
 	dw ThrashPetalDanceEffect    ; THRASH_PETAL_DANCE_EFFECT
 	dw TeleportEffect            ; TELEPORT_EFFECT
 	dw TwoToFiveAttacksEffect    ; TWO_TO_FIVE_ATTACKS_EFFECT
-	dw BurnEffect                ; BURN_EFFECT
+	dw FirewallEffect            ; FIREWALL_EFFECT
 	dw FlinchSideEffect          ; FLINCH_SIDE_EFFECT1
 	dw SleepEffect               ; SLEEP_EFFECT
 	dw PoisonEffect              ; POISON_SIDE_EFFECT2
@@ -41,7 +41,7 @@ MoveEffectPointerTable:
 	dw OneHitKOEffect            ; OHKO_EFFECT
 	dw ChargeEffect              ; CHARGE_EFFECT
 	dw NULL                      ; SUPER_FANG_EFFECT
-	dw NULL                      ; SPECIAL_DAMAGE_EFFECT ; unused
+	dw NULL                      ; SPECIAL_DAMAGE_EFFECT
 	dw TrappingEffect            ; TRAPPING_EFFECT
 	dw ChargeEffect              ; FLY_EFFECT
 	dw TwoToFiveAttacksEffect    ; ATTACK_TWICE_EFFECT
@@ -89,4 +89,8 @@ MoveEffectPointerTable:
 	dw DisableEffect             ; DISABLE_EFFECT
 	dw WithdrawEffect            ; WITHDRAW_EFFECT
 	dw GrowthEffect              ; GROWTH_EFFECT
+	dw DefenseCurlEffect         ; DEFENSE_CURL_EFFECT
+	dw ReflectLightScreenEffect  ; ACID_ARMOR_EFFECT
+	dw ExplodeRecoilEffect       ; EXPLODE_RECOIL_EFFECT
+	dw ConversionEffect          ; CONVERSION_EFFECT
 	assert_table_length NUM_MOVE_EFFECTS

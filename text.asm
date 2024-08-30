@@ -10,7 +10,6 @@ INCLUDE "text/SSAnne1F.asm"
 INCLUDE "text/SSAnne2F.asm"
 INCLUDE "text/SSAnne3F.asm"
 INCLUDE "text/SSAnneBow.asm"
-INCLUDE "text/SSAnneKitchen.asm"
 INCLUDE "text/SSAnneCaptainsRoom.asm"
 INCLUDE "text/SSAnne1FRooms.asm"
 INCLUDE "text/SSAnne2FRooms.asm"
@@ -24,7 +23,6 @@ INCLUDE "text/RocketHideoutElevator.asm"
 INCLUDE "text/SilphCo2F.asm"
 INCLUDE "text/SilphCo3F.asm"
 INCLUDE "text/SilphCo4F.asm"
-INCLUDE "text/SilphCo5F.asm"
 INCLUDE "text/CinnabarVolcano.asm"
 
 
@@ -77,6 +75,7 @@ INCLUDE "text/Daycare.asm"
 ; moved from Text 2
 INCLUDE "text/SafariZoneWest.asm"
 INCLUDE "text/ProspectorsHouse.asm"
+INCLUDE "text/MoveMystic.asm"
 
 
 SECTION "Text 4", ROMX
@@ -138,7 +137,8 @@ INCLUDE "text/Route24.asm"
 INCLUDE "text/ViridianSchoolHouseQuiz.asm"
 INCLUDE "text/CinnabarLabTradeRoom.asm"
 INCLUDE "text/FuchsiaMeetingRoom.asm"
-
+INCLUDE "text/SSAnneKitchen.asm"
+INCLUDE "text/SaffronAbandonedBuilding.asm"
 
 SECTION "Text 6", ROMX
 
@@ -284,6 +284,7 @@ INCLUDE "text/CeladonMart1FPhoneCalls.asm"
 INCLUDE "text/PalletPhoneResultEvents.asm"
 INCLUDE "text/BillsGarden.asm"
 INCLUDE "text/SecretLab.asm"
+INCLUDE "text/SilphCo5F.asm"
 
 SECTION "Text 12", ROMX
 INCLUDE "text/TypeGuysHouse.asm"
@@ -295,7 +296,6 @@ SECTION "Pokédex Text", ROMX
 
 INCLUDE "data/pokemon/dex_text.asm"
 
-
 SECTION "Move Names", ROMX
 
 INCLUDE "data/moves/names.asm"
@@ -303,7 +303,3 @@ INCLUDE "data/moves/names.asm"
 SECTION "Movedex Text", ROMX
 
 INCLUDE "data/moves/movedex_text.asm"
-
-SECTION "Movedex Text 2", ROMX
-
-INCLUDE "data/moves/movedex_text2.asm"

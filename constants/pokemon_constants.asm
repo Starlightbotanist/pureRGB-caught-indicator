@@ -5,6 +5,7 @@
 ; - CryData (see data/pokemon/cries.asm)
 ; - PokedexOrder (see data/pokemon/dex_order.asm)
 ; - PokedexEntryPointers (see data/pokemon/dex_entries.asm)
+; - ConversionAttackTable
 	const_def
 	const NO_MON             ; $00
 	const RHYDON             ; $01
@@ -152,7 +153,7 @@
 	const WEEZING            ; $8F
 	const PERSIAN            ; $90
 	const MAROWAK            ; $91
-	const_skip               ; $92
+	const FLOATING_WEEZING   ; $92
 	const HAUNTER            ; $93
 	const ABRA               ; $94
 	const ALAKAZAM           ; $95
