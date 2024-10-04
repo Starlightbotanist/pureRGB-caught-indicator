@@ -1,6 +1,6 @@
 # Pokémon PureRGB (PureRed, PureGreen, PureBlue)
 
-Please see the orignal github page for information about this hack: https://github.com/Vortyne/pureRGB
+Please see the original github page for information about this hack: https://github.com/Vortyne/pureRGB
 
 ## Fork Changes
 
