@@ -12,8 +12,8 @@ SilphCo10F_Script:
 
 SilphCo10FGateCallbackScript::
 	ld hl, wCurrentMapScriptFlags
-	bit 5, [hl]
-	res 5, [hl]
+	bit BIT_CUR_MAP_LOADED_1, [hl]
+	res BIT_CUR_MAP_LOADED_1, [hl]
 	ret z
 	ld hl, .GateCoordinates
 	call SilphCo2F_SetCardKeyDoorYScript
@@ -40,7 +40,7 @@ Load10FCheckCardKeyText:
 	CheckEvent EVENT_ALL_CARD_KEY_DOORS_OPENED
 	ret z
 	ld a, TEXT_SILPHCO10F_CARD_KEY_DONE
-	ldh [hSpriteIndexOrTextID], a
+	ldh [hTextID], a
 	jp DisplayTextID
 
 SilphCo10Text7:

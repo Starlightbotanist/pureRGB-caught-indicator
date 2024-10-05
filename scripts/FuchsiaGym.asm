@@ -30,20 +30,20 @@ FuchsiaGymKogaPostBattleScript:
 ; fallthrough
 FuchsiaGymReceiveTM06:
 	ld a, TEXT_FUCHSIAGYM_KOGA_SOUL_BADGE_INFO
-	ldh [hSpriteIndexOrTextID], a
+	ldh [hTextID], a
 	call DisplayTextID
 	SetEvent EVENT_BEAT_KOGA
 	lb bc, TM_KOGA, 1
 	call GiveItem
 	jr nc, .BagFull
 	ld a, TEXT_FUCHSIAGYM_KOGA_RECEIVED_TM06
-	ldh [hSpriteIndexOrTextID], a
+	ldh [hTextID], a
 	call DisplayTextID
 	SetEvent EVENT_GOT_TM06
 	jr .gymVictory
 .BagFull
 	ld a, TEXT_FUCHSIAGYM_KOGA_TM06_NO_ROOM
-	ldh [hSpriteIndexOrTextID], a
+	ldh [hTextID], a
 	call DisplayTextID
 .gymVictory
 	ld hl, wObtainedBadges
@@ -94,17 +94,17 @@ FuchsiaGymKogaText:
 	jr nz, .afterBeat
 	call z, FuchsiaGymReceiveTM06
 	call DisableWaitingAfterTextDisplay
-	jr .done
+	rst TextScriptEnd
 .afterBeat
 	ld hl, .PostBattleAdviceText
 	rst _PrintText
-	jr .done
+	rst TextScriptEnd
 .beforeBeat
 	ld hl, .BeforeBattleText
 	rst _PrintText
-	ld hl, wd72d
-	set 6, [hl]
-	set 7, [hl]
+	ld hl, wStatusFlags3
+	set BIT_TALKED_TO_TRAINER, [hl]
+	set BIT_PRINT_END_BATTLE_TEXT, [hl]
 	ld hl, .ReceivedSoulBadgeText
 	ld de, .ReceivedSoulBadgeText
 	call SaveEndBattleTextPointers
@@ -118,7 +118,6 @@ FuchsiaGymKogaText:
 	ldh [hJoyHeld], a
 	ld a, SCRIPT_FUCHSIAGYM_KOGA_POST_BATTLE
 	ld [wFuchsiaGymCurScript], a
-.done
 	rst TextScriptEnd
 
 .BeforeBattleText:

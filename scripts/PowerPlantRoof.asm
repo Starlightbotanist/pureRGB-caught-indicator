@@ -7,8 +7,8 @@ PowerPlantRoof_Script:
 
 PowerPlantRoofOnMapLoad:
 	ld hl, wCurrentMapScriptFlags
-	bit 5, [hl]
-	res 5, [hl]
+	bit BIT_CUR_MAP_LOADED_1, [hl]
+	res BIT_CUR_MAP_LOADED_1, [hl]
 	ret z
 	; if the player is standing in a specific area, make the palette darker as if dark clouds
 	CheckEvent EVENT_BEAT_ZAPDOS
@@ -69,7 +69,7 @@ CheckShowDarkClouds::
 	xor a
 	ld [wMuteAudioAndPauseMusic], a
 	ld a, TEXT_POWER_PLANT_ROOF_DARK_CLOUDS
-	ldh [hSpriteIndexOrTextID], a
+	ldh [hTextID], a
 	jp DisplayTextID
 
 PlayThunderRumbleSound::
@@ -265,7 +265,7 @@ CheckDoZapdosLightningAnimation:
 	ld c, 90
 	rst _DelayFrames
 	ld a, POWER_PLANT_ROOF_ZAPDOS
-	ldh [hSpriteIndexOrTextID], a ; makes zapdos stay on screen during battle transition
+	ldh [hSpriteIndex], a ; makes zapdos stay on screen during battle transition
 	SetEvent EVENT_FIGHTING_ZAPDOS
 	ret
 

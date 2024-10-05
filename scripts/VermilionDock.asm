@@ -17,8 +17,8 @@ VermilionDock_Script:
 	jp z, VermilionDockSSAnneLeavesScript
 	SetEventReuseHL EVENT_STARTED_WALKING_OUT_OF_DOCK
 	call Delay3
-	ld hl, wd730
-	set 7, [hl]
+	ld hl, wStatusFlags5
+	set BIT_SCRIPTED_MOVEMENT_STATE, [hl]
 	ld hl, wSimulatedJoypadStatesEnd
 	ld a, D_UP
 	ld [hli], a
@@ -177,7 +177,7 @@ VermilionDock_EmitSmokePuff:
 	jp WriteOAMBlock
 
 VermilionDockOAMBlock:
-	; tile id, attribute
+; tile ID, attributes
 	db $fc, $10
 	db $fd, $10
 	db $fe, $10
@@ -267,14 +267,14 @@ TruckSpriteGFX: INCBIN  "gfx/sprites/truck_sprite.2bpp"
 
 NoTruckAction:
 	ld hl, wCurrentMapScriptFlags
-	res 7, [hl]
+	res BIT_CUR_MAP_USED_ELEVATOR, [hl]
 	ret
 
 TruckCheck:
 	CheckEventHL EVENT_FOUND_MEW
 	jp nz, ChangeTruckTile
 	ld hl, wCurrentMapScriptFlags
-	res 5, [hl]
+	res BIT_CUR_MAP_LOADED_1, [hl]
 	lb bc, FLAG_TEST, HS_MEW_VERMILION_DOCK
 	ld hl, wMissableObjectFlags
 	predef FlagActionPredef
@@ -285,8 +285,8 @@ TruckCheck:
 	ld [wMissableObjectIndex], a
 	predef HideObject
 .skiphidingmew
-	ld a, [wd728]
-	bit 0, a ; using Strength?
+	ld a, [wStatusFlags1]
+	bit BIT_STRENGTH_ACTIVE, a ; using Strength?
 	jr z, NoTruckAction
 	; the position for moving the truck is 22,0
 	ld hl, wYCoord
@@ -301,13 +301,13 @@ TruckCheck:
 	bit PLAYER_DIR_BIT_LEFT, a
 	jr z, NoTruckAction
 	ld hl, wCurrentMapScriptFlags
-	bit 7, [hl]
-	set 7, [hl] ; wait until the next time the player presses left
+	bit BIT_CUR_MAP_USED_ELEVATOR, [hl]
+	set BIT_CUR_MAP_USED_ELEVATOR, [hl] ; wait until the next time the player presses left
 	ret z
 	ldh a, [hJoyHeld]
 	bit BIT_D_LEFT, a ; is player pressing left
 	ret z
-	res 7, [hl]
+	res BIT_CUR_MAP_USED_ELEVATOR, [hl]
 	ld a, $ff
 	ld [wJoyIgnore], a
 	ld [wUpdateSpritesEnabled], a
@@ -365,9 +365,9 @@ ShowMew:
 
 ChangeTruckTile:
 	ld hl, wCurrentMapScriptFlags
-	bit 5, [hl]
-	res 5, [hl]
-	res 7, [hl]
+	bit BIT_CUR_MAP_LOADED_1, [hl]
+	res BIT_CUR_MAP_LOADED_1, [hl]
+	res BIT_CUR_MAP_USED_ELEVATOR, [hl]
 	ret z
 	ld bc, $9
 	call GetOWCoord

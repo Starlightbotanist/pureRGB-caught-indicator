@@ -20,7 +20,7 @@ Lab4Script_GetFossilsInBag:
 	jr z, .done
 	push hl
 	push de
-	ld [wd11e], a
+	ld [wTempByteValue], a
 	ld b, a
 	predef GetQuantityOfItemInBag
 	pop de
@@ -28,9 +28,8 @@ Lab4Script_GetFossilsInBag:
 	ld a, b
 	and a
 	jr z, .loop
-
-	; A fossil's in the bag
-	ld a, [wd11e]
+	; A fossil is in the bag
+	ld a, [wTempByteValue]
 	ld [de], a
 	inc de
 	push hl
@@ -241,8 +240,8 @@ ShowBeforeAfterImages:
 	call GBPalWhiteOut ; zero all palettes
 	call ClearScreen
 	call UpdateSprites
-	ld hl, wd72c
-	set 1, [hl]
+	ld hl, wStatusFlags2
+	set BIT_NO_AUDIO_FADE_OUT, [hl]
 	ld a, $33 ; 3/7 volume
 	ldh [rNR50], a
 	
@@ -251,8 +250,8 @@ ShowBeforeAfterImages:
 	
 	call Delay3
 	call GBPalNormal
-	ld a, [wcf91]
-	ld [wd0b5], a ; getmonheader input pokemon
+	ld a, [wCurPartySpecies]
+	ld [wCurSpecies], a ; getmonheader input pokemon
 	call GetMonHeader ; load pokemon picture location
 	hlcoord 1, 1
 	call LoadFlippedFrontSpriteByMonIndex ; draw pokemon picture
@@ -266,7 +265,7 @@ ShowBeforeAfterImages:
 	ld de, AfterString
 	call PlaceString
 
-	ld a, [wcf91]
+	ld a, [wCurPartySpecies]
 	call PlayCry ; play pokemon cry
 
 	.waitForButtonPress
@@ -275,8 +274,8 @@ ShowBeforeAfterImages:
 	and A_BUTTON | B_BUTTON
 	jr z, .waitForButtonPress
 
-	ld hl, wd72c
-	res 1, [hl]
+	ld hl, wStatusFlags2
+	res BIT_NO_AUDIO_FADE_OUT, [hl]
  	ld a, $77
  	ldh [rNR50], a ; full volume
 	

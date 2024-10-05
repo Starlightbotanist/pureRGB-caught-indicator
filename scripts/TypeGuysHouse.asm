@@ -16,8 +16,8 @@ TypeGuysHouse_TextPointers:
 
 TypeGuysHouseCheckTurnOffLights:
 	ld hl, wCurrentMapScriptFlags
-	bit 5, [hl]
-	res 5, [hl]
+	bit BIT_CUR_MAP_LOADED_1, [hl]
+	res BIT_CUR_MAP_LOADED_1, [hl]
 	ret z
 	ld a, [wXCoord]
 	cp 8
@@ -86,7 +86,7 @@ TypeGuysHouseComputer::
 	cp SPRITE_FACING_UP
 	ret nz
 	ld a, TEXT_TYPE_GUYS_HOUSE_COMPUTER
-	ldh [hSpriteIndexOrTextID], a
+	ldh [hTextID], a
 	jp DisplayTextID
 .text
 	text_asm

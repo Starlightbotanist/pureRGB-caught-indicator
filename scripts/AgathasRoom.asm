@@ -11,8 +11,8 @@ AgathasRoom_Script:
 AgathaShowOrHideExitBlock:
 ; Blocks or clears the exit to the next room.
 	ld hl, wCurrentMapScriptFlags
-	bit 5, [hl]
-	res 5, [hl]
+	bit BIT_CUR_MAP_LOADED_1, [hl]
+	res BIT_CUR_MAP_LOADED_1, [hl]
 	ret z
 	CheckEvent EVENT_BEAT_AGATHAS_ROOM_TRAINER_0
 	ld a, $3b
@@ -23,8 +23,8 @@ AgathaShowOrHideExitBlock:
 	lb bc, 0, 2
 	predef ReplaceTileBlock
 	ld hl, wCurrentMapScriptFlags
-	bit 3, [hl]
-	res 3, [hl] 
+	bit BIT_MAP_LOADED_AFTER_BATTLE, [hl]
+	res BIT_MAP_LOADED_AFTER_BATTLE, [hl] 
 	ret z
 	jp GBFadeInFromWhite ; PureRGBnote: ADDED: since trainer instantly talks to us after battle we need to fade back in here
 
@@ -70,7 +70,7 @@ AgathasRoomDefaultScript:
 	jr z, AgathaScriptWalkIntoRoom
 .stopPlayerFromLeaving
 	ld a, TEXT_AGATHASROOM_AGATHA_DONT_RUN_AWAY
-	ldh [hSpriteIndexOrTextID], a
+	ldh [hTextID], a
 	call DisplayTextID
 	ld a, D_UP
 	ld [wSimulatedJoypadStatesEnd], a
@@ -107,7 +107,7 @@ AgathasRoomAgathaEndBattleScript:
 	jr z, ResetAgathaScript
 	call DoEliteFourFacing
 	ld a, TEXT_AGATHASROOM_AGATHA
-	ldh [hSpriteIndexOrTextID], a
+	ldh [hTextID], a
 	call DisplayTextID
 ;;;;;;;;;; PureRGBnote: ADDED: sound effect for the doors opening
 	ld a, SFX_GO_INSIDE

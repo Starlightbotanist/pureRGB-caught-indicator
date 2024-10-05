@@ -8,11 +8,11 @@ CeruleanCity_Script:
 ; PureRGBnote: ADDED: function that will remove the cut tree if we deleted it with the tree deleter
 CeruleanCityReplaceCutTile:
 	ld hl, wCurrentMapScriptFlags
-	bit 4, [hl]
-	res 4, [hl]
+	bit BIT_CROSSED_MAP_CONNECTION, [hl]
+	res BIT_CROSSED_MAP_CONNECTION, [hl]
 	jr nz, .replaceTileNoRedraw
-	bit 5, [hl]
-	res 5, [hl]
+	bit BIT_CUR_MAP_LOADED_1, [hl]
+	res BIT_CUR_MAP_LOADED_1, [hl]
 	jr nz, .replaceTile
 	ret
 .replaceTile
@@ -50,7 +50,7 @@ CeruleanCity_ScriptPointers:
 
 CeruleanCityRocketDefeatedScript:
 	ld hl, wCurrentMapScriptFlags
-	res 3, [hl]
+	res BIT_MAP_LOADED_AFTER_BATTLE, [hl]
 	call GBFadeInFromWhite ; PureRGBnote: ADDED: since trainer instantly talks to us after battle we need to fade back in here
 	ld a, [wIsInBattle]
 	cp $ff
@@ -59,7 +59,7 @@ CeruleanCityRocketDefeatedScript:
 	ld [wJoyIgnore], a
 	SetEvent EVENT_BEAT_CERULEAN_ROCKET_THIEF
 	ld a, TEXT_CERULEANCITY_ROCKET
-	ldh [hSpriteIndexOrTextID], a
+	ldh [hTextID], a
 	call DisplayTextID
 	xor a ; SCRIPT_CERULEANCITY_DEFAULT
 	ld [wJoyIgnore], a
@@ -89,7 +89,7 @@ ENDC
 	ld [wSprite02StateData1FacingDirection], a
 	call Delay3
 	ld a, TEXT_CERULEANCITY_ROCKET
-	ldh [hSpriteIndexOrTextID], a
+	ldh [hTextID], a
 	jp DisplayTextID
 .skipRocketThiefEncounter
 	CheckEvent EVENT_BEAT_CERULEAN_RIVAL
@@ -156,8 +156,8 @@ CeruleanCityFaceRivalScript:
 	jp SetSpriteFacingDirectionAndDelay ; face object
 
 CeruleanCityRivalBattleScript:
-	ld a, [wd730]
-	bit 0, a
+	ld a, [wStatusFlags5]
+	bit BIT_SCRIPTED_NPC_MOVEMENT, a
 	ret nz
 	; reset rival's sprite movement facing byte otherwise he can look around weirdly after battle for a moment
 	ld hl, wMapSpriteData + ((CERULEANCITY_RIVAL - 1) * 2)
@@ -165,11 +165,11 @@ CeruleanCityRivalBattleScript:
 	xor a
 	ld [wJoyIgnore], a
 	ld a, TEXT_CERULEANCITY_RIVAL
-	ldh [hSpriteIndexOrTextID], a
+	ldh [hTextID], a
 	call DisplayTextID
-	ld hl, wd72d
-	set 6, [hl]
-	set 7, [hl]
+	ld hl, wStatusFlags3
+	set BIT_TALKED_TO_TRAINER, [hl]
+	set BIT_PRINT_END_BATTLE_TEXT, [hl]
 	ld hl, CeruleanCityRivalDefeatedText
 	ld de, CeruleanCityRivalVictoryText
 	call SaveEndBattleTextPointers
@@ -191,7 +191,7 @@ CeruleanCityRivalBattleScript:
 
 CeruleanCityRivalDefeatedScript:
 	ld hl, wCurrentMapScriptFlags
-	res 3, [hl]
+	res BIT_MAP_LOADED_AFTER_BATTLE, [hl]
 	call GBFadeInFromWhite ; PureRGBnote: ADDED: since trainer instantly talks to us after battle we need to fade back in here
 	ld a, [wIsInBattle]
 	cp $ff
@@ -201,7 +201,7 @@ CeruleanCityRivalDefeatedScript:
 	ld [wJoyIgnore], a
 	SetEvent EVENT_BEAT_CERULEAN_RIVAL
 	ld a, TEXT_CERULEANCITY_RIVAL
-	ldh [hSpriteIndexOrTextID], a
+	ldh [hTextID], a
 	call DisplayTextID
 	ld a, SFX_STOP_ALL_MUSIC
 	ld [wNewSoundID], a
@@ -246,8 +246,8 @@ CeruleanCityMovement4:
 	db -1 ; end
 
 CeruleanCityRivalCleanupScript:
-	ld a, [wd730]
-	bit 0, a
+	ld a, [wStatusFlags5]
+	bit BIT_SCRIPTED_NPC_MOVEMENT, a
 	ret nz
 	ld a, HS_CERULEAN_RIVAL
 	ld [wMissableObjectIndex], a
@@ -317,13 +317,13 @@ CeruleanCityRocketText:
 	jr nz, .beatRocketThief
 	ld hl, .Text
 	rst _PrintText
-	ld hl, wd72d
-	set 6, [hl]
-	set 7, [hl]
+	ld hl, wStatusFlags3
+	set BIT_TALKED_TO_TRAINER, [hl]
+	set BIT_PRINT_END_BATTLE_TEXT, [hl]
 	ld hl, .IGiveUpText
 	ld de, .IGiveUpText
 	call SaveEndBattleTextPointers
-	ldh a, [hSpriteIndexOrTextID]
+	ldh a, [hTextID]
 	ld [wSpriteIndex], a
 	call EngageMapTrainer
 	call InitBattleEnemyParameters

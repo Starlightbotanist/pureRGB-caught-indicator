@@ -76,7 +76,7 @@ _ItemUseBallText06::
 _SurfingGotOnText::
 	text "<PLAYER> got on"
 	line "@"
-	text_ram wcd6d
+	text_ram wNameBuffer
 	text "!"
 	prompt
 
@@ -94,7 +94,7 @@ _ApexChipPutOnPokeballText::
 	text "You installed the"
 	line "APEX CHIP on"
 	para "@"
-	text_ram wcd6d
+	text_ram wNameBuffer
 	text "'s"
 	line "Poké Ball.@"
 	text_asm
@@ -111,7 +111,7 @@ _ApexChipPutOnPokeballText::
 	rst TextScriptEnd
 
 _ApexChipDVsMaxedText::
-	text_ram wcd6d
+	text_ram wNameBuffer
 	text "'s"
 	line "potential is"
 	cont "maximized!"
@@ -123,7 +123,7 @@ _ApexChipAlreadyUsedText::
 	line "an APEX CHIP"
 	para "installed on"
 	line "@"
-	text_ram wcd6d
+	text_ram wNameBuffer
 	text "'s"
 	cont "Poké Ball."
 	prompt
@@ -139,7 +139,7 @@ _BoosterChipInstalledText::
 	text_end
 
 _VitaminStatRoseText::
-	text_ram wcd6d
+	text_ram wNameBuffer
 	text "'s"
 	line "@"
 	text_ram wStringBuffer
@@ -252,7 +252,7 @@ _TeachMachineMoveText::
 	done
 
 _MonCannotLearnMachineMoveText::
-	text_ram wcd6d
+	text_ram wNameBuffer
 	text " is not"
 	line "compatible with"
 	cont "@"
@@ -327,7 +327,7 @@ _NoCyclingAllowedHereText::
 _NoSurfingHereText::
 	text "No SURFing on"
 	line "@"
-	text_ram wcd6d
+	text_ram wNameBuffer
 	text " here!"
 	prompt
 

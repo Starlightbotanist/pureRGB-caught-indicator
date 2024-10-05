@@ -8,19 +8,19 @@ FuchsiaCity_Script:
 ; PureRGBnote: ADDED: function that will remove all cut trees in fuchsia if we deleted them with the tree deleter
 FuchsiaCityDefaultScript:
 	ld hl, wCurrentMapScriptFlags
-	bit 4, [hl] ; did we enter the map by traversal from another route
-	res 4, [hl]
+	bit BIT_CROSSED_MAP_CONNECTION, [hl] ; did we enter the map by traversal from another route
+	res BIT_CROSSED_MAP_CONNECTION, [hl]
 	jr nz, .removeAddCutTilesNoRedraw
-	bit 5, [hl] ; did we load the map from a save/warp/door/battle, etc?
-	res 5, [hl]
+	bit BIT_CUR_MAP_LOADED_1, [hl] ; did we load the map from a save/warp/door/battle, etc?
+	res BIT_CUR_MAP_LOADED_1, [hl]
 	jr nz, .removeAddCutTiles
 	; check if ERIK is walking away
 	CheckEventHL EVENT_ERIK_LEAVING
 	ret z
 	ld a, $FF
 	ld [wJoyIgnore], a
-	ld a, [wd730]
-	bit 0, a
+	ld a, [wStatusFlags5]
+	bit BIT_SCRIPTED_NPC_MOVEMENT, a
 	ret nz
 	ResetEventReuseHL EVENT_ERIK_LEAVING
 	xor a

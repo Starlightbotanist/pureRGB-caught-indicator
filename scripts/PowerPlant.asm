@@ -18,8 +18,8 @@ PowerPlant_Script:
 
 PowerPlantOnMapLoad:
 	ld hl, wCurrentMapScriptFlags
-	bit 5, [hl]
-	res 5, [hl]
+	bit BIT_CUR_MAP_LOADED_1, [hl]
+	res BIT_CUR_MAP_LOADED_1, [hl]
 	ret z
 	CheckEvent EVENT_BEAT_ZAPDOS
 	jr nz, .noPowerOutage
@@ -122,7 +122,7 @@ PowerPlantCheckStandingOnButton:
 	ld de, PowerPlantGateShutOff
 	call PlayNewSoundChannel8
 	ld a, TEXT_POWERPLANT_OPEN_GATE_TEXT
-	ldh [hSpriteIndexOrTextID], a
+	ldh [hTextID], a
 	call DisplayTextID
 	jp PowerPlantCheckReplaceGateBlocks
 
@@ -384,7 +384,7 @@ PowerPlantElectricity4::
 	; fall through
 PowerPlantElectricity:
 	ld a, TEXT_POWERPLANT_ELECTRICITY
-	ldh [hSpriteIndexOrTextID], a
+	ldh [hTextID], a
 	jp DisplayTextID
 
 PowerPlantElectricityText::
@@ -521,7 +521,7 @@ ZapdosAbsorbAnimation:
 	xor a
 	ld [wMuteAudioAndPauseMusic], a
 	ld a, TEXT_ZAPDOS_FLEW_AWAY
-	ldh [hSpriteIndexOrTextID], a
+	ldh [hTextID], a
 	call DisplayTextID
 	ld a, SCRIPT_POWERPLANT_DEFAULT
 	ld [wPowerPlantCurScript], a
@@ -576,7 +576,7 @@ PowerPlantPowerOut:
 
 PowerPlantMagnet::
 	ld a, TEXT_POWERPLANT_MAGNET
-	ldh [hSpriteIndexOrTextID], a
+	ldh [hTextID], a
 	call DisplayTextID
 	CheckEvent EVENT_BEAT_ZAPDOS
 	ret z
@@ -624,7 +624,7 @@ PowerPlantMagnetText:
 	ld a, SCRIPT_MAGNETON_SUPERCHARGE
 	ld [wPowerPlantCurScript], a
 	ld a, FLOATING_MAGNETON
-	ld [wcf91], a
+	ld [wCurPartySpecies], a
 	callfar ChangePartyPokemonSpecies ; change magneton into floating magneton
 	ld hl, .magnetonWentClose
 	jr .done
@@ -654,8 +654,8 @@ MagnetonWasSuperChargedText:
 	text_end
 
 MagnetonSuperchargeAnimation:
-	ld a, [wd730]
-	bit 7, a
+	ld a, [wStatusFlags5]
+	bit BIT_SCRIPTED_MOVEMENT_STATE, a
 	ret nz ; wait for player to finish walking
 	ld a, 1
 	ld [wMuteAudioAndPauseMusic], a
@@ -690,7 +690,7 @@ MagnetonSuperchargeAnimation:
 	ld de, PowerPlantElectricityFar
 	call FloatingAnimation
 	ld a, TEXT_MAGNETON_WAS_SUPERCHARGED
-	ldh [hSpriteIndexOrTextID], a
+	ldh [hTextID], a
 	call DisplayTextID
 	xor a
 	ld [wMuteAudioAndPauseMusic], a
@@ -726,7 +726,7 @@ MagnetonSuperchargeAnimation:
 
 PowerPlantCheckPowersBack:
 	ld hl, wCurrentMapScriptFlags
-	bit 5, [hl]
+	bit BIT_CUR_MAP_LOADED_1, [hl]
 	ret nz
 	CheckEvent EVENT_SAW_POWER_BACK_TEXT
 	ret nz
@@ -734,7 +734,7 @@ PowerPlantCheckPowersBack:
 	ret z
 	SetEvent EVENT_SAW_POWER_BACK_TEXT
 	ld a, TEXT_POWERPLANT_POWER_BACK
-	ldh [hSpriteIndexOrTextID], a
+	ldh [hTextID], a
 	jp DisplayTextID
 
 PowerPlantPowerBackText::

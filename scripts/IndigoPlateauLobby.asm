@@ -4,15 +4,15 @@ IndigoPlateauLobby_Script:
 	call EnableAutoTextBoxDrawing
 	call CheckArenaAssistantWalking
 	ld hl, wCurrentMapScriptFlags
-	bit 6, [hl]
-	res 6, [hl]
+	bit BIT_CUR_MAP_LOADED_2, [hl]
+	res BIT_CUR_MAP_LOADED_2, [hl]
 	ret z
 	ResetEvent EVENT_VICTORY_ROAD_1_BOULDER_ON_SWITCH
-	ld hl, wBeatLorelei
-	bit 1, [hl]
-	res 1, [hl]
+	; Reset Elite Four events if the player started challenging them before
+	ld hl, wElite4Flags
+	bit BIT_STARTED_ELITE_4, [hl]
+	res BIT_STARTED_ELITE_4, [hl]
 	ret z
-	; Elite 4 events
 	ResetEventRange INDIGO_PLATEAU_EVENTS_START, EVENT_LANCES_ROOM_LOCK_DOOR
 	ret
 
@@ -204,7 +204,7 @@ IndigoPlateauArenaAssistantText:
 	; walks into door and leaves
 	ld de, AssistantWalksUp
 	ld a, INDIGOPLATEAULOBBY_ARENA_ASSISTANT
-	ldh [hSpriteIndexOrTextID], a
+	ldh [hSpriteIndex], a
 	call MoveSprite
 	xor a
 	ld [wJoyIgnore], a
@@ -227,8 +227,8 @@ CheckArenaAssistantWalking:
 	ret z
 	ld a, -1
 	ld [wJoyIgnore], a ; ignore all input until she is done walking
-	ld a, [wd730]
-	bit 0, a
+	ld a, [wStatusFlags5]
+	bit BIT_SCRIPTED_NPC_MOVEMENT, a
 	ret nz
 	ResetEvent EVENT_ARENA_ASSISTANT_WALKING
 	xor a

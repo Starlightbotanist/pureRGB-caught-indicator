@@ -2,8 +2,8 @@
 ; in order to revive fossils for you early. There is also a bunch of amusing text to read in his house.
 FossilGuysHouse_Script:
 	ld hl, wCurrentMapScriptFlags
-	bit 5, [hl]
-	res 5, [hl]
+	bit BIT_CUR_MAP_LOADED_1, [hl]
+	res BIT_CUR_MAP_LOADED_1, [hl]
 	jr z, .skip
 	; on map load
 	ResetEvent EVENT_TALKED_TO_MOVE_MYSTIC_ONCE
@@ -384,7 +384,7 @@ MoveMysticCrystalBallText:
 	add hl, de
 	ld a, [hl] ; chosen mon
 	push af
-	ld [wd11e], a
+	ld [wNamedObjectIndex], a
 	call GetMonName
 	call CopyToStringBuffer
 	pop af
@@ -463,7 +463,7 @@ MoveMysticCrystalBallText:
 	ld a, e
 	ld [w2CharStringBuffer], a
 	ld a, d
-	ld [wd11e], a
+	ld [wNamedObjectIndex], a
 	call GetMoveName
 	call Random
 	and %11

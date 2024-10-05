@@ -10,8 +10,8 @@ BillsGarden_ScriptPointers:
 
 BillsGardenScript0:
 	ld hl, wCurrentMapScriptFlags
-	bit 5, [hl]
-	res 5, [hl]
+	bit BIT_CUR_MAP_LOADED_1, [hl]
+	res BIT_CUR_MAP_LOADED_1, [hl]
 	jr z, .checkOverHeard
 	CheckEvent EVENT_IN_BILLS_GARDEN
 	ret nz
@@ -69,7 +69,7 @@ BillsGardenScript0:
 	cp 5
 	ret z ; no overheard for mom/dad
 	ld a, TEXT_BILLS_GARDEN_OVERHEARD
-	ldh [hSpriteIndexOrTextID], a
+	ldh [hTextID], a
 	jp DisplayTextID
 
 

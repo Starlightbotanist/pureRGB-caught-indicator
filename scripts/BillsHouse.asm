@@ -10,8 +10,8 @@ BillsHouse_Script:
 
 BillsHouseAddDoors:
 	ld hl, wCurrentMapScriptFlags
-	bit 5, [hl]
-	res 5, [hl]
+	bit BIT_CUR_MAP_LOADED_1, [hl]
+	res BIT_CUR_MAP_LOADED_1, [hl]
 	ret z
 	ResetEvent EVENT_IN_BILLS_GARDEN
 	CheckEvent EVENT_BECAME_CHAMP
@@ -64,8 +64,8 @@ BillsHousePokemonWalkToMachineScript:
 	db -1 ; end
 
 BillsHousePokemonEntersMachineScript:
-	ld a, [wd730]
-	bit 0, a
+	ld a, [wStatusFlags5]
+	bit BIT_SCRIPTED_NPC_MOVEMENT, a
 	ret nz
 	ld a, HS_BILL_POKEMON
 	ld [wMissableObjectIndex], a
@@ -115,8 +115,8 @@ BillExitMachineMovement:
 	db -1 ; end
 
 BillsHouseCleanupScript:
-	ld a, [wd730]
-	bit 0, a
+	ld a, [wStatusFlags5]
+	bit BIT_SCRIPTED_NPC_MOVEMENT, a
 	ret nz
 	xor a
 	ld [wJoyIgnore], a
@@ -128,7 +128,7 @@ BillsHouseCleanupScript:
 
 BillsHousePCScript:
 	ld a, TEXT_BILLSHOUSE_ACTIVATE_PC
-	ldh [hSpriteIndexOrTextID], a
+	ldh [hTextID], a
 	call DisplayTextID
 	ld a, SCRIPT_BILLSHOUSE_DEFAULT
 	ld [wBillsHouseCurScript], a

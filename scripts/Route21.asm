@@ -10,11 +10,11 @@ Route21_Script:
 
 CheckRemoveVolcano:
 	ld hl, wCurrentMapScriptFlags
-	bit 4, [hl]
-	res 4, [hl]
+	bit BIT_CROSSED_MAP_CONNECTION, [hl]
+	res BIT_CROSSED_MAP_CONNECTION, [hl]
 	jr nz, .replaceTiles
-	bit 5, [hl]
-	res 5, [hl]
+	bit BIT_CUR_MAP_LOADED_1, [hl]
+	res BIT_CUR_MAP_LOADED_1, [hl]
 	jr nz, .checkRemoveLavaSuit
 	ret
 .checkRemoveLavaSuit
@@ -26,8 +26,8 @@ CheckRemoveVolcano:
 	ld [wWalkBikeSurfState], a
 	call LoadWalkingPlayerSpriteGraphics
 	; also turn on autosurf bit since we are guaranteed to have surfed to here and to prevent softlocks should have surf turned on again
-	ld hl, wd728
-	set 2, [hl] ; set autosurf bit
+	ld hl, wStatusFlags1
+	set BIT_AUTOSURF, [hl] ; set autosurf bit
 .replaceTiles
 	CheckFlag FLAG_VOLCANO_AREA_TURNED_OFF
 	ret z
@@ -245,7 +245,7 @@ Route21CinnabarVolcanoSign::
 	CheckFlag FLAG_VOLCANO_AREA_TURNED_OFF
 	ret nz
 	ld a, TEXT_ROUTE21_CINNABAR_VOLCANO_SIGN
-	ldh [hSpriteIndexOrTextID], a
+	ldh [hTextID], a
 	jp DisplayTextID
 
 Route21CinnabarVolcanoSignText:
