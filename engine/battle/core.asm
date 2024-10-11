@@ -2046,11 +2046,11 @@ DrawEnemyHUDAndHPBar:
 	cp 2
 	jr z, .notOwned
 	ld a, [wEnemyMonSpecies2]
-	ld [wd11e], a
+	ld [wPokedexNum], a
 	ld hl, IndexToPokedex
 	ld b, BANK(IndexToPokedex)
 	call Bankswitch
-	ld a, [wd11e]
+	ld a, [wPokedexNum]
 	dec a
 	ld c, a
 	ld b, FLAG_TEST
