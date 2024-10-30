@@ -37,7 +37,8 @@ DoneDrawFunc:
 	ld a, 1
 	ldh [hAutoBGTransferEnabled], a ; enable transfer
 	call Delay3
-	call LoadGBPal
+	CheckAndResetEvent FLAG_SKIP_MULTI_CHOICE_LOADGBPAL ; todo: is this flag needed? Check if removing LoadGBPal entirely is okay.
+	call z, LoadGBPal
 	call HandleMenuInput
 	xor a
 	ldh [hJoy7], a ; joypad state update flag
