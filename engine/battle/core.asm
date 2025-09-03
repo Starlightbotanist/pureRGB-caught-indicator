@@ -1960,7 +1960,7 @@ AnimateRetreatingPlayerMon:
 	lb bc, 7, 7
 	jp ClearScreenArea
 
-; reads player's current mon's HP into wBattleMonHP
+; Copies player's battle pokemon's current HP and status into the party struct data so it stays after battle or switching
 ReadPlayerMonCurHPAndStatus:
 	ld a, [wPlayerMonNumber]
 	ld hl, wPartyMon1HP
@@ -1970,7 +1970,8 @@ ReadPlayerMonCurHPAndStatus:
 	ld e, l
 	ld hl, wBattleMonHP
 	ld bc, $4               ; 2 bytes HP, 1 byte unknown (unused?), 1 byte status
-	jp CopyData
+	rst _CopyData
+	ret
 
 DrawHUDsAndHPBars:
 	call DrawPlayerHUDAndHPBar
@@ -7617,11 +7618,7 @@ do999StatCap:
 	;If the bit is already set from the lesser nibble, then its addition here can still make it remain set if a is low enough.
 	ret c ;jump to next marker if the c_flag is set. This only remains set if BC <  the cap of $03E7.
 	;else let's continue and set the 999 cap
-	ld a, MAX_STAT_VALUE / $100 ; else load $03 into a
-	ld b, a ;and store it as the high byte
-	ld a, MAX_STAT_VALUE % $100 ; else load $E7 into a
-	ld c, a ;and store it as the low byte
-	;now registers b & c together contain $03E7 for a capped stat value of 999
+	lb bc, MAX_STAT_VALUE / $100 , MAX_STAT_VALUE % $100 ; $03 into high byte, $E7 into low byte which is 999
 	ret
 ;;;;;;;;;;
 
