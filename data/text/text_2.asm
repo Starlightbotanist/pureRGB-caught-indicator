@@ -197,12 +197,7 @@ _RockTunnelPokecenterGuyText::
 	cont "LAVENDER TOWN!"
 	done
 
-_UnusedBenchGuyText1::
-	text "I wish I could"
-	line "catch #MON."
-	done
-
-_UnusedBenchGuyText2::
+_SafariZoneTiredGuyText::
 	text "I'm tired from"
 	line "all the fun<...>"
 	done
@@ -493,14 +488,15 @@ _TurnPageText::
 	done
 
 _ViridianSchoolNotebookText5::
-	text "GIRL: Hey! Don't"
+	text "GIRL" ; fall through
+_ViridianSchoolHeyDontLookAtNotes::
+	db ": Hey! Don't"
 	line "look at my notes!@"
 	text_end
 
 _ViridianSchoolNotebookTextGus::
-	text "GUS: Hey! Don't"
-	line "look at my notes!@"
-	text_end
+	text "GUS@"
+	text_jump _ViridianSchoolHeyDontLookAtNotes
 
 _ViridianSchoolNotebookText1::
 	text "Looked at the"
@@ -577,11 +573,6 @@ _FightingDojoText::
 	text "FIGHTING DOJO"
 	done
 
-_IndigoPlateauHQText::
-	text "INDIGO PLATEAU"
-	line "#MON LEAGUE HQ"
-	done
-
 _RedBedroomSNESText::
 	text "<PLAYER> is"
 	line "playing the SNES!"
@@ -593,16 +584,12 @@ _Route15UpstairsBinocularsText::
 	text "A large, shining"
 	line "bird is flying"
 	cont "toward the sea."
-	done
+	prompt
 
-_AerodactylFossilText::
-	text "AERODACTYL Fossil"
-	line "A primitive and"
-	cont "rare #MON."
-	done
-
-_KabutopsFossilText::
-	text "KABUTOPS Fossil"
+_AerodactylKabutopsFossilText::
+	text "@"
+	text_ram wNameBuffer
+	text " Fossil"
 	line "A primitive and"
 	cont "rare #MON."
 	done
@@ -730,27 +717,36 @@ _VermilionGymTrashText::
 _VermilionGymTrashSuccessText1::
 	text "Hey! There's a"
 	line "switch under the"
-	cont "trash!"
-	cont "Turn it on!"
+	cont "trash!@"
+	text_jump _VermilionGymTurnItOn
 
-	para "The 1st electric"
-	line "lock opened!@"
-	text_end
+_VermilionGymTurnItOn::
+	cont "Turn it on!"
+	done
+
+_VermilionGym1stElectricLock::
+	text "The 1st@"
+	text_jump _VermilionTheElectricLockOpened
+
+_VermilionGym2ndElectricLock::
+	text "The 2nd@"
+	text_jump _VermilionTheElectricLockOpened
+
+_VermilionTheElectricLockOpened::
+	db " electric"
+	line "lock opened!"
+	done
 
 _VermilionGymTrashSuccessText2::
 	text "Hey! There's"
 	line "another switch"
-	cont "under the trash!"
-	cont "Turn it on!"
-	prompt
+	cont "under the trash!@"
+	text_jump _VermilionGymTurnItOn
 
 _VermilionGymTrashSuccessText3::
-	text "The 2nd electric"
-	line "lock opened!"
-
-	para "The motorized door"
-	line "opened!@"
-	text_end
+	text "The motorized door"
+	line "opened!"
+	done
 
 ;_VermilionGymTrashFailText::
 ;	text "Nope! There's"
@@ -1824,6 +1820,11 @@ _CantDepositSSTicketText::
 	text "You need that"
 	line "ticket while"
 	cont "on the S.S.ANNE!"
+	prompt
+
+_CantDepositBikeText::
+	text "You're riding it!"
+	line "Can't deposit now!"
 	prompt
 
 _SpiritAppearedNextLine::

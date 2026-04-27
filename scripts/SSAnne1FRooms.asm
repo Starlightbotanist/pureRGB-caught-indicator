@@ -42,30 +42,30 @@ SSAnne8TrainerHeader3:
 SSAnne1FRoomsGentleman1Text:
 	text_asm
 	ld hl, SSAnne8TrainerHeader0
+SSAnne1FRoomsTalkToTrainer:
 	call TalkToTrainer
 	rst TextScriptEnd
 
 SSAnne1FRoomsGentleman2Text:
 	text_asm
 	ld hl, SSAnne8TrainerHeader1
-	call TalkToTrainer
-	rst TextScriptEnd
+	jr SSAnne1FRoomsTalkToTrainer
 
 SSAnne1FRoomsYoungsterText:
 	text_asm
 	ld hl, SSAnne8TrainerHeader2
-	call TalkToTrainer
-	rst TextScriptEnd
+	jr SSAnne1FRoomsTalkToTrainer
 
 SSAnne1FRoomsCooltrainerFText:
 	text_asm
 	ld hl, SSAnne8TrainerHeader3
-	call TalkToTrainer
-	rst TextScriptEnd
+	jr SSAnne1FRoomsTalkToTrainer
 
 SSAnne1FRoomsWigglytuffText:
 	text_far _SSAnne1FRoomsWigglytuffText
 	text_asm
+	ld c, DEX_WIGGLYTUFF - 1
+  	callfar SetMonSeen
 	ld a, WIGGLYTUFF
 	call PlayCry
 	rst TextScriptEnd

@@ -24,6 +24,7 @@ FossilGuysHouse_TextPointers:
 	dw_const FossilGuysHouseTeleporterText,  TEXT_FOSSILGUYSHOUSE_TELEPORTER2
 	dw_const FossilGuysHousePosterText,      TEXT_FOSSILGUYSHOUSE_POSTER
 	dw_const FossilGuysHouseDeskText,        TEXT_FOSSILGUYSHOUSE_DESK
+	dw_const FossilGuysComputerText,         TEXT_FOSSILGUYSHOUSE_COMPUTER
 
 FossilGuysHouseFossilGuyText:
 	text_asm
@@ -54,7 +55,7 @@ FossilGuysHouseFossilGuyText:
 .noFossil
 	ld hl, FossilGuyWhereFossilText
 	rst _PrintText
-	jp .done
+	rst TextScriptEnd
 .checkHelix
 	ld b, HELIX_FOSSIL
 	jr .checkItemFossil
@@ -83,11 +84,11 @@ FossilGuysHouseFossilGuyText:
 	SetEvents EVENT_GAVE_FOSSIL_TO_SUPER_NERD, EVENT_SUPER_NERD_GOING_TO_CINNABAR, EVENT_SKIP_FOSSIL_GUY_GREETING
 	ld hl, FossilGuyGaveFossil
 	rst _PrintText
-	jp .done
+	rst TextScriptEnd
 .suitYourself
 	ld hl, FossilGuyDenied
 	rst _PrintText
-	jp .done
+	rst TextScriptEnd
 .doneRevivedFossil
 	ld hl, FossilGuyCameBackFossil
 	rst _PrintText
@@ -99,10 +100,11 @@ FossilGuysHouseFossilGuyText:
 	ld b, a
 	ld c, 24
 	call GivePokemon
-	jp nc, .done
+	jr nc, .finishGiveFossilEnd
 	SetEvent EVENT_RECEIVED_FOSSIL_PKMN_FROM_SUPER_NERD
 	ResetEvent EVENT_SKIP_FOSSIL_GUY_GREETING
-	jp .done
+.finishGiveFossilEnd
+	rst TextScriptEnd
 .stageTwoStart
 	ld b, OLD_AMBER
 	predef GetIndexOfItemInBag
@@ -127,22 +129,23 @@ FossilGuysHouseFossilGuyText:
 	SetEvents EVENT_GAVE_OLD_AMBER_TO_SUPER_NERD, EVENT_SUPER_NERD_GOING_TO_CINNABAR
 	ld hl, FossilGuyGaveAmber
 	rst _PrintText
-	jr .done
+	rst TextScriptEnd
 .doneRevivedAmber
 	ld hl, FossilGuyCameBackAmber
 	rst _PrintText
 	lb bc, AERODACTYL, 24
 	call GivePokemon
-	jr nc, .done
+	jr nc, .doneRevivedAmberEnd
 	SetEvent EVENT_RECEIVED_AERODACTYL_FROM_SUPER_NERD
-	jr .done
+.doneRevivedAmberEnd
+	rst TextScriptEnd
 .stageThreeStart
 	CheckEvent EVENT_SEAFOAM_FOUND_OTHER_FOSSIL
 	jr nz, .goToCinnabar
 .endText
 	ld hl, FossilGuyEndText
 	rst _PrintText
-	jr .done
+	rst TextScriptEnd
 .goToCinnabar
 	CheckEvent EVENT_GOT_HELIX_FOSSIL
 	jr nz, .checkDome2
@@ -158,19 +161,18 @@ FossilGuysHouseFossilGuyText:
 	jr z, .endText
 	ld hl, FossilGuyGoToCinnabarText
 	rst _PrintText
-	jr .done
+	rst TextScriptEnd
 .greetingEnd
 	ld hl, FossilGuyGreetingEnd
 	rst _PrintText
-	jr .done
+	rst TextScriptEnd
 .comeBackLater
 	ld hl, FossilGuyComeBackLater
 	rst _PrintText
-	jr .done
+	rst TextScriptEnd
 .neverMet
 	ld hl, FossilGuyNeverMet
 	rst _PrintText
-.done
 	rst TextScriptEnd
 
 ; Conversation text
@@ -341,6 +343,33 @@ FossilGuysHousePosterText:
 FossilGuysHouseDeskText:
 	text_far _FossilGuysDesk
 	text_end
+
+FossilGuysPC::
+	ld a, [wSpritePlayerStateData1FacingDirection]
+	cp SPRITE_FACING_UP
+	ret nz
+	ld a, TEXT_FOSSILGUYSHOUSE_COMPUTER
+	ldh [hTextID], a
+	jp DisplayTextID
+
+FossilGuysComputerText::
+	text_asm
+	ld hl, .text1
+	rst _PrintText
+	ld a, 1
+	ldh [hSpriteIndex], a
+	ld a, SPRITE_FACING_RIGHT
+  	ldh [hSpriteFacingDirection], a
+  	call SetSpriteFacingDirection
+	ld hl, .text2
+	rst _PrintText
+	rst TextScriptEnd
+.text1
+	text_far _FossilGuysComputer1
+	text_end
+.text2
+	text_far _FossilGuysComputer2
+	text_end
 	
 MoveMysticCrystalBallText:
 	text_asm
@@ -394,14 +423,16 @@ MoveMysticCrystalBallText:
 	ld b, a
 	push bc
 	ld hl, MoveMysticMonsList
-	ld de, 4
+	ld de, 2
 	call IsInArray
+	ld a, b
 	pop bc
 	jp nc, .comeAgain
 	push bc
-	inc hl
-	inc hl
-	hl_deref ; hl = text specific to the mon chosen
+	ld hl, MoveMysticMonTextEntries
+	ld bc, 5
+	call AddNTimes
+	; hl = text entry address
 	push hl
 	call LoadScreenTilesFromBuffer2
 	ld hl, .lookdeep
@@ -632,8 +663,6 @@ FormulateMoveMysticMonList:
 .skipSeen
 	inc hl
 	inc hl
-	inc hl
-	inc hl
 	jr .loop
 .done
 	ld a, -1
@@ -642,129 +671,89 @@ FormulateMoveMysticMonList:
 	ld [hl], b ; length of list
 	ret
 
-
 ; mon ID, mon dex ID (needed for checking if it's seen)
 ; if it's guaranteed to be seen at meeting this NPC $FF is used instead for dex ID
-; TODO: dont need text dws cause can use the index as order?
 MoveMysticMonsList:
 	db BEEDRILL, $FF
-	dw BeedrillMoveMysticText
 	db FEAROW, DEX_FEAROW
-	dw FearowMoveMysticText
 	db ARBOK, DEX_ARBOK
-	dw ArbokMoveMysticText
 	db JIGGLYPUFF, $FF
-	dw JigglypuffMoveMysticText
 	db WIGGLYTUFF, DEX_WIGGLYTUFF
-	dw WigglytuffMoveMysticText
 	db GOLDUCK, DEX_GOLDUCK
-	dw GolduckMoveMysticText
 	db ARCANINE, DEX_ARCANINE
-	dw ArcanineMoveMysticText
 	db GOLEM, DEX_GOLEM
-	dw GolemMoveMysticText
 	db DEWGONG, DEX_DEWGONG
-	dw DewgongMoveMysticText
 	db HYPNO, DEX_HYPNO
-	dw HypnoMoveMysticText
 	db HITMONLEE, DEX_HITMONLEE
-	dw HitmonleeMoveMysticText
 	db HITMONCHAN, DEX_HITMONCHAN
-	dw HitmonchanMoveMysticText
 	db LICKITUNG, $FF
-	dw LickitungMoveMysticText
 	db KANGASKHAN, DEX_KANGASKHAN
-	dw KangaskhanMoveMysticText
 	db SEAKING, DEX_SEAKING
-	dw SeakingMoveMysticText
 	db JYNX, DEX_JYNX
-	dw JynxMoveMysticText
 	db ELECTABUZZ, DEX_ELECTABUZZ
-	dw ElectabuzzMoveMysticText
 	db MAGMAR, DEX_MAGMAR
-	dw MagmarMoveMysticText
 	db OMASTAR, DEX_OMASTAR
-	dw OmastarMoveMysticText
 	db DRAGONITE, DEX_DRAGONITE
-	dw DragoniteMoveMysticText	
 	db -1
 
+MoveMysticMonTextEntries:
 BeedrillMoveMysticText:
 	text_far _BeedrillMoveMysticText
 	text_end
-
-ArbokMoveMysticText::
-	text_far _ArbokMoveMysticText
-	text_end
-
 FearowMoveMysticText::
 	text_far _FearowMoveMysticText
 	text_end
-
-GolemMoveMysticText::
-	text_far _GolemMoveMysticText
+ArbokMoveMysticText::
+	text_far _ArbokMoveMysticText
 	text_end
-
-HitmonleeMoveMysticText::
-	text_far _HitmonleeMoveMysticText
-	text_end
-
-HitmonchanMoveMysticText::
-	text_far _HitmonchanMoveMysticText
-	text_end
-
-ElectabuzzMoveMysticText::
-	text_far _ElectabuzzMoveMysticText
-	text_end
-
-MagmarMoveMysticText::
-	text_far _MagmarMoveMysticText
-	text_end
-
-JynxMoveMysticText::
-	text_far _JynxMoveMysticText
-	text_end
-
-HypnoMoveMysticText::
-	text_far _HypnoMoveMysticText
-	text_end
-
-DragoniteMoveMysticText::
-	text_far _DragoniteMoveMysticText
-	text_end
-
-SeakingMoveMysticText::
-	text_far _SeakingMoveMysticText
-	text_end
-	
-KangaskhanMoveMysticText::
-	text_far _KangaskhanMoveMysticText
-	text_end
-	
-LickitungMoveMysticText::
-	text_far _LickitungMoveMysticText
-	text_end
-
-OmastarMoveMysticText::
-	text_far _OmastarMoveMysticText
-	text_end
-
 JigglypuffMoveMysticText::
 	text_far _JigglypuffMoveMysticText
 	text_end
-
 WigglytuffMoveMysticText::
 	text_far _WigglytuffMoveMysticText
 	text_end
-
 GolduckMoveMysticText::
 	text_far _GolduckMoveMysticText
 	text_end
-
+ArcanineMoveMysticText::
+	text_far _ArcanineMoveMysticText
+	text_end
+GolemMoveMysticText::
+	text_far _GolemMoveMysticText
+	text_end
 DewgongMoveMysticText::
 	text_far _DewgongMoveMysticText
 	text_end
-
-ArcanineMoveMysticText::
-	text_far _ArcanineMoveMysticText
+HypnoMoveMysticText::
+	text_far _HypnoMoveMysticText
+	text_end	
+HitmonleeMoveMysticText::
+	text_far _HitmonleeMoveMysticText
+	text_end
+HitmonchanMoveMysticText::
+	text_far _HitmonchanMoveMysticText
+	text_end
+LickitungMoveMysticText::
+	text_far _LickitungMoveMysticText
+	text_end
+KangaskhanMoveMysticText::
+	text_far _KangaskhanMoveMysticText
+	text_end
+SeakingMoveMysticText::
+	text_far _SeakingMoveMysticText
+	text_end
+JynxMoveMysticText::
+	text_far _JynxMoveMysticText
+	text_end
+ElectabuzzMoveMysticText::
+	text_far _ElectabuzzMoveMysticText
+	text_end
+MagmarMoveMysticText::
+	text_far _MagmarMoveMysticText
+	text_end
+OmastarMoveMysticText::
+	text_far _OmastarMoveMysticText
+	text_end
+DragoniteMoveMysticText::
+	text_far _DragoniteMoveMysticText
 	text_end

@@ -9,7 +9,7 @@ Route2Gate_TextPointers:
 Route2GateOaksAideText:
 	text_asm
 	CheckEvent EVENT_GOT_HM05
-	jr nz, .got_item
+	jr nz, .flashExplanation
 	ld a, 10
 	ldh [hOaksAideRequirement], a
 	ld a, HM_FLASH
@@ -25,8 +25,9 @@ Route2GateOaksAideText:
 	cp OAKS_AIDE_GOT_ITEM
 	jr nz, .no_item
 	SetEvent EVENT_GOT_HM05
-.got_item
+.flashExplanation
 	ld hl, .FlashExplanationText
+.printDone
 	rst _PrintText
 .no_item
 	rst TextScriptEnd
