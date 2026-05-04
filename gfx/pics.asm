@@ -670,7 +670,6 @@ MapAreasUI::	INCBIN "gfx/town_map/area_type_ui.2bpp"
 MapAreasUIEnd::
 FishingWaterIcons:: INCBIN "gfx/town_map/mon_fishing_water_icons.1bpp"
 ExtraMenuBorderConnectors:: INCBIN "gfx/font/extra_menu_border_connectors.1bpp"
-FromToChangeBoxPrompt:: INCBIN "gfx/font/from_to_change_box_prompt.1bpp"
 EditPrompt:: INCBIN "gfx/font/edit_prompt.1bpp"
 TeaTile:: INCBIN "gfx/icons/tea.2bpp"
 FoodTiles:: INCBIN "gfx/icons/food_on_table.2bpp"
@@ -700,6 +699,7 @@ DojoBetaTiles:: INCBIN "gfx/unused_prototype_sprites/dojo_beta.2bpp"
 BallAnimTiles:: INCBIN "gfx/battle/ball_anim.2bpp"
 WildDataArrows:: INCBIN "gfx/town_map/wild_data_arrows.1bpp"
 WildDataShoe:: INCBIN "gfx/town_map/shoe.2bpp"
+LinkBattleVSText:: INCBIN "gfx/font/VS.1bpp"
 
 GrimerPeekingSprite:: INCBIN "gfx/sprites/grimer_peeking.2bpp"
 

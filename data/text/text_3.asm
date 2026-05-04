@@ -19,6 +19,24 @@ _OlderFileWillBeErasedText::
 	cont "save. Okay?"
 	done
 
+_SortItems::
+	text "Sort your items?"
+	done
+
+_SortPCItems::
+	text "Sort your PC"
+	line "items?"
+	done
+
+_SortDone::
+	text "All sorted out!"
+	prompt
+
+_SortNotEnough::
+	text "Need at least 2"
+	line "items to sort."
+	prompt
+
 _WhenYouChangeBoxText::
 	text "When you change a"
 	line "#MON BOX, data"
@@ -41,6 +59,11 @@ _ChooseABoxDataWillSaveText::
 	text "Choose a <PKMN> BOX."
 	line "Game will save.@"
 	text_end
+
+_RenameCurrentBoxText::
+	text "Rename the current"
+	line "BOX?"
+	done
 
 _EvolvedText::
 	text_ram_stringbuffer

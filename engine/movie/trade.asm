@@ -1,4 +1,4 @@
-InternalClockTradeAnim:
+InternalClockTradeAnim::
 ; Do the trading animation with the player's gameboy on the left.
 ; In-game trades and internally clocked link cable trades use this.
 	ld a, [wTradedPlayerMonSpecies]
@@ -268,7 +268,7 @@ Trade_DrawOpenEndOfLinkCable:
 	call Trade_ClearTileMap
 	ld b, HIGH(vBGMap0)
 	call CopyScreenTileBufferToVRAM
-	ld b, SET_PAL_GENERIC
+	ld d, SET_PAL_GENERIC
 	call RunPaletteCommand
 
 ; This function call is pointless. It just copies blank tiles to VRAM that was
@@ -453,7 +453,7 @@ Trade_InitGameboyTransferGfx:
 	ldh [hAutoBGTransferEnabled], a
 	call ClearScreen
 	;shinpokerednote: gbcnote: update pal for GBC
-	ld b, SET_PAL_GENERIC
+	ld d, SET_PAL_GENERIC
 	call RunPaletteCommand
 	xor a
 	ldh [hAutoBGTransferEnabled], a
@@ -769,8 +769,8 @@ Trade_CircleOAMBlocks:
 Trade_LoadMonSprite:
 	ld [wCurPartySpecies], a
 	ld [wCurSpecies], a
-	ld [wWholeScreenPaletteMonSpecies], a
-	lb bc, SET_PAL_POKEMON_WHOLE_SCREEN_TRADE, 0
+	ld e, a
+	ld d, SET_PAL_POKEMON_WHOLE_SCREEN_TRADE
 	call RunPaletteCommand
 	ldh a, [hAutoBGTransferEnabled]
 	xor $1
