@@ -351,7 +351,6 @@ wMenuWrappingEnabled:: db
 wDirectionChangeModeCounter:: db
 
 ; PureRGBnote: when running the generic palette setting function, we can force it to use a different palette by loading one here
-; TODO: is this needed? can pass e into runpalettecommand
 wGenericPaletteOverride:: db
 
 	ds 1 ; used to be wToggleableObjectIndex but that wasn't needed after moving the hide/show object routines into home bank

@@ -44,7 +44,7 @@ INCLUDE "constants/map_constants.asm"
 INCLUDE "constants/map_data_constants.asm"
 INCLUDE "constants/map_object_constants.asm"
 INCLUDE "constants/toggle_constants.asm"
-INCLUDE "constants/original_toggle_constants.asm" ; TODOsync: original toggle constants?
+INCLUDE "constants/original_toggle_constants.asm"
 INCLUDE "constants/sprite_set_constants.asm"
 INCLUDE "constants/credits_constants.asm"
 INCLUDE "constants/audio_constants.asm"
