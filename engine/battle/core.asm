@@ -3434,7 +3434,7 @@ PlayerCanExecuteChargingMove:
 	                    ; resulting in the Pokemon being invulnerable for the whole battle
 	res INVULNERABLE, [hl]
 PlayerCanExecuteMove:
-	call DisplayUsedMoveText ; TODOsync: PrintMonName1Text
+	call DisplayUsedMoveText
 	callfar CheckRemapMoveData
 	callfar CheckSpecialBattleMoveModifiersPlayer
 	ld hl, DecrementPP
