@@ -2118,6 +2118,27 @@ DrawEnemyHUDAndHPBar::
 	lb bc, 4, 12
 	call ClearScreenArea
 	callfar PlaceEnemyHUDTiles
+	ld a, [wIsInBattle]
+	cp 2 ; is it a trainer battle?
+	jr z, .trainerBattle
+	push hl
+	ld a, [wEnemyMonSpecies2]
+	ld [wPokedexNum], a
+	callfar IndexToPokedex
+	ld a, [wPokedexNum]
+	dec a
+	ld c, a
+	ld b, FLAG_TEST
+	ld hl, wPokedexOwned
+	call FlagAction
+	ld a, c
+	and a
+	jr z, .notOwned
+	hlcoord 1, 1
+	ld [hl], $D0 ; replace this with your Poké Ball icon or other character
+.notOwned
+	pop hl
+.trainerBattle
 	ld de, wEnemyMonNick
 	hlcoord 1, 0
 	call CenterMonName
