@@ -14,9 +14,7 @@ StartSimulatingJoypadStates::
 	xor a
 	ld [wOverrideSimulatedJoypadStatesMask], a
 	ld [wSpritePlayerStateData2MovementByte1], a
-	ld hl, wStatusFlags5
-	set BIT_SCRIPTED_MOVEMENT_STATE, [hl]
-	ret
+	jp SetPlayerAutoMoving
 
 IsItemInBag::
 ; given an item_id in b

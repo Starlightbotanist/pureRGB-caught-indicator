@@ -1,6 +1,5 @@
 ApplyOutOfBattlePoisonDamage::
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_MOVEMENT_STATE, a
+	call IsPlayerAutoMoving
 	jp nz, .noBlackOut ; no black out if joypad states are being simulated
 	ld a, [wPartyCount]
 	and a

@@ -26,8 +26,7 @@ FightingDojo_Script:
 	ld [wFightingDojoCurScript], a
 	ret
 .MasterWalking
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_NPC_MOVEMENT, a
+	call IsNPCAutoMoving
 	ret nz
 	ResetEvent EVENT_GENERIC_NPC_WALKING_FLAG
 	call EnableAllJoypad

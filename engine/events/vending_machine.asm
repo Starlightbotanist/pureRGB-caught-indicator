@@ -19,8 +19,7 @@ VendingMachineMenu::
 	ld [wTopMenuItemY], a
 	ld a, 1
 	ld [wTopMenuItemX], a
-	ld hl, wStatusFlags5
-	set BIT_NO_TEXT_DELAY, [hl]
+	call DisableTextDelay
 	hlcoord 0, 3
 	lb bc, 8, 12
 	call TextBoxBorderUpdateSprites
@@ -42,8 +41,7 @@ VendingMachineMenu::
 	ld de, DrinkPriceText2
 	call PlaceString
 .menu
-	ld hl, wStatusFlags5
-	res BIT_NO_TEXT_DELAY, [hl]
+	call EnableTextDelay
 	call HandleMenuInput
 	bit B_PAD_B, a
 	jp nz, .notThirsty

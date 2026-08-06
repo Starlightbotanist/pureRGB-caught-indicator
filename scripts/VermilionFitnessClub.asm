@@ -18,8 +18,7 @@ VermilionFitnessClub_Script:
 	ld c, TOGGLE_VERMILIONFITNESSCLUB_JANITOR
 	call HideExtraObject
 .notLoaded
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_MOVEMENT_STATE, a
+	call IsPlayerAutoMoving
 	jr nz, .noPositionScripts
 	call IsPlayerBesideVermilionFitnessClubClerk
 	jr nz, .notBesideClerk

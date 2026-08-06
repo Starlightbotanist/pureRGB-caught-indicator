@@ -36,8 +36,7 @@ UsedCut::
 	ld a, [wWhichPokemon]
 	ld hl, wPartyMonNicks
 	call GetPartyMonName
-	ld hl, wStatusFlags5
-	set BIT_NO_TEXT_DELAY, [hl]
+	call DisableTextDelay
 	call GBPalWhiteOutWithDelay3
 	call ClearSprites
 	call RestoreScreenTilesAndReloadTilePatterns
@@ -53,8 +52,7 @@ UsedCut::
 	ld hl, UsedCutText
 	rst _PrintText
 	call LoadScreenTilesFromBuffer2
-	ld hl, wStatusFlags5
-	res BIT_NO_TEXT_DELAY, [hl]
+	call EnableTextDelay
 	call DisableSpriteUpdates
 	call InitCutAnimOAM
 	ld de, CutTreeBlockSwaps

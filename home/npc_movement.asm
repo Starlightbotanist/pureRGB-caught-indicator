@@ -7,9 +7,7 @@ IsPlayerCharacterBeingControlledByGame::
 	ld a, [wMovementFlags]
 	bit BIT_EXITING_DOOR, a
 	ret nz
-	ld a, [wStatusFlags5]
-	and 1 << BIT_SCRIPTED_MOVEMENT_STATE
-	ret
+	jp IsPlayerAutoMoving
 
 RunNPCMovementScript::
 	ld hl, wMovementFlags

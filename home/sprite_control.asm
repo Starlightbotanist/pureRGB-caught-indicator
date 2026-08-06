@@ -110,3 +110,23 @@ WasMapJustLoaded::
 GetTileAndCoordsInFrontOfPlayer::
 	homecall _GetTileAndCoordsInFrontOfPlayer
 	ret
+
+IsPlayerAutoMoving::
+	ld a, [wStatusFlags5]
+	bit BIT_SCRIPTED_MOVEMENT_STATE, a
+	ret
+
+SetPlayerAutoMoving::
+	ld hl, wStatusFlags5
+	set BIT_SCRIPTED_MOVEMENT_STATE, [hl]
+	ret
+
+StopPlayerAutoMoving::
+	ld hl, wStatusFlags5
+	res BIT_SCRIPTED_MOVEMENT_STATE, [hl]
+	ret
+
+IsNPCAutoMoving::
+	ld a, [wStatusFlags5]
+	bit BIT_SCRIPTED_NPC_MOVEMENT, a
+	ret

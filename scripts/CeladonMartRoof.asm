@@ -55,8 +55,7 @@ FossilsList::
 	db 0 ; end
 
 CeladonMartRoofScript_GiveDrinkToGirl:
-	ld hl, wStatusFlags5
-	set BIT_NO_TEXT_DELAY, [hl]
+	call DisableTextDelay
 	ld hl, CeladonMartRoofLittleGirlGiveHerWhichDrinkText
 	rst _PrintText
 	xor a
@@ -82,8 +81,7 @@ CeladonMartRoofScript_GiveDrinkToGirl:
 	call TextBoxBorder
 	call UpdateSprites
 	call CeladonMartRoofScript_PrintDrinksInBag
-	ld hl, wStatusFlags5
-	res BIT_NO_TEXT_DELAY, [hl]
+	call EnableTextDelay
 	call HandleMenuInput
 	bit B_PAD_B, a
 	ret nz

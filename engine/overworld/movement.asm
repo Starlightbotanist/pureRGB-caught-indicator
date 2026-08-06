@@ -381,20 +381,15 @@ UpdateSpriteInWalkingAnimation:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;shinpokerednote: 60fps - updated xy every other tick
 	pop bc
-	push bc
 	ld a, b
 	and a 
 	jr nz, .xydone
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
 	ld a, [hli]                      ; x#SPRITESTATEDATA1_YSTEPVECTOR
-	ld b, a
-	ld a, [hl]                       ; x#SPRITESTATEDATA1_YPIXELS
-	add b
+	add [hl]
 	ld [hli], a                      ; update [x#SPRITESTATEDATA1_YPIXELS]
 	ld a, [hli]                      ; x#SPRITESTATEDATA1_XSTEPVECTOR
-	ld b, a
-	ld a, [hl]                       ; x#SPRITESTATEDATA1_XPIXELS
-	add b
+	add [hl]
 	ld [hl], a                       ; update [x#SPRITESTATEDATA1_XPIXELS]
 .xydone
 	ldh a, [hCurrentSpriteOffset]
@@ -403,7 +398,6 @@ UpdateSpriteInWalkingAnimation:
 	ld a, [hl]                       ; x#SPRITESTATEDATA2_WALKANIMATIONCOUNTER
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;shinpokerednote: 60fps - make the delay decounter update every other tick	
-	pop bc
 	add b	;60fps
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	dec a
@@ -876,8 +870,7 @@ DoScriptedNPCMovement:
 ; a few times in the game. It is used when the NPC and player must walk together
 ; in sync, such as when the player is following the NPC somewhere. An NPC can't
 ; be moved in sync with the player using the other method.
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_MOVEMENT_STATE, a
+	call IsPlayerAutoMoving
 	ret z
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; shinpokerednote: 60fps - update animations every other frame and halve movement

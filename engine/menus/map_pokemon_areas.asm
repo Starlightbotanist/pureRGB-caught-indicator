@@ -462,9 +462,6 @@ LoadMapIcons:
 	jr nz, .nextEntry
 	jr .dontSkip
 
-
-
-
 TownMapCoordsToOAMCoords2:
 ; in: lower nybble of a = x, upper nybble of a = y
 ; out: b and [hl] = (y * 8) + 24, c and [hl+1] = (x * 8) + 24

@@ -145,8 +145,7 @@ ENDC
 
 ; display the before battle text after the enemy trainer has walked up to the player's sprite
 DisplayEnemyTrainerTextAndStartBattle::
-	ld a, [wStatusFlags5]
-	and 1 << BIT_SCRIPTED_NPC_MOVEMENT
+	call IsNPCAutoMoving
 	ret nz ; return if the enemy trainer hasn't finished walking to the player's sprite
 	call EnableAllJoypad
 	ld a, [wSpriteIndex]
@@ -192,10 +191,11 @@ EndTrainerBattle::
 	ld c, [hl] ; load corresponding toggleable object index and remove it
 	call HideObject
 .skipRemoveSprite
-	ld hl, wStatusFlags5
-	bit BIT_UNKNOWN_5_4, [hl]
-	res BIT_UNKNOWN_5_4, [hl]
-	ret nz
+	; PureRGBnote: REMOVED: was this needed??? 
+	;ld hl, wStatusFlags5
+	;bit BIT_UNKNOWN_5_4, [hl]
+	;res BIT_UNKNOWN_5_4, [hl]
+	;ret nz
 
 ResetButtonPressedAndMapScript::
 	call EnableAllJoypad

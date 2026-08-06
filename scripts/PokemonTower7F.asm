@@ -42,8 +42,7 @@ PokemonTower7FSetMapScript:
 	ret
 
 PokemonTower7FHideNPCScript:
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_NPC_MOVEMENT, a
+	call IsNPCAutoMoving
 	ret nz
 	ld hl, wToggleableObjectList
 	ld a, [wSpriteIndex]

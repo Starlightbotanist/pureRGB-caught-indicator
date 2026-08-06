@@ -1,8 +1,7 @@
 ; PureRGBnote: CHANGED: most of the players pc code was changed to remember your location in the item list after performing actions
 ; like withdrawing, depositing...etc.
 PlayerPC::
-	ld hl, wStatusFlags5
-	set BIT_NO_TEXT_DELAY, [hl]
+	call DisableTextDelay
 	call SaveScreenTilesToBuffer1
 	xor a
 	ld [wBagSavedMenuItem], a
@@ -54,8 +53,7 @@ PlayerPCMenu:
 	ld [hli], a ; wListScrollOffset
 	ld [hl], a ; wMenuWatchMovingOutOfBounds
 	ld [wPlayerMonNumber], a
-	ld hl, wStatusFlags5
-	set BIT_NO_TEXT_DELAY, [hl]
+	call DisableTextDelay
 	ld hl, WhatDoYouWantText
 	rst _PrintText
 	call HandleMenuInput
@@ -90,8 +88,7 @@ ExitPlayerPC:
 	xor a
 	ld [wListScrollOffset], a
 	ld [wBagSavedMenuItem], a
-	ld hl, wStatusFlags5
-	res BIT_NO_TEXT_DELAY, [hl]
+	call EnableTextDelay
 	xor a
 	ld [wDoNotWaitForButtonPressAfterDisplayingText], a
 	ret
@@ -115,14 +112,12 @@ PlayerPCDeposit:
 	ld a, [wNumBagItems]
 	and a
 	jr nz, .loop
-	ld hl, wStatusFlags5
-	res BIT_NO_TEXT_DELAY, [hl]
+	call EnableTextDelay
 	ld hl, NothingToDepositText
 	rst _PrintText
 	jp PlayerPCMenu
 .loop
-	ld hl, wStatusFlags5
-	set BIT_NO_TEXT_DELAY, [hl]
+	call DisableTextDelay
 	ld hl, WhatToDepositText
 	rst _PrintText
 	ld hl, wNumBagItems
@@ -179,14 +174,12 @@ PlayerPCWithdraw:
 	ld a, [wNumBoxItems]
 	and a
 	jr nz, .loop
-	ld hl, wStatusFlags5
-	res BIT_NO_TEXT_DELAY, [hl]
+	call EnableTextDelay
 	ld hl, NothingStoredText
 	rst _PrintText
 	jp PlayerPCMenu
 .loop
-	ld hl, wStatusFlags5
-	set BIT_NO_TEXT_DELAY, [hl]
+	call DisableTextDelay
 	ld hl, WhatToWithdrawText
 	rst _PrintText
 	ld hl, wNumBoxItems
@@ -243,14 +236,12 @@ PlayerPCToss:
 	ld a, [wNumBoxItems]
 	and a
 	jr nz, .loop
-	ld hl, wStatusFlags5
-	res BIT_NO_TEXT_DELAY, [hl]
+	call EnableTextDelay
 	ld hl, NothingStoredText
 	rst _PrintText
 	jp PlayerPCMenu
 .loop
-	ld hl, wStatusFlags5
-	set BIT_NO_TEXT_DELAY, [hl]
+	call DisableTextDelay
 	ld hl, WhatToTossText
 	rst _PrintText
 	ld hl, wNumBoxItems
@@ -452,14 +443,12 @@ DepositItemFromItemMenu::
 
 WorldOptions:
 	call ClearScreen
-	ld hl, wStatusFlags5
-	res BIT_NO_TEXT_DELAY, [hl] ; turn off instant text to display the options menu
+	call EnableTextDelay ; turn off instant text to display the options menu
 	xor a
 	ld [wOptionsCancelCursorX], a
 	ld [wTopMenuItemY], a
 	callfar DisplayWorldOptions
-	ld hl, wStatusFlags5
-	set BIT_NO_TEXT_DELAY, [hl] ; go back to instant text
+	call DisableTextDelay ; go back to instant text
 	jp PlayerPCMenu
 
 

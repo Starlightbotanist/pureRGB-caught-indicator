@@ -652,8 +652,7 @@ MagnetonWasSuperChargedText:
 	text_end
 
 MagnetonSuperchargeAnimation:
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_MOVEMENT_STATE, a
+	call IsPlayerAutoMoving
 	ret nz ; wait for player to finish walking
 	call PauseMusic
 	; make player face up

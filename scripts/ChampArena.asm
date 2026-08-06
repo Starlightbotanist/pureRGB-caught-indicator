@@ -52,10 +52,9 @@ InitNewArenaCutscene:
 ChampArenaWaitForPlayerWalkToFinish:
 	CheckEvent EVENT_ARENA_PLAYER_WALKING
 	ret z
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_NPC_MOVEMENT, a
+	call IsNPCAutoMoving
 	ret nz
-	bit BIT_SCRIPTED_MOVEMENT_STATE, a
+	bit BIT_SCRIPTED_MOVEMENT_STATE, a ; wStatusFlags5 still loaded from IsNPCAutoMoving
 	ret nz
 	ResetEvent EVENT_ARENA_PLAYER_WALKING
 	call GBFadeOutToWhite
@@ -140,10 +139,9 @@ ChampArenaWaitForOpponentWalkToFinish:
 	CheckEvent EVENT_ARENA_OPPONENT_WALKING
 	ret z
 	call CheckOpponentOpenCloseDoor
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_NPC_MOVEMENT, a
+	call IsNPCAutoMoving
 	ret nz
-	bit BIT_SCRIPTED_MOVEMENT_STATE, a
+	bit BIT_SCRIPTED_MOVEMENT_STATE, a ; wStatusFlags5 still loaded from IsNPCAutoMoving
 	ret nz
 
 	ResetEvent EVENT_ARENA_OPPONENT_WALKING
@@ -386,8 +384,7 @@ ChampArenaAssistantText:
 	rst _PrintText
 	SetEvent EVENT_ARENA_PLAYER_WALKING
 	; player walks away
-	ld hl, wStatusFlags5
-	set BIT_SCRIPTED_MOVEMENT_STATE, [hl]
+	call SetPlayerAutoMoving
 	ld hl, wSimulatedJoypadStatesEnd
 	ld a, [wXCoord]
 	ld de, PlayerCenterFieldDirectionsRight

@@ -64,8 +64,7 @@ LinkCableHelp::
 	ld a, 1
 	ld [wTopMenuItemX], a
 .linkHelpLoop
-	ld hl, wStatusFlags5
-	set BIT_NO_TEXT_DELAY, [hl]
+	call DisableTextDelay
 	hlcoord 0, 0
 	lb bc, 8, 13
 	call TextBoxBorder
@@ -75,21 +74,18 @@ LinkCableHelp::
 	ld hl, LinkCableHelpText2
 	rst _PrintText
 	call HandleMenuInput
+	call EnableTextDelay
 	bit B_PAD_B, a
 	jr nz, .exit
 	ld a, [wCurrentMenuItem]
 	cp 3 ; pressed a on "STOP READING"
 	jr z, .exit
-	ld hl, wStatusFlags5
-	res BIT_NO_TEXT_DELAY, [hl]
 	ld hl, LinkCableInfoTexts
 	ld bc, 5
 	call AddNTimes
 	rst _PrintText
 	jp .linkHelpLoop
 .exit
-	ld hl, wStatusFlags5
-	res BIT_NO_TEXT_DELAY, [hl]
 	call LoadScreenTilesFromBuffer1
 	jp TextScriptEndNoButtonPress
 

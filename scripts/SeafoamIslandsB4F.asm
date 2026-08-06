@@ -367,10 +367,9 @@ SeafoamIslandsB4FDragonairEventOnMapLoad:
 	jp UpdateSprites
 
 SeafoamIslandsB4FDragonairEventStartScript:
-	ld a, [wStatusFlags5] ; is the player moving?
-	bit BIT_SCRIPTED_NPC_MOVEMENT, a
+	call IsNPCAutoMoving
 	ret nz
-	bit BIT_SCRIPTED_MOVEMENT_STATE, a
+	bit BIT_SCRIPTED_MOVEMENT_STATE, a ; wStatusFlags5 still loaded from IsNPCAutoMoving
 	ret nz
 	ld a, [wYCoord]
 	cp 5

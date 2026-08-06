@@ -275,10 +275,9 @@ DiamondMineCheckDigAnimation:
 DiamondMineCheckFinalStep:
 	CheckEvent EVENT_DIAMOND_MINE_FINAL_STEP
 	ret z
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_NPC_MOVEMENT, a
+	call IsNPCAutoMoving
 	ret nz
-	bit BIT_SCRIPTED_MOVEMENT_STATE, a
+	bit BIT_SCRIPTED_MOVEMENT_STATE, a ; wStatusFlags5 still loaded from IsNPCAutoMoving
 	ret nz
 	ResetEvent EVENT_DIAMOND_MINE_FINAL_STEP
 
@@ -516,8 +515,7 @@ DiamondMineProspectorText:
 	text_end
 
 DiamondMineLoadPlayerDirections:
-	ld hl, wStatusFlags5
-	set BIT_SCRIPTED_MOVEMENT_STATE, [hl]
+	call SetPlayerAutoMoving
 	ld hl, wSimulatedJoypadStatesEnd
 	ld a, [wXCoord]
 	cp 3

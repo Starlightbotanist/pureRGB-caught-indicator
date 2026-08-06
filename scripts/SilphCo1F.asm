@@ -320,8 +320,7 @@ SaffronAbandonedBuildingHeliumPipeText:
 	text_end
 
 CheckFloatingWeezingAnimation:
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_MOVEMENT_STATE, a
+	call IsPlayerAutoMoving
 	ret nz ; wait for player to finish walking
 	CheckAndResetEvent EVENT_FLOATING_WEEZING_ANIMATION
 	ret z

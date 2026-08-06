@@ -82,8 +82,7 @@ PokemonTower6FMarowakBattleScript:
 	xor a
 	ld [wSpritePlayerStateData2MovementByte1], a
 	ld [wOverrideSimulatedJoypadStatesMask], a
-	ld hl, wStatusFlags5
-	set BIT_SCRIPTED_MOVEMENT_STATE, [hl]
+	call SetPlayerAutoMoving
 	ld a, SCRIPT_POKEMONTOWER6F_PLAYER_MOVING
 	jr PokemonTower6FSetMapScript
 

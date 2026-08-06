@@ -147,8 +147,7 @@ PewterCityHideYoungsterScript:
 	lb bc, TOGGLE_GYM_GUY, SCRIPT_PEWTERCITY_RESET_YOUNGSTER
 	; fall through
 PewterCityHideNPCScript:
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_NPC_MOVEMENT, a
+	call IsNPCAutoMoving
 	ret nz
 	ld a, c
 	ld [wPewterCityCurScript], a

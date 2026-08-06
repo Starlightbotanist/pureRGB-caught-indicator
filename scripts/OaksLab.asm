@@ -63,8 +63,7 @@ OakEntryMovement:
 	db -1 ; end
 
 OaksLabToggleOaksScript:
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_NPC_MOVEMENT, a
+	call IsNPCAutoMoving
 	ret nz
 	ld c, TOGGLE_OAKS_LAB_OAK_2
 	call HideObject
@@ -290,8 +289,7 @@ OaksLabChoseStarterScript:
 	ret
 
 OaksLabRivalChoosesStarterScript:
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_NPC_MOVEMENT, a
+	call IsPlayerAutoMoving
 	ret nz
 	call OaksLabDisableAllJoypadExceptAorB
 	ld a, OAKSLAB_RIVAL
@@ -370,8 +368,7 @@ OaksLabRivalChallengesPlayerScript:
 	ret
 
 OaksLabRivalStartBattleScript:
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_NPC_MOVEMENT, a
+	call IsNPCAutoMoving
 	ret nz
 	; reset rival's sprite movement facing byte otherwise he can look around weirdly after battle for a moment
 	ld hl, wMapSpriteData + ((OAKSLAB_RIVAL - 1) * 2)
@@ -454,8 +451,7 @@ OaksLabRivalStartsExitScript:
 	db -1 ; end
 
 OaksLabPlayerWatchRivalExitScript:
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_NPC_MOVEMENT, a
+	call IsNPCAutoMoving
 	jr nz, .checkRivalPosition
 	ld c, TOGGLE_OAKS_LAB_RIVAL
 	call HideObject
@@ -530,8 +526,7 @@ OaksLabRivalFaceUpOakFaceDownScript:
 	jp SetSpriteFacingDirectionAndDelay
 
 OaksLabOakGivesPokedexScript:
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_NPC_MOVEMENT, a
+	call IsNPCAutoMoving
 	ret nz
 	call EnableAutoTextBoxDrawing
 	call PlayDefaultMusic
@@ -599,8 +594,7 @@ OaksLabOakGivesPokedexScript:
 	ret
 
 OaksLabRivalLeavesWithPokedexScript:
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_NPC_MOVEMENT, a
+	call IsNPCAutoMoving
 	ret nz
 	call PlayDefaultMusic
 	ld c, TOGGLE_OAKS_LAB_RIVAL
@@ -809,11 +803,9 @@ OaksLabShowPokeBallPokemonScript:
 	ldh [hSpriteDataOffset], a
 	call GetPointerWithinSpriteStateData1
 	ld [hl], SPRITE_FACING_RIGHT
-	ld hl, wStatusFlags5
-	set BIT_NO_TEXT_DELAY, [hl]
+	call DisableTextDelay
 	callfar StarterDex
-	ld hl, wStatusFlags5
-	res BIT_NO_TEXT_DELAY, [hl]
+	call EnableTextDelay
 	call ReloadMapData
 	ld c, 10
 	rst _DelayFrames

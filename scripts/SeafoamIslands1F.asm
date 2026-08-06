@@ -177,8 +177,7 @@ DragonairUnderWaterEventAreaScript:
 	ld [wMapPalOffset], a
 	jp LoadGBPal
 .defaultScript
-	ld a, [wStatusFlags5] ; is the player moving?
-	bit BIT_SCRIPTED_MOVEMENT_STATE, a
+	call IsPlayerAutoMoving
 	ret nz
 	CheckEvent EVENT_DRAGONAIR_EVENT_BEAT_CLOYSTER
 	jr nz, .beatCloyster

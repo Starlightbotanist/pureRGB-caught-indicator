@@ -943,10 +943,9 @@ PokemonTowerB1FHideGhost:
 PokemonTowerB1FWaitForNPCWalk:
 	CheckEvent EVENT_CATACOMBS_SPRITE_WALKING
 	jr z, .checkStartPlayerWalk
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_NPC_MOVEMENT, a
+	call IsNPCAutoMoving
 	ret nz
-	bit BIT_SCRIPTED_MOVEMENT_STATE, a
+	bit BIT_SCRIPTED_MOVEMENT_STATE, a ; wStatusFlags5 still loaded from IsNPCAutoMoving
 	ret nz
 	ld a, [wXCoord]
 	cp 5

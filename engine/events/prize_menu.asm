@@ -4,8 +4,7 @@ CeladonPrizeMenu::
 	ld hl, RequireCoinCaseText
 	jp PrintText
 .havingCoinCase
-	ld hl, wStatusFlags5
-	set BIT_NO_TEXT_DELAY, [hl]
+	call DisableTextDelay
 	ld hl, ExchangeCoinsForPrizesText
 	rst _PrintText
 ; the following are the menu settings
@@ -34,9 +33,7 @@ CeladonPrizeMenu::
 	cp 3 ; "NO,THANKS" choice
 	call nz, HandlePrizeChoice
 .noChoice
-	ld hl, wStatusFlags5
-	res BIT_NO_TEXT_DELAY, [hl]
-	ret
+	jp EnableTextDelay
 
 RequireCoinCaseText:
 	text_far _RequireCoinCaseText

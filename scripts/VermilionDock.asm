@@ -17,8 +17,7 @@ VermilionDock_Script:
 	jp z, VermilionDockSSAnneLeavesScript
 	SetEventReuseHL EVENT_STARTED_WALKING_OUT_OF_DOCK
 	call Delay3
-	ld hl, wStatusFlags5
-	set BIT_SCRIPTED_MOVEMENT_STATE, [hl]
+	call SetPlayerAutoMoving
 	ld hl, wSimulatedJoypadStatesEnd
 	ld a, PAD_UP
 	ld [hli], a

@@ -886,8 +886,7 @@ ItemUseSurfboard:
 .notVolcano
 ;;;;;
 	call .makePlayerMoveForward
-	ld hl, wStatusFlags5
-	set BIT_SCRIPTED_MOVEMENT_STATE, [hl]
+	call SetPlayerAutoMoving
 	ld a, 2
 	ld [wWalkBikeSurfState], a ; change player state to surfing
 	ld a, [wCurMapTileset]

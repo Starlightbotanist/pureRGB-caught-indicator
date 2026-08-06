@@ -76,8 +76,7 @@ SSAnne2FSetFacingDirectionScript:
 	jp SetSpriteFacingDirectionAndDelay
 
 SSAnne2FRivalStartBattleScript:
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_NPC_MOVEMENT, a
+	call IsNPCAutoMoving
 	ret nz
 	call SSAnne2FSetFacingDirectionScript
 	call EnableAllJoypad
@@ -148,8 +147,7 @@ SSAnne2FRivalAfterBattleScript:
 	db -1 ; end
 
 SSAnne2FRivalExitScript:
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_NPC_MOVEMENT, a
+	call IsNPCAutoMoving
 	ret nz
 	call EnableAllJoypad
 	ld c, TOGGLE_SS_ANNE_2F_RIVAL

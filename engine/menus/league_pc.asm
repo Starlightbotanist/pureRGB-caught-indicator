@@ -1,8 +1,7 @@
 PKMNLeaguePC:
 	ld hl, AccessedHoFPCText
 	rst _PrintText
-	ld hl, wStatusFlags5
-	set BIT_NO_TEXT_DELAY, [hl]
+	call DisableTextDelay
 	push hl
 	ld a, [wUpdateSpritesEnabled]
 	push af

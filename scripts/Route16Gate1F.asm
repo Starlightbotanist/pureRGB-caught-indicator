@@ -76,9 +76,7 @@ Route16Gate1FPlayerMovingRightScript:
 	ret nz
 	call EnableAllJoypad
 	ld [wRoute16Gate1FCurScript], a ; SCRIPT_ROUTE16GATE1F_DEFAULT
-	ld hl, wStatusFlags5
-	res BIT_SCRIPTED_MOVEMENT_STATE, [hl]
-	ret
+	jp StopPlayerAutoMoving
 
 Route16Gate1FIsBicycleInBagScript:
 	ld b, BICYCLE

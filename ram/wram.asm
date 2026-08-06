@@ -569,7 +569,14 @@ wLowHealthAlarmDisabled:: db
 
 wPlayerMonMinimized:: db
 
-	ds 13
+	ds 2
+
+;shinpokerednote: ADDED: exp bar wram values (only needed in battle)
+wEXPBarPixelLength::  ds 1
+wEXPBarBaseEXP::      ds 3
+wEXPBarCurEXP::       ds 3
+wEXPBarNeededEXP::    ds 3
+wEXPBarKeepFullFlag:: ds 1
 
 ; number of hits by enemy in attacks like Double Slap, etc.
 wEnemyNumHits:: db
@@ -2573,6 +2580,7 @@ wStatusFlags6:: db
 ; bit 7: used fly out of battle
 wStatusFlags7:: db
 
+; TODO: change to an event?
 ; bit 1: set when you beat Lorelei and reset in Indigo Plateau lobby
 ; the game uses this to tell when Elite 4 events need to be reset
 wElite4Flags:: db
@@ -2787,13 +2795,7 @@ wBoxMonNicksEnd::
 
 wBoxDataEnd::
 
-;shinpokerednote: ADDED: exp bar wram values
-wEXPBarPixelLength::  ds 1
-wEXPBarBaseEXP::      ds 3
-wEXPBarCurEXP::       ds 3
-wEXPBarNeededEXP::    ds 3
-wEXPBarKeepFullFlag:: ds 1
-
+; ds 11 ; used to be exp bar space here, could use this many bytes without issue possibly
 
 SECTION "Stack", WRAMX
 

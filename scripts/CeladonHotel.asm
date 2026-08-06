@@ -185,8 +185,7 @@ CeladonLaprasGuyMovement2:
 
 CeladonLaprasGuyGoesThroughDoor:
 	; leaves through the door with a sound
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_NPC_MOVEMENT, a
+	call IsNPCAutoMoving
 	ret nz
 	ld a, SFX_GO_OUTSIDE
 	rst _PlaySound
@@ -203,8 +202,7 @@ CeladonLaprasGuyGoesThroughDoor:
 	ret	
 
 CeladonLaprasGuyWaitingForLoserToMove:
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_NPC_MOVEMENT, a
+	call IsNPCAutoMoving
 	ret nz
 	ld a, SCRIPT_CELADONHOTEL_LAPRAS_GUY_LEAVES
 	ld [wCeladonHotelCurScript], a

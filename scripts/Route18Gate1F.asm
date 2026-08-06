@@ -76,9 +76,7 @@ Route18Gate1FPlayerMovingRightScript:
 	ret nz
 	call EnableAllJoypad
 	ld [wRoute18Gate1FCurScript], a ; SCRIPT_ROUTE18GATE1F_DEFAULT
-	ld hl, wStatusFlags5
-	res BIT_SCRIPTED_MOVEMENT_STATE, [hl]
-	ret
+	jp StopPlayerAutoMoving
 
 Route18Gate1F_TextPointers:
 	def_text_pointers

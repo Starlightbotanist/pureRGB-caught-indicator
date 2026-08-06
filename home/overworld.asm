@@ -2379,7 +2379,19 @@ LoadDestinationWarpPosition::
 ; PureRGBnote: ADDED: code for setting blackout map on flying or entering a pokecenter (instead of just when healing pokemon)
 
 SetLastBlackoutMap::
-	; called when entering pokemon centers
+	; in pokemon centers specifically, talking to the nurse again after healing will just make her bow until you move
+	lb de, 3, 3 ; this relies on pokecenters having the same layout!
+SetSpecificBlackoutMap::
+	call IsPlayerAtCoords
+	jr nz, .notAtCoords
+	CheckEvent EVENT_NURSE_TEXT_LOOP_BLOCKER
+	call nz, DisableAutoTextBoxDrawing
+	jr SetOnlyLastBlackoutMap
+.notAtCoords
+	ResetEvent EVENT_NURSE_TEXT_LOOP_BLOCKER
+	call EnableAutoTextBoxDrawing
+SetOnlyLastBlackoutMap::
+	; called when entering places that we can black out to (red's house, pokemon centers)
 	ld a, [wLastMap]
 	jr BlackoutMapCommon
 

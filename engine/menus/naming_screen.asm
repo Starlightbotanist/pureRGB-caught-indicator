@@ -92,8 +92,7 @@ DisplayNamingScreen:
 
 DisplayNamingScreenWrap:
 	push hl
-	ld hl, wStatusFlags5
-	set BIT_NO_TEXT_DELAY, [hl]
+	call DisableTextDelay
 	call GBPalWhiteOutWithDelay3
 	call ClearScreen
 	call UpdateSprites
@@ -184,8 +183,7 @@ DisplayNamingScreenWrap:
 	call GBPalNormal
 	xor a
 	ld [wAnimCounter], a
-	ld hl, wStatusFlags5
-	res BIT_NO_TEXT_DELAY, [hl]
+	call EnableTextDelay
 	ld a, [wIsInBattle]
 	and a
 	jp z, LoadTextBoxTilePatterns

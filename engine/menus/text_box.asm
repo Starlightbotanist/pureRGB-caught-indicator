@@ -35,9 +35,9 @@ DisplayTextBoxID_::
 	call GetTextBoxIDText
 	ld a, [wStatusFlags5]
 	push af
-	ld a, [wStatusFlags5]
-	set BIT_NO_TEXT_DELAY, a
-	ld [wStatusFlags5], a
+	push hl
+	call DisableTextDelay
+	pop hl
 	call PlaceString
 	pop af
 	ld [wStatusFlags5], a
@@ -122,8 +122,7 @@ GetAddressOfScreenCoords:
 INCLUDE "data/text_boxes.asm"
 
 DisplayMoneyBox:
-	ld hl, wStatusFlags5
-	set BIT_NO_TEXT_DELAY, [hl]
+	call DisableTextDelay
 	ld a, MONEY_BOX_TEMPLATE
 	ld [wTextBoxID], a
 	call DisplayTextBoxID
@@ -134,17 +133,14 @@ DisplayMoneyBox:
 	ld de, wPlayerMoney
 	ld c, 3 | LEADING_ZEROES | MONEY_SIGN
 	call PrintBCDNumber
-	ld hl, wStatusFlags5
-	res BIT_NO_TEXT_DELAY, [hl]
-	ret
+	jp EnableTextDelay
 
 CurrencyString:
 	db "      ¥@"
 
 ; PureRGBnote: ADDED: new text box type - this one's for displaying how many color changes are left when talking to the color change NPC.
 DisplayAmountLeftBox:
-	ld hl, wStatusFlags5
-	set BIT_NO_TEXT_DELAY, [hl]
+	call DisableTextDelay
 	ld a, AMOUNT_LEFT_BOX_TEMPLATE
 	ld [wTextBoxID], a
 	call DisplayTextBoxID
@@ -158,17 +154,13 @@ DisplayAmountLeftBox:
 	hlcoord 12, 1
 	ld de, AmountLeftString
 	call PlaceString
-	ld hl, wStatusFlags5
-	res BIT_NO_TEXT_DELAY, [hl]
-	ret
+	jp EnableTextDelay
 
 AmountLeftString:
 	db "× Left@"
 
 DoBuySellQuitMenu:
-	ld a, [wStatusFlags5]
-	set BIT_NO_TEXT_DELAY, a
-	ld [wStatusFlags5], a
+	call DisableTextDelay
 	xor a
 	ld [wChosenMenuItem], a
 	ld a, BUY_SELL_QUIT_MENU_TEMPLATE
@@ -186,9 +178,7 @@ DoBuySellQuitMenu:
 	ld [wCurrentMenuItem], a
 	ld [wLastMenuItem], a
 	ld [wMenuWatchMovingOutOfBounds], a
-	ld a, [wStatusFlags5]
-	res BIT_NO_TEXT_DELAY, a
-	ld [wStatusFlags5], a
+	call EnableTextDelay
 	call HandleMenuInput
 	call PlaceUnfilledArrowMenuCursor
 	bit B_PAD_A, a
@@ -221,9 +211,7 @@ DoBuySellQuitMenu:
 ; hl = address where the text box border should be drawn
 DisplayTwoOptionMenu:
 	push hl
-	ld a, [wStatusFlags5]
-	set BIT_NO_TEXT_DELAY, a
-	ld [wStatusFlags5], a
+	call DisableTextDelay
 
 ; pointless because both values are overwritten before they are read
 	xor a
@@ -293,8 +281,7 @@ DisplayTwoOptionMenu:
 	pop hl
 	add hl, bc
 	call PlaceString
-	ld hl, wStatusFlags5
-	res BIT_NO_TEXT_DELAY, [hl]
+	call EnableTextDelay
 	ld a, [wTwoOptionMenuID]
 	cp NO_YES_MENU
 	jr nz, .notNoYesMenu

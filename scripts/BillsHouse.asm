@@ -61,8 +61,7 @@ BillsHousePokemonWalkToMachineScript:
 	db -1 ; end
 
 BillsHousePokemonEntersMachineScript:
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_NPC_MOVEMENT, a
+	call IsNPCAutoMoving
 	ret nz
 	ld c, TOGGLE_BILL_POKEMON
 	call HideObject
@@ -110,8 +109,7 @@ BillsHouseBillExitsMachineScript:
 	db -1 ; end
 
 BillsHouseCleanupScript:
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_NPC_MOVEMENT, a
+	call IsNPCAutoMoving
 	ret nz
 	call EnableAllJoypad
 	SetEvent EVENT_MET_BILL_2 ; this event seems redundant
@@ -315,8 +313,7 @@ BillsHouseActivatePCScript:
 	ld a, PAD_A | PAD_B
 	ld [wMenuWatchedKeys], a
 ;;;;;;;;;;
-	ld hl, wStatusFlags5
-	set BIT_NO_TEXT_DELAY, [hl]
+	call DisableTextDelay
 	hlcoord 0, 0
 	lb bc, 10, 9
 	call TextBoxBorder
@@ -350,8 +347,7 @@ BillsHouseActivatePCScript:
 	call LoadScreenTilesFromBuffer2
 	jr .billsPokemonLoop
 .cancel
-	ld hl, wStatusFlags5
-	res BIT_NO_TEXT_DELAY, [hl]
+	call EnableTextDelay
 	call LoadScreenTilesFromBuffer2
 	rst TextScriptEnd
 .favoritePokemon:

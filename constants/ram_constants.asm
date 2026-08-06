@@ -119,7 +119,7 @@ DEF BOX_NUM_MASK EQU %01111111
 	const BIT_UNKNOWN_5_1             ; 1
 	const BIT_UNKNOWN_5_2             ; 2
 	const_skip                        ; 3 ; unused
-	const BIT_UNKNOWN_5_4             ; 4
+	const_skip                        ; 4 ; unused but used to be BIT_UNKNOWN_5_4
 	const BIT_DISABLE_JOYPAD          ; 5
 	const BIT_NO_TEXT_DELAY           ; 6
 	const BIT_SCRIPTED_MOVEMENT_STATE ; 7 

@@ -339,8 +339,7 @@ CheckReassignFloodLavaWarp:
 CheckShowSurfableRhydon:
 	CheckEvent EVENT_SURFING_ON_RHYDON
 	ret z
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_MOVEMENT_STATE, a
+	call IsPlayerAutoMoving
 	ret nz
 	ld a, [wYCoord]
 	cp 57
@@ -357,8 +356,7 @@ CheckForceSurfDirection::
 	ld a, [wWalkBikeSurfState]
 	cp SURFING
 	ret nz
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_MOVEMENT_STATE, a
+	call IsPlayerAutoMoving
 	ret nz
 	lda_coord 8, 9 ; tile below player
 	cp $24 ; down flowing lava
@@ -1586,30 +1584,26 @@ CheckWaitForVolcanoSpriteWalk:
 	call .doneWalkReset
 	jpfar AnimateBoulderDust
 .normalWalk
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_NPC_MOVEMENT, a
+	call IsNPCAutoMoving
 	ret nz
-	bit BIT_SCRIPTED_MOVEMENT_STATE, a
+	bit BIT_SCRIPTED_MOVEMENT_STATE, a ; wStatusFlags5 still loaded from IsNPCAutoMoving
 	ret nz
 	jr .doneWalkReset
 .easternWall
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_MOVEMENT_STATE, a
+	call IsPlayerAutoMoving
 	ret nz
 	call .doneWalkReset
 	jp VolcanoBlowWallOpen
 .blaineWalksOut
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_NPC_MOVEMENT, a
+	call IsNPCAutoMoving
 	ret nz
 	call .doneWalkReset
 	ld c, TOGGLE_VOLCANO_BLAINE
 	jp HideExtraObject
 .entranceMovement
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_NPC_MOVEMENT, a
+	call IsNPCAutoMoving
 	ret nz
-	bit BIT_SCRIPTED_MOVEMENT_STATE, a
+	bit BIT_SCRIPTED_MOVEMENT_STATE, a ; wStatusFlags5 still loaded from IsNPCAutoMoving
 	ret nz
 	call .doneWalkReset
 	ld a, [wYCoord]

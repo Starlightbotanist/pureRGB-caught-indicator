@@ -183,8 +183,7 @@ SilphCo11FGiovanniAfterBattleScript:
 	jr SilphCo11FResetCurScript
 
 SilphCo11FGiovanniBattleFacingScript:
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_NPC_MOVEMENT, a
+	call IsNPCAutoMoving
 	ret nz
 	ld a, SILPHCO11F_GIOVANNI
 	ldh [hSpriteIndex], a

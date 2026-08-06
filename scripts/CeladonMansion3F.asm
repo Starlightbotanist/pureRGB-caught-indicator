@@ -33,23 +33,27 @@ CeladonMansion3FGameDesignerText:
 	cp NUM_POKEMON - 2 ; PureRGBnote: CHANGED: discount Mew and Missingno when checking for if the player has caught everything
 	ld hl, .CompletedDexText
 	jr nc, .printDone
-	ld hl, .Text
+	ld hl, .DefaultText
 .printDone
 	rst _PrintText
 	rst TextScriptEnd
-
-.Text:
-	text_far _CeladonMansion3FGameDesignerText
-	text_end
 
 .CompletedDexText:
 	text_far _CeladonMansion3FGameDesignerCompletedDexText
 	text_promptbutton
 	text_asm
+	call ClearTextBox
 	callfar DisplayDiploma
-	ld a, TRUE
-	ld [wDoNotWaitForButtonPressAfterDisplayingText], a
-	rst TextScriptEnd
+	ld hl, .congrats
+	jr .printDone
+
+.DefaultText:
+	text_far _CeladonMansion3FGameDesignerText
+	text_end
+
+.congrats
+	text_far _CeladonMansion3FGameDesignerCongratsText
+	text_end
 
 CeladonMansion3FGameProgramPCText:
 	text_far _CeladonMansion3FGameProgramPCText

@@ -48,8 +48,7 @@ BikeShopClerkText:
 	bit B_PAD_B, a
 	; BUG: text stays with no delay if you cancel here.
 	jr nz, .cancel
-	ld hl, wStatusFlags5
-	res BIT_NO_TEXT_DELAY, [hl]
+	call EnableTextDelay
 	ld a, [wCurrentMenuItem]
 	and a
 	jr nz, .cancel
@@ -72,8 +71,7 @@ BikeShopClerkText:
 	ld [wTopMenuItemY], a
 	ld a, $1
 	ld [wTopMenuItemX], a
-	ld hl, wStatusFlags5
-	set BIT_NO_TEXT_DELAY, [hl]
+	call DisableTextDelay
 	hlcoord 0, 0
 	lb bc, 4, 15
 	call TextBoxBorderUpdateSprites

@@ -1893,3 +1893,8 @@ _SaveFileUpdateWarpText::
 	cont "to a new version."
 	para "Warp to PALLET?"
 	done
+
+_MimicNoPointText::
+	text "No point in"
+	line "mimicking MIMIC!"
+	prompt

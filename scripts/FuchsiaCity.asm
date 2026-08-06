@@ -18,8 +18,7 @@ FuchsiaCityDefaultScript:
 	CheckEventHL EVENT_ERIK_LEAVING
 	ret z
 	call DisableAllJoypad
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_NPC_MOVEMENT, a
+	call IsNPCAutoMoving
 	ret nz
 	ResetEventReuseHL EVENT_ERIK_LEAVING
 	call EnableAllJoypad

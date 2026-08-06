@@ -451,14 +451,12 @@ TownMapCoordsToOAMCoords:
 	srl a
 	add 24
 	ld b, a
-	ld [hli], a
 	pop af
 	and $f
 	swap a
 	srl a
 	add 24
 	ld c, a
-	ld [hli], a
 	ret
 
 WritePlayerOrBirdSpriteOAM:

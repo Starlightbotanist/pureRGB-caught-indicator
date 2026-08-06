@@ -100,8 +100,7 @@ GameCornerMovement_Rocket_WalkDirect:
 	db -1 ; end
 
 GameCornerRocketExitScript:
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_NPC_MOVEMENT, a
+	call IsNPCAutoMoving
 	ret nz
 	call EnableAllJoypad
 	ld c, TOGGLE_GAME_CORNER_ROCKET
@@ -544,8 +543,7 @@ GameCornerOopsForgotCoinCaseText:
 	text_end
 
 GameCornerDrawCoinBox:
-	ld hl, wStatusFlags5
-	set BIT_NO_TEXT_DELAY, [hl]
+	call DisableTextDelay
 	hlcoord 11, 0
 	lb bc, 5, 7
 	call TextBoxBorderUpdateSprites
@@ -570,9 +568,7 @@ GameCornerDrawCoinBox:
 	ld de, wPlayerCoins
 	ld c, 2 | LEADING_ZEROES
 	call PrintBCDNumber
-	ld hl, wStatusFlags5
-	res BIT_NO_TEXT_DELAY, [hl]
-	ret
+	jp EnableTextDelay
 .clearLine
 	lb bc, 1, 7
 	jp ClearScreenArea

@@ -51,8 +51,7 @@ MovementNpcToLeft:
 	db -1 ; end
 
 CinnabarGymGetOpponentTextScript:
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_NPC_MOVEMENT, a
+	call IsNPCAutoMoving
 	ret nz
 	call EnableAllJoypad
 	ld a, [wOpponentAfterWrongAnswer]

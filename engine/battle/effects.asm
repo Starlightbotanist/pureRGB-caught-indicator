@@ -1422,6 +1422,24 @@ MimicEffect:
 	ld a, [wMoveMissed]
 	and a
 	jp nz, MimicMissed
+;;;;;;; PureRGBnote: FIXED: check if opponent ONLY has Mimic in their moves. If so we will make the user's MIMIC fail. Avoids looping MIMIC.
+	ldh a, [hWhoseTurn]
+	and a
+	ld hl, wBattleMonMoves
+	jr nz, .gotTurn1
+	ld hl, wEnemyMonMoves
+.gotTurn1
+	ld b, NUM_MOVES
+.loopCheckMovesOtherThanMimic
+	ld a, [hli]
+	dec b
+	jp z, MimicMissed ; opponent has no moves other than MIMIC, make MIMIC fail.
+	cp MIMIC
+	jr z, .loopCheckMovesOtherThanMimic
+	cp NO_MOVE
+	jr z, .loopCheckMovesOtherThanMimic
+	; otherwise continue
+;;;;;;;
 	ldh a, [hWhoseTurn]
 	and a
 	ld hl, wBattleMonMoves
@@ -1434,7 +1452,7 @@ MimicEffect:
 	ld a, [wEnemyBattleStatus1]
 .enemyTurn
 	bit INVULNERABLE, a
-	jr nz, MimicMissed
+	jp nz, MimicMissed
 .getRandomMove
 	push hl
 	call BattleRandom
@@ -1446,6 +1464,9 @@ MimicEffect:
 	pop hl
 	and a
 	jr z, .getRandomMove
+	; if we reached here the opponent has has moves other than MIMIC.
+	cp MIMIC
+	jr z, .getRandomMove ; don't allow MIMIC as the chosen random move.
 	ld d, a
 	ldh a, [hWhoseTurn]
 	and a
@@ -1459,8 +1480,10 @@ MimicEffect:
 	ld a, [wEnemyBattleStatus1]
 	bit INVULNERABLE, a
 	jr nz, MimicMissed
+	call SaveScreenTilesToBuffer1	; shinpokerednote - need to save the tiles in case the opponent switched before mimic
 	ld a, [wCurrentMenuItem]
 	push af
+.loopSelect
 	ld a, $1
 	ld [wMoveMenuType], a
 	call MoveSelectionMenu
@@ -1470,7 +1493,15 @@ MimicEffect:
 	ld c, a
 	ld b, $0
 	add hl, bc
-	ld d, [hl]
+	ld a, [hl]
+	ld d, a
+	cp MIMIC
+	jr nz, .notMimickingMimic ; PureRGBnote: FIXED: Don't allow MIMIC'ing MIMIC via the player's selection menu.
+	; If we reached this part, they have another move that could be copied instead of MIMIC, so we will re-show the mimic menu.
+	ld hl, MimicNoPointText
+	rst _PrintText
+	jr .loopSelect
+.notMimickingMimic
 	pop af
 	ld hl, wBattleMonMoves
 .playerTurn
@@ -1504,10 +1535,15 @@ ExecuteReplacedMove::
 	jp z, CheckIfPlayerNeedsToChargeUp
 	jp CheckIfEnemyNeedsToChargeUp
 ;;;;;;;;;;
+
 MimicMissed:
 	ld c, 50
 	rst _DelayFrames
 	jp PrintButItFailedText_
+
+MimicNoPointText:
+	text_far _MimicNoPointText
+	text_end
 
 MimicLearnedMoveText:
 	text_far _MimicLearnedMoveText

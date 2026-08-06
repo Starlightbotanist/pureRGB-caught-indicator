@@ -1,7 +1,6 @@
 PewterPokecenter_Script:
 	call SetLastBlackoutMap ; PureRGBnote: ADDED: set blackout map on entering pokemon center
-	call Serial_TryEstablishingExternallyClockedConnection
-	jp EnableAutoTextBoxDrawing
+	jp Serial_TryEstablishingExternallyClockedConnection
 
 PewterPokecenter_TextPointers:
 	def_text_pointers

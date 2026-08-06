@@ -82,8 +82,7 @@ ENDC
 	db -1 ; end
 
 SilphCo7FRivalStartBattleScript:
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_NPC_MOVEMENT, a
+	call IsNPCAutoMoving
 	ret nz
 	; reset rival's sprite behaviour bytes otherwise he can look around weirdly after battle for a moment
 	ld hl, wMapSpriteData + ((SILPHCO7F_RIVAL - 1) * 2)
@@ -161,8 +160,7 @@ SilphCo7FRivalAfterBattleScript:
 	db -1 ; end
 
 SilphCo7FRivalExitScript:
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_NPC_MOVEMENT, a
+	call IsNPCAutoMoving
 	ret nz
 	; PureRGBnote: ADDED: make rival teleport away
 	ld a, SILPHCO7F_RIVAL

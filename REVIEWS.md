@@ -2,6 +2,14 @@
 
 Want to leave a review? Go [here](https://github.com/Vortyne/pureRGB/issues/new?assignees=&labels=review&projects=&template=review.yml&title=%5BReview%5D%3A+Summarize+your+review+here).
 
+### Review by 2jaimz1994 on 2.7.4
+
+What a trip! PureRGB was absolutely fantastic. QoL improvements, Pokemon/stat improvements, move/movepool improvements, access, difficulty (only slightly because of Pokemon improvements), and more! This is everything I imagined Gen 1 should have been, and stayed pretty true to Gen 1 mechanics.
+
+Yes, there are “new” types, like Crystal for ‘Hardened’ Onix, but it’s only after a quest to improve a normal Rock/Ground Onix. But it’s not something every Onix has, or something you have to do. I think the game had to have a new type to help code its improved defensive resistances, but it functions as Rock offensively. He was my absolute favorite here, right in front of the newly reworked Ground/Ghost Marowak. There’s a few others that are equally as awesome, they just couldn’t all work into the team I wanted. I will be trying some of them next time! Onix, Magneton, Magmar, Weezing, and Dragonair all get side quests to improve them in some way.
+
+Highly recommend!!!! 12/10! If you haven’t played it, yet, stop the game you’re playing and try this one out!
+
 ### Review by Sandokhan9 on 2.7.4 - A sublime authentic gen 1 experience
 
 PureRGB perfectly preserves the spirit of gen 1 and improves upon it in every conceivable way. Didn't feel the same way since I played pokemon on GBA 20 years ago.

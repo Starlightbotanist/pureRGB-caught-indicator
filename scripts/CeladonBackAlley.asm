@@ -3,8 +3,7 @@ CeladonBackAlley_Script:
 	ld hl, wCurrentMapScriptFlags
 	bit BIT_MAP_LOADED_AFTER_BATTLE, [hl]
 	jr nz, .afterBattle
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_MOVEMENT_STATE, a
+	call IsPlayerAutoMoving
 	jr nz, .noPositionScripts
 	call IsPlayerBesideCeladonBackAlleyHooligan
 	jr nz, .notBesideClerk

@@ -13,8 +13,7 @@ SSAnneKitchen_Script:
 	CheckEvent EVENT_GENERIC_NPC_WALKING_FLAG
 	ret z
 	call DisableAllJoypad
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_NPC_MOVEMENT, a
+	call IsNPCAutoMoving
 	ret nz
 	ld a, SSANNEKITCHEN_WAITER
 	call GetMapSpriteLocation

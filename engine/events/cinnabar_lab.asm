@@ -1,6 +1,5 @@
 GiveFossilToCinnabarLab::
-	ld hl, wStatusFlags5
-	set BIT_NO_TEXT_DELAY, [hl]
+	call DisableTextDelay
 	xor a
 	ld [wCurrentMenuItem], a
 	ld a, PAD_A | PAD_B
@@ -23,8 +22,7 @@ GiveFossilToCinnabarLab::
 	hlcoord 0, 0
 	call TextBoxBorderUpdateSprites
 	call PrintFossilsInBag
-	ld hl, wStatusFlags5
-	res BIT_NO_TEXT_DELAY, [hl]
+	call EnableTextDelay
 	call HandleMenuInput
 	bit B_PAD_B, a
 	jr nz, .cancelledGivingFossil

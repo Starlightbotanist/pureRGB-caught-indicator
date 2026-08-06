@@ -105,8 +105,7 @@ ViridianSchoolBlackboard::
 .blackboardLoop
 	xor a
 	ldh [hAutoBGTransferEnabled], a
-	ld hl, wStatusFlags5
-	set BIT_NO_TEXT_DELAY, [hl]
+	call DisableTextDelay
 	hlcoord 0, 0
 	lb bc, 6, 10
 	call TextBoxBorder
@@ -140,6 +139,7 @@ ViridianSchoolBlackboard::
 	ld [wMenuItemOffset], a
 	jr .blackboardLoop
 .didNotPressLeftOrRight
+	call EnableTextDelay
 	ld a, [wCurrentMenuItem]
 	ld b, a
 	ld a, [wMenuItemOffset]
@@ -148,16 +148,12 @@ ViridianSchoolBlackboard::
 	jr z, .exitBlackboard
 	; we must have pressed a on a status condition
 	; so print the text
-	ld hl, wStatusFlags5
-	res BIT_NO_TEXT_DELAY, [hl]
 	ld hl, ViridianStatusTextData
 	ld bc, 5
 	call AddNTimes
 	rst _PrintText
 	jr .blackboardLoop
 .exitBlackboard
-	ld hl, wStatusFlags5
-	res BIT_NO_TEXT_DELAY, [hl]
 	call LoadScreenTilesFromBuffer1
 	jp TextScriptEndNoButtonPress
 .loadDefaultMenuData

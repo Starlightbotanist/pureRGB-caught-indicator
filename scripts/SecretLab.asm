@@ -130,8 +130,7 @@ CheckOpponentWalkIn:
 	call .playEncounterMusic
 	jr .done
 .walkUpToChief
-	ld hl, wStatusFlags5
-	set BIT_SCRIPTED_MOVEMENT_STATE, [hl]
+	call SetPlayerAutoMoving
 	ld a, 3
 	ld [wSimulatedJoypadStatesIndex], a
 	ld a, PAD_UP
@@ -171,10 +170,9 @@ CheckOpponentWalkIn:
 	jp PlayMusic
 
 WaitForWalkFinish:
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_NPC_MOVEMENT, a
+	call IsNPCAutoMoving
 	ret nz
-	bit BIT_SCRIPTED_MOVEMENT_STATE, a
+	bit BIT_SCRIPTED_MOVEMENT_STATE, a ; wStatusFlags5 still loaded from IsNPCAutoMoving
 	ret nz
 	ResetEvent EVENT_SECRET_LAB_NPC_WALK_IN_HAPPENING
 	call EnableAllJoypad
@@ -423,8 +421,7 @@ CheckPasswordCorrect:
 	call StopAllMusic
 	ld a, SFX_SWITCH
 	rst _PlaySound
-	ld hl, wStatusFlags5
-	set BIT_SCRIPTED_MOVEMENT_STATE, [hl]
+	call SetPlayerAutoMoving
 	ld hl, PlayerMoveToDoor
 	ld de, wSimulatedJoypadStatesEnd
 	ld bc, 4
@@ -473,8 +470,7 @@ NotePassword:
 CheckWalkingToDoor:
 	CheckEvent EVENT_SECRET_LAB_WALKING_IN_FRONT_OF_DOOR
 	ret z
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_MOVEMENT_STATE, a
+	call IsPlayerAutoMoving
 	ret nz
 	ResetEvent EVENT_SECRET_LAB_WALKING_IN_FRONT_OF_DOOR
 	ld a, PLAYER_DIR_UP
@@ -560,8 +556,7 @@ ToggleMachineDoorQuick:
 CheckMewtwoTransform:
 	CheckEvent EVENT_STARTED_MEWTWO_TRANSFORMATION
 	ret z
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_MOVEMENT_STATE, a
+	call IsPlayerAutoMoving
 	ret nz
 	ResetEvent EVENT_STARTED_MEWTWO_TRANSFORMATION
 	ld a, PLAYER_DIR_UP
@@ -830,8 +825,7 @@ SecretLabMewtwoMachineText:
 	rst _CopyData
 	ld a, 5
 	ld [wSimulatedJoypadStatesIndex], a
-	ld hl, wStatusFlags5
-	set BIT_SCRIPTED_MOVEMENT_STATE, [hl]
+	call SetPlayerAutoMoving
 	ld a, [wXCoord]
 	cp 7
 	jr nz, .startTransform

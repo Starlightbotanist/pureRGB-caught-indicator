@@ -82,8 +82,7 @@ Route22FirstRivalBattleScript:
 	ret
 
 Route22Rival1StartBattleScript:
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_NPC_MOVEMENT, a
+	call IsNPCAutoMoving
 	ret nz
 	; reset rival's sprite behaviour bytes otherwise he can look around weirdly after battle for a moment
 	ld hl, wMapSpriteData + ((ROUTE22_RIVAL1 - 1) * 2)
@@ -193,8 +192,7 @@ Route22Rival1ExitMovementData2:
 	db -1 ; end
 
 Route22Rival1ExitScript:
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_NPC_MOVEMENT, a
+	call IsNPCAutoMoving
 	ret nz
 	call EnableAllJoypad
 	ld c, TOGGLE_ROUTE_22_RIVAL_1
@@ -230,8 +228,7 @@ Route22SecondRivalBattleScript:
 	ret
 
 Route22Rival2StartBattleScript:
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_NPC_MOVEMENT, a
+	call IsNPCAutoMoving
 	ret nz
 	; reset rival's sprite behaviour bytes otherwise he can look around weirdly after battle for a moment
 	ld hl, wMapSpriteData + ((ROUTE22_RIVAL2 - 1) * 2)
@@ -332,8 +329,7 @@ Route22Rival2ExitMovementData2:
 	db -1 ; end
 
 Route22Rival2ExitScript:
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_NPC_MOVEMENT, a
+	call IsNPCAutoMoving
 	ret nz
 	call EnableAllJoypad
 	ld c, TOGGLE_ROUTE_22_RIVAL_2

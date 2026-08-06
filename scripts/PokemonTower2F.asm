@@ -94,8 +94,7 @@ ENDC
 	ret
 
 PokemonTower2FPlayerMovingScript:
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_MOVEMENT_STATE, a
+	call IsPlayerAutoMoving
 	ret nz
 	ld a, [wXCoord]
 	cp 5
@@ -152,8 +151,7 @@ PokemonTower2FDefeatedRivalScript:
 	jr PokemonTower2FLoadMapScript
 
 PokemonTower2FRivalExitsScript:
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_NPC_MOVEMENT, a
+	call IsNPCAutoMoving
 	ret nz
 	ld c, TOGGLE_POKEMON_TOWER_2F_RIVAL
 	call HideObject

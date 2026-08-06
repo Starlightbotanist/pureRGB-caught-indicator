@@ -2,6 +2,14 @@
 ;                     the ability to do this is unlocked by donating to the nurse at rock tunnel pokecenter.
 
 DisplayPokemonCenterDialogue_::
+	CheckEvent EVENT_NURSE_TEXT_LOOP_BLOCKER
+	jr z, .normalText
+	ld c, 14 ; number of frames for the nurse to bow (faster than usual)
+	call .nurseBows
+	ld a, 1
+	ld [wDoNotWaitForButtonPressAfterDisplayingText], a
+	jp UpdateSprites
+.normalText
 	call SaveScreenTilesToBuffer1 ; save screen
 	ldh a, [hJoyHeld]
 	bit B_PAD_B, a
@@ -49,6 +57,7 @@ DisplayPokemonCenterDialogue_::
 	call Delay3
 	predef HealParty
 	farcall AnimateHealingMachine ; do the healing machine animation
+	SetEvent EVENT_NURSE_TEXT_LOOP_BLOCKER
 	xor a
 	ld [wAudioFadeOutControl], a
 	ld a, [wAudioSavedROMBank]
@@ -65,10 +74,8 @@ DisplayPokemonCenterDialogue_::
 	ld hl, PokemonFightingFitText
 	rst _PrintText
 .skipFightingFit
-	ld a, $14
-	ld [wSprite01StateData1ImageIndex], a ; make the nurse bow
-	ld c, a
-	rst _DelayFrames
+	ld c, $14 ; length of nurse bowing in frames
+	call .nurseBows
 	CheckEvent EVENT_BECAME_CHAMP
 	jr z, .notChamp
 	callfar RandomPartyPokemon
@@ -96,6 +103,11 @@ DisplayPokemonCenterDialogue_::
 	xor a
 	ld [wUnusedC000], a
 	jp UpdateSprites
+.nurseBows
+	ld a, $14
+	ld [wSprite01StateData1ImageIndex], a ; make the nurse bow
+	rst _DelayFrames
+	ret
 
 PokemonCenterWelcomeText:
 	text_far _PokemonCenterWelcomeText
