@@ -24,6 +24,7 @@ _SilphCo11FSilphPresidentReceivedMasterBallText::
 	line "@"
 	text_ram_stringbuffer
 	text "!@"
+	sound_get_key_item
 	text_end
 
 _SilphCo11FSilphPresidentMasterBallDescriptionText::
@@ -75,7 +76,7 @@ _SilphCo11FGiovanniText::
 	line "world of pain!"
 	done
 
-_SilphCo10FGiovanniILostAgainText::
+_SilphCo11FGiovanniILostAgainText::
 	text "Arrgh!!"
 	line "I lost again!?"
 	prompt

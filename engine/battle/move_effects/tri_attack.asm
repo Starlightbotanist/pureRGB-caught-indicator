@@ -28,9 +28,7 @@ TriAttackEffect_:
 
 	set BRN, [hl]
 	callfar HalveAttackDueToBurn
-	call GetStatusAnimation
-	ld [wAnimationID], a
-	callfar PlayBattleAnimationGotID
+	call .getAnim
 	jpfar PrintBurnText
 .freeze
 	ld a, b
@@ -43,9 +41,7 @@ TriAttackEffect_:
 
 	set FRZ, [hl]
 	callfar ClearHyperBeam
-	call GetStatusAnimation
-	ld [wAnimationID], a
-	callfar PlayBattleAnimationGotID
+	call .getAnim
 	jpfar PrintFrozenText
 .paralyze
 	ld a, b
@@ -58,10 +54,14 @@ TriAttackEffect_:
 
 	set PAR, [hl]
 	callfar QuarterSpeedDueToParalysis
+	call .getAnim
+	jpfar PrintMayNotAttackText
+.getAnim
 	call GetStatusAnimation
 	ld [wAnimationID], a
 	callfar PlayBattleAnimationGotID
-	jpfar PrintMayNotAttackText
+	ret
+
 
 GetStatusAnimation:
 	ldh a, [hWhoseTurn]

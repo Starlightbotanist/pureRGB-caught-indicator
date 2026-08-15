@@ -29,11 +29,11 @@ DisplayWorldOptions::
 	ld de, PokedexPromptGraphics
 	ld hl, vChars1 tile $43
 	lb bc, BANK(PokedexPromptGraphics), 3
-	call CopyVideoData
+	call CopyVideoDataHBlank
 	ld de, InfoPromptGraphics
 	ld hl, vChars1 tile $46
 	lb bc, BANK(InfoPromptGraphics), 2
-	call CopyVideoData
+	call CopyVideoDataHBlank
 	ld hl, WorldOptionsHeader
 	ld bc, WorldOptionsData
 	jp DisplayOptionMenuCommon
@@ -100,17 +100,13 @@ WorldOptionsInfoTextJumpTable:
 	dw MoveMysticInfoText
 
 VolcanoInfoText:
-	text_far _VolcanoInfoText
-	text_end
+	text_far_end _VolcanoInfoText
 
 CatchupInfoText:
-	text_far _CatchupInfoText
-	text_end
+	text_far_end _CatchupInfoText
 
 BallDesignerInfoText:
-	text_far _BallDesignerInfoText
-	text_end
+	text_far_end _BallDesignerInfoText
 
 MoveMysticInfoText:
-	text_far _MoveMysticInfoText
-	text_end
+	text_far_end _MoveMysticInfoText

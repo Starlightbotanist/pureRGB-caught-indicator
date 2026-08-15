@@ -22,8 +22,7 @@ UsedCut::
 	jp PrintText
 
 .NothingToCutText
-	text_far _NothingToCutText
-	text_end
+	text_far_end _NothingToCutText
 
 .canCut
 	ld [wCutTile], a
@@ -42,7 +41,7 @@ UsedCut::
 	call RestoreScreenTilesAndReloadTilePatterns
 	ld a, SCREEN_HEIGHT_PX
 	ldh [hWY], a
-	call Delay3
+	call Delay3IfNotGBC
 	call LoadGBPal
 	call LoadCurrentMapView
 	call SaveScreenTilesToBuffer2
@@ -68,8 +67,7 @@ UsedCut::
 	jp RedrawMapView
 
 UsedCutText:
-	text_far _UsedCutText
-	text_end
+	text_far_end _UsedCutText
 
 InitCutAnimOAM:
 	xor a
@@ -84,11 +82,11 @@ InitCutAnimOAM:
 	ld de, Overworld_GFX tile $2d ; cuttable tree sprite top row
 	ld hl, vChars1 tile $7c
 	lb bc, BANK(Overworld_GFX), 2
-	call CopyVideoData
+	call CopyVideoDataHBlank
 	ld de, Overworld_GFX tile $3d ; cuttable tree sprite bottom row
 	ld hl, vChars1 tile $7e
 	lb bc, BANK(Overworld_GFX), 2
-	call CopyVideoData
+	call CopyVideoDataHBlank
 	jr WriteCutOrBoulderDustAnimationOAMBlock
 .grass
 	ld hl, vChars1 tile $7c
@@ -115,7 +113,7 @@ InitCutAnimOAM:
 LoadCutGrassAnimationTilePattern:
 	ld de, MoveAnimationTiles1 tile 6 ; tile depicting a leaf
 	lb bc, BANK(MoveAnimationTiles1), 1
-	jp CopyVideoData
+	jp CopyVideoDataHBlank
 
 WriteCutOrBoulderDustAnimationOAMBlock:
 	call GetCutOrBoulderDustAnimationOffsets

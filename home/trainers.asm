@@ -1,12 +1,19 @@
 ; PureRGBnote: MOVED: a bunch of code was moved from this file to other banks or commented out since it was unused.
 ; TODO: probably stuff in here that can be moved to another bank
-
-; stores hl in [wTrainerHeaderPtr]
 StoreTrainerHeaderPointer::
 	ld a, h
 	ld [wTrainerHeaderPtr], a
 	ld a, l
 	ld [wTrainerHeaderPtr+1], a
+	ret
+
+; Same as below, but accepts a custom wram map script tracker in bc
+ExecuteCustomMapScriptInTable::
+	call EnableAutoTextBoxDrawing
+ExecuteCustomMapScriptInTableOnly::
+	ld a, [bc]
+	call ExecuteCurMapScriptInTable
+	ld [bc], a
 	ret
 
 ; executes the current map script from the function pointer array provided in de.
@@ -22,7 +29,7 @@ ExecuteCurMapScriptInTable::
 	ld hl, wStatusFlags7
 	bit BIT_USE_CUR_MAP_SCRIPT, [hl]
 	res BIT_USE_CUR_MAP_SCRIPT, [hl]
-	jr z, .useProvidedIndex ; test if map script index was overridden manually
+	jr z, .useProvidedIndex
 	ld a, [wCurMapScript]
 .useProvidedIndex
 	pop hl
@@ -33,82 +40,64 @@ ExecuteCurMapScriptInTable::
 
 ; reads specific information from trainer header (pointed to at wTrainerHeaderPtr)
 ; a: offset in header data
-;    0 -> flag's bit (into wTrainerHeaderFlagBit)
-;    2 -> flag's byte ptr (into hl)
-;    4 -> before battle text (into hl)
-;    6 -> after battle text (into hl)
-;    8 -> end battle text (into hl)
 ReadTrainerHeaderInfo::
+	ld hl, wTrainerHeaderPtr
 	push de
 	push af
-	ld d, $0
+	ld d, 0
 	ld e, a
-	ld hl, wTrainerHeaderPtr
 	ld a, [hli]
 	ld l, [hl]
 	ld h, a
 	add hl, de
 	pop af
 	and a
+	pop de
 	jr nz, .nonZeroOffset
 	ld a, [hl]
-	ld [wTrainerHeaderFlagBit], a  ; store flag's bit
-	jr .done
-.nonZeroOffset
-	cp $2
-	jr z, .readPointer ; read flag's byte ptr
-	cp $4
-	jr z, .readPointer ; read before battle text
-	cp $6
-	jr z, .readPointer ; read after battle text
-	cp $8
-	jr nz, .done 
-;   jr z, .readPointer
-;	cp $a
-;	jr nz, .done
-;	ld a, [hli]        ; read end battle text (2) but override the result afterwards (XXX why, bug?)
-;	ld d, [hl]
-;	ld e, a
-;	jr .done
-.readPointer ; read end battle text
-	call GetAddressFromPointer
-.done
-	pop de
+	ld [wTrainerHeaderFlagBit], a
 	ret
+.nonZeroOffset
+	cp TRAINER_EVENT_FLAG_POINTER
+	jp z, GetAddressFromPointer
+	cp TRAINER_END_BATTLE_TEXT_BANK
+	ret z
+PrintBankedTrainerText::
+	; print the text immediately otherwise for Start or After battle texts
+	ld a, [hLoadedROMBank]
+	push af
+	call GetBankedTrainerTextPointer
+	call SetCurBank
+	rst _PrintText
+	pop af
+	jp SetCurBank
 
-; PureRGBnote: CHANGED: this function was optimized a bit.
+; PureRGBnote: CHANGED: this function was optimized a bit and now has banks stored for the trainer text entries
 TalkToTrainer::
 	call StoreTrainerHeaderPointer
-	xor a
+	xor a ; TRAINER_EVENT_FLAG_BIT
 	call ReadTrainerHeaderInfo     ; read flag's bit
 	call TrainerFlagActionTest      ; read trainer's flag
 	ld a, c
 	and a
 	jr z, .trainerNotYetFought     ; test trainer's flag
-	ld a, $6
-	call ReadTrainerHeaderInfo     ; print after battle text
-	rst _PrintText
-	ret
+	ld a, TRAINER_AFTER_BATTLE_TEXT_BANK
+	jp ReadTrainerHeaderInfo     ; print after battle text
 .trainerNotYetFought
-	ld a, $4
+	ld a, TRAINER_BEFORE_BATTLE_TEXT_BANK
 	call ReadTrainerHeaderInfo     ; print before battle text
-	rst _PrintText
-	;ld a, $a
-	;call ReadTrainerHeaderInfo     ; (?) does nothing apparently (maybe bug in ReadTrainerHeaderInfo)
-	push de
-	ld a, $8
+	ld a, TRAINER_END_BATTLE_TEXT_BANK
 	call ReadTrainerHeaderInfo     ; read end battle text
-	pop de
-	call SaveEndBattleTextPointers
+	call SaveBankedEndBattleTextPointers
 	ld hl, wStatusFlags7
 	set BIT_USE_CUR_MAP_SCRIPT, [hl] ; activate map script index override (index is set below)
 	ld hl, wMiscFlags
-	bit BIT_SEEN_BY_TRAINER, [hl]  ; test if player is already engaging the trainer (because the trainer saw the player)
+	bit BIT_SEEN_BY_TRAINER, [hl]
 	ret nz
-; if the player talked to the trainer of his own volition
+; if the player talked to the trainer of their own volition
 	call EngageMapTrainer
 	ld hl, wCurMapScript
-	inc [hl]      ; increment map script index before StartTrainerBattle increments it again (next script function is usually EndTrainerBattle)
+	inc [hl] ; increment map script index before StartTrainerBattle increments it again (next script function is usually EndTrainerBattle)
 	jp StartTrainerBattle
 
 ; checks if any trainers are seeing the player and wanting to fight
@@ -172,12 +161,12 @@ EndTrainerBattle::
 	ld hl, wStatusFlags3
 	res BIT_PRINT_END_BATTLE_TEXT, [hl]
 	ld hl, wMiscFlags
-	res BIT_SEEN_BY_TRAINER, [hl] ; player is no longer engaged by any trainer
+	res BIT_SEEN_BY_TRAINER, [hl]
 	ld a, [wIsInBattle]
 	cp $ff
 	jr z, ResetButtonPressedAndMapScript
 	ld b, FLAG_SET
-	call TrainerFlagAction   ; flag trainer as fought
+	call TrainerFlagAction ; flag trainer as fought
 	ld a, [wEnemyMonOrTrainerClass]
 	cp OPP_ID_OFFSET
 	jr nc, .skipRemoveSprite    ; test if trainer was fought (in that case skip removing the corresponding sprite)
@@ -188,7 +177,7 @@ EndTrainerBattle::
 	ld a, [wSpriteIndex]
 	call IsInArray ; search for sprite ID
 	inc hl
-	ld c, [hl] ; load corresponding toggleable object index and remove it
+	ld c, [hl]
 	call HideObject
 .skipRemoveSprite
 	; PureRGBnote: REMOVED: was this needed??? 
@@ -203,14 +192,13 @@ ResetButtonPressedAndMapScript::
 	ldh [hJoyHeld], a
 	ldh [hJoyPressed], a
 	ldh [hJoyReleased], a
-	ld [wCurMapScript], a               ; reset battle status
+	ld [wCurMapScript], a
 	ret
 
-; calls TrainerWalkUpToPlayer
 TrainerWalkUpToPlayer_Bank0::
 	farjp TrainerWalkUpToPlayer
 
-; sets opponent type and mon set/lvl based on the engaging trainer data
+; sets opponent trainer class and party level based on the engaging trainer data
 InitBattleEnemyParameters::
 	ld a, [wEngagedTrainerClass]
 	ld [wCurOpponent], a
@@ -244,28 +232,28 @@ SpritePositionBankswitch::
 	ret
 
 CheckForEngagingTrainers::
-	xor a
+	xor a ; TRAINER_EVENT_FLAG_BIT
 	call ReadTrainerHeaderInfo       ; read trainer flag's bit (unused)
-	ld d, h                          ; store trainer header address in de
+	ld d, h                          
 	ld e, l
 .trainerLoop
-	call StoreTrainerHeaderPointer   ; set trainer header pointer to current trainer
+	call StoreTrainerHeaderPointer
 	ld a, [de]
-	ld [wSpriteIndex], a             ; store trainer flag's bit
+	ld [wSpriteIndex], a
 	ld [wTrainerHeaderFlagBit], a
 	cp -1
 	ret z
-	call TrainerFlagActionTest        ; read trainer flag
+	call TrainerFlagActionTest
 	ld a, c
 	and a ; has the trainer already been defeated?
 	jr nz, .continue
 	push hl
 	push de
 	push hl
-	xor a
-	call ReadTrainerHeaderInfo       ; get trainer header pointer
+	xor a ; TRAINER_EVENT_FLAG_BIT
+	call ReadTrainerHeaderInfo
 	inc hl
-	ld a, [hl]                       ; read trainer engage distance
+	ld a, [hl]
 	pop hl
 	ld [wTrainerEngageDistance], a
 	ld a, [wSpriteIndex]
@@ -278,16 +266,30 @@ CheckForEngagingTrainers::
 	and a
 	ret nz ; break if the trainer is engaging
 .continue
-	ld hl, $c
+	ld hl, TRAINER_STRUCT_SIZE
 	add hl, de
 	ld d, h
 	ld e, l
 	jr .trainerLoop
 
+GetBankedTrainerTextPointer:
+	ld a, [hli]
+	push af
+	hl_deref
+	pop af
+	ret
+
+; for all basic trainers, loss text = end battle text, they never print loss text anyway
+SaveBankedEndBattleTextPointers:
+	call GetBankedTrainerTextPointer
+	ld d, h
+	ld e, l
+	jr SaveEndBattleTextPointersCommon
 ; hl = text if the player wins
 ; de = text if the player loses
 SaveEndBattleTextPointers::
-	ldh a, [hLoadedROMBank]
+	ld a, [hLoadedROMBank]
+SaveEndBattleTextPointersCommon::
 	ld [wEndBattleTextRomBank], a
 	ld a, h
 	ld [wEndBattleWinTextPointer], a
@@ -303,15 +305,15 @@ SaveEndBattleTextPointers::
 ; [wSpriteIndex]: sprite ID of trainer who is engaged
 EngageMapTrainer::
 	ld hl, wMapSpriteExtraData
-	ld d, $0
+	ld d, 0
 	ld a, [wSpriteIndex]
 	dec a
 	add a
 	ld e, a
-	add hl, de     ; seek to engaged trainer data
-	ld a, [hli]    ; load trainer class
+	add hl, de
+	ld a, [hli]
 	ld [wEngagedTrainerClass], a
-	ld a, [hl]     ; load trainer mon set
+	ld a, [hl]
 	ld [wEngagedTrainerSet], a
 	jpfar PlayTrainerMusic ; PureRGBnote: MOVED: playtrainermusic was moved to another bank
 
@@ -357,7 +359,7 @@ TrainerFlagActionTest::
 	ld b, FLAG_TEST
 	; fall through
 TrainerFlagAction::
-	ld a, $2
+	ld a, TRAINER_EVENT_FLAG_POINTER
 	call ReadTrainerHeaderInfo     ; read flag's byte ptr (does not change b register)
 	ld a, [wTrainerHeaderFlagBit]
 	ld c, a

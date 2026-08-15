@@ -53,6 +53,7 @@ _OaksLabReceivedMonText::
 	line "a @"
 	text_ram_namebuffer
 	text "!@"
+	sound_get_key_item
 	text_end
 
 _OaksLabLastMonText::
@@ -102,6 +103,7 @@ _OaksLabOak1DeliverParcelText::
 
 _OaksLabOak1ParcelThanksText::
 	text_start
+
 	para "Ah! This is the"
 	line "custom # BALL"
 	cont "I ordered!"
@@ -131,6 +133,7 @@ _OaksLabOak1ReceivedPokeballsText::
 
 _OaksLabGivePokeballsExplanationText::
 	text_start
+
 	para "When a wild"
 	line "#MON appears,"
 	cont "it's fair game."
@@ -245,6 +248,7 @@ _OaksLabRivalReceivedMonText::
 	line "a @"
 	text_ram_namebuffer
 	text "!@"
+	sound_get_key_item
 	text_end
 
 _OaksLabRivalIllTakeYouOnText::
@@ -315,6 +319,7 @@ _OaksLabOakGotPokedexText::
 
 	para "<PLAYER> got"
 	line "#DEX from OAK!@"
+	sound_get_key_item
 	text_end
 
 _OaksLabOakThatWasMyDreamText::

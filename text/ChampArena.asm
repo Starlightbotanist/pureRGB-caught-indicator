@@ -518,7 +518,10 @@ _ChampArenaAssistantDefeatedAllTrainers::
 	text "Wow! <PLAYER>"
 	line "has defeated all"
 	cont "challengers!"
-	para "Congratulations!@"
+	para "@"
+	text_far _GenericCongratulationsText
+	sound_get_item_2
+	text_promptbutton
 	text_end
 
 _ChampArenaAssistantCallInChallengers::

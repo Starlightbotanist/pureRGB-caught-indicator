@@ -79,6 +79,7 @@ _FoundItemText::
 	line "@"
 	text_ram_stringbuffer
 	text "!@"
+	sound_get_item_1
 	text_end
 
 _FoundMultipleItemText::
@@ -88,6 +89,7 @@ _FoundMultipleItemText::
 	text " ×@"
 	text_ram wTempStore1
 	text "!@"
+	sound_get_item_1
 	text_end
 
 _NoMoreRoomForItemText::
@@ -153,8 +155,9 @@ _OaksAideHereYouGoText::
 	text_decimal hOaksAideNumMonsOwned, 1, 3
 	text " kinds"
 	cont "of #MON!"
-	cont "Congratulations!"
-
+	cont "@"
+	text_far _GenericCongratulationsText
+	text_start
 	para "Here you go!"
 	prompt
 
@@ -163,6 +166,7 @@ _OaksAideGotItemText::
 	line "@"
 	text_ram wOaksAideRewardItemName
 	text "!@"
+	sound_get_item_1
 	text_end
 
 _OaksAideNoRoomText::

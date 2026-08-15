@@ -69,7 +69,7 @@ VermilionDockSSAnneLeavesScript:
 	xor a
 	ld [wSpritePlayerStateData1ImageIndex], a
 	ld c, 120
-	rst _DelayFrames
+	rst DelayFrames
 	ld b, HIGH(vBGMap1)
 	call CopyScreenTileBufferToVRAM
 	hlcoord 0, 10
@@ -218,7 +218,7 @@ VermilionDock_EraseSSAnne:
 	hlbgcoord 0, 10
 	ld de, wVermilionDockTileMapBuffer
 	lb bc, BANK(wVermilionDockTileMapBuffer), 12
-	call CopyVideoData
+	call CopyVideoDataHBlank
 
 ; Replace the blocks of the lower half of the ship with water blocks. This
 ; leaves the upper half alone, but that doesn't matter because replacing any of
@@ -235,12 +235,12 @@ VermilionDock_EraseSSAnne:
 	ld a, SFX_SS_ANNE_HORN
 	rst _PlaySound
 	ld c, 120
-	rst _DelayFrames
+	rst DelayFrames
 	ret
 
 VermilionDock_TextPointers:
 	def_text_pointers
-	dw_const VermilionDockMewText,      TEXT_VERMILIONDOCK_MEW
+	dba_const VermilionDockMewText,      TEXT_VERMILIONDOCK_MEW
 
 VermilionDockTrainerHeaders:
 	def_trainers
@@ -253,7 +253,7 @@ VermilionDockMewText:
 	ld hl, MewTrainerHeader
 	call TalkToTrainer
 	ld c, 60
-	rst _DelayFrames
+	rst DelayFrames
 	jp TextScriptEndNoButtonPress
 
 MewBattleText:
@@ -271,7 +271,7 @@ MewBattleText:
 	lb bc, BANK(MewBubbleTiles), 4
 	call CopyVideoData
 	ld c, 20
-	rst _DelayFrames
+	rst DelayFrames
 	ld b, BANK(SFX_Battle_24)
 	call MuteAudioAndChangeAudioBank
 	ld a, SFX_BATTLE_24
@@ -293,7 +293,7 @@ MewBattleText:
 	jr z, .adjustOAMCoords
 .continue
 	ld c, 5
-	rst _DelayFrames
+	rst DelayFrames
 	; move down slightly
 	call .mewDifferent
 	ld a, [wXCoord]
@@ -305,7 +305,7 @@ MewBattleText:
 	ld e, 6
 	call .loopMoveMewAndBubble
 	ld c, 20
-	rst _DelayFrames
+	rst DelayFrames
 	; move up into the air
 	ld a, SFX_BATTLE_1C
 	call PlaySoundResetSFXModifiers
@@ -319,7 +319,7 @@ MewBattleText:
 	lb bc, -1, 0
 	call .loopMoveMewAndBubble
 	ld c, 10
-	rst _DelayFrames
+	rst DelayFrames
 	; change player OAM to be the up facing sprite if it isn't already
 	ld a, [wYCoord]
 	cp 20
@@ -342,13 +342,13 @@ MewBattleText:
 	lb bc, 1, 0
 	call .loopMoveMewAndBubble
 	ld c, 10
-	rst _DelayFrames
+	rst DelayFrames
 	call .mewNormal
 	ld e, 4
 	lb bc, -1, 0
 	call .loopMoveMewAndBubble
 	ld c, 40
-	rst _DelayFrames
+	rst DelayFrames
 	call UnmuteAudioAndRestoreAudioBank
 	rst TextScriptEnd
 .adjustOAMCoords
@@ -471,7 +471,7 @@ TruckCheck:
 	ld bc, (Bank(TruckSpriteGFX) << 8) | 8
 	ld hl, vChars1 + $400
 	ld de, TruckSpriteGFX
-	call CopyVideoData
+	call CopyVideoDataHBlank
 	ld hl, TruckOAMTable
 	ld bc, $20
 	ld de, wShadowOAM + $20
@@ -494,7 +494,7 @@ TruckCheck:
 	dec a
 	jr nz, .movingtruck2
 	ld c, 2
-	rst _DelayFrames
+	rst DelayFrames
 	dec b
 	jr nz, .movingtruck
 	ld a, $3
@@ -504,7 +504,7 @@ TruckCheck:
 	callfar AnimateBoulderDust
 	call ShowMew
 	ld c, 20
-	rst _DelayFrames
+	rst DelayFrames
 	call EnableAllJoypad
 	SetEvent EVENT_FOUND_MEW
 	ret
@@ -562,7 +562,7 @@ VermilionDockRedLeftAnimate:
 	ld hl, vSprites tile 8
 	call CopyVideoData
 	ld c, 10
-	rst _DelayFrames
+	rst DelayFrames
 	ld a, [wWalkBikeSurfState]
 	ld de, RedSprite tile 8
 	lb bc, BANK(RedSprite), 4

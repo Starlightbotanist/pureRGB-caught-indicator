@@ -459,7 +459,7 @@ ItemUseBall:
 
 .skipShakeCalculations
 	ld c, 20
-	rst _DelayFrames
+	rst DelayFrames
 
 	; Do the animation.
 	call MapBallToAnimation ; PureRGBnote: CHANGED: choose which toss animation to use before entering animation code
@@ -644,24 +644,19 @@ ItemUseBall:
 ItemUseBallText00:
 ;"It dodged the thrown ball!"
 ;"This pokemon can't be caught"
-	text_far _ItemUseBallText00
-	text_end
+	text_far_end _ItemUseBallText00
 ItemUseBallText01:
 ;"You missed the pokemon!"
-	text_far _ItemUseBallText01
-	text_end
+	text_far_end _ItemUseBallText01
 ItemUseBallText02:
 ;"Darn! The pokemon broke free!"
-	text_far _ItemUseBallText02
-	text_end
+	text_far_end _ItemUseBallText02
 ItemUseBallText03:
 ;"Aww! It appeared to be caught!"
-	text_far _ItemUseBallText03
-	text_end
+	text_far_end _ItemUseBallText03
 ItemUseBallText04:
 ;"Shoot! It was so close too!"
-	text_far _ItemUseBallText04
-	text_end
+	text_far_end _ItemUseBallText04
 ItemUseBallText05:
 ;"All right! {MonName} was caught!"
 ;play sound
@@ -671,28 +666,23 @@ ItemUseBallText05:
 	text_end
 ItemUseBallText07:
 ;"X was transferred to Bill's PC"
-	text_far _ItemUseBallText07
-	text_end
+	text_far_end _ItemUseBallText07
 ItemUseBallText08:
 ;"X was transferred to someone's PC"
-	text_far _ItemUseBallText08
-	text_end
+	text_far_end _ItemUseBallText08
 
 NoBoxSlotsLeftText:
 ;"0 slots left in Box X! Time to change boxes!"
-	text_far _NoBoxSlotsLeftText
-	text_end
+	text_far_end _NoBoxSlotsLeftText
 
 BoxSlotsLeftText:
 ;"X slots left in box X"
-	text_far _BoxSlotsLeftText
-	text_end
+	text_far_end _BoxSlotsLeftText
 
 
 ItemUseBallText06:
 ;"New DEX data will be added..."
-	text_far _ItemUseBallText06
-	text_end
+	text_far_end _ItemUseBallText06
 ;play sound
 ItemUseBallText06Sound:	
 	sound_dex_page_added
@@ -922,16 +912,13 @@ ItemUseSurfboard:
 	ret
 
 SurfingGotOnText:
-	text_far _SurfingGotOnText
-	text_end
+	text_far_end _SurfingGotOnText
 
 AlreadySurfingText:
-	text_far _AlreadySurfingText
-	text_end
+	text_far_end _AlreadySurfingText
 
 LavaSurfText:
-	text_far _LavaSurfingText
-	text_end
+	text_far_end _LavaSurfingText
 
 ItemUsePokedex:
 	jpfar ShowPokedexMenu
@@ -992,15 +979,23 @@ ItemUseMedicine:
 	and a
 	jp z, .emptyParty
 	ld a, [wWhichPokemon]
+	ld [wPartyWhichItemIndex], a
 	push af
 	ld a, [wCurItem]
 	push af
+	ld [wPartyItemID], a
+	ld a, [wIsInBattle]
+	and a
 	ld a, USE_ITEM_PARTY_MENU
+	jr z, .battleCheck1
+	ld a, USE_ITEM_PARTY_MENU_BATTLE
+.battleCheck1
 	ld [wPartyMenuTypeOrMessageID], a
 	call DisableSpriteUpdates
 	ld a, [wPseudoItemID]
 	and a ; using Softboiled?
 	jr z, .notUsingSoftboiled
+.restart
 ; if using softboiled
 	call GoBackToPartyMenu
 	jr .getPartyMonDataAddress
@@ -1361,7 +1356,7 @@ ItemUseMedicine:
 	jr .doneHealing
 .healingItemNoEffect
 	call ItemUseNoEffect
-	jp .done
+	jp .checkForRestart
 .doneHealing
 	ld a, [wPseudoItemID]
 	and a ; using Softboiled?
@@ -1408,10 +1403,32 @@ ItemUseMedicine:
 	call RedrawPartyMenu ; redraws the party menu and displays the message
 	ld a, 1
 	ldh [hAutoBGTransferEnabled], a
-	ld c, 50
-	rst _DelayFrames
-	call WaitForTextScrollButtonPress
-	jr .done
+	call WaitForSoundToFinish
+	call DisplayTextPromptButton
+.checkForRestart
+	ld a, [wPseudoItemID]
+	and a
+	jr nz, .done
+	ld a, [wPartyItemID]
+	ld [wCurItem], a
+	ld b, a
+	predef GetQuantityOfItemInBag
+	ld a, b
+	and a
+	jr z, .done
+	ld a, [wIsInBattle]
+	and a
+	jr nz, .done
+	call CheckIfUsingHealingItemAgainWouldBeUseless
+	jr nc, .done
+	ld a, [wPartyWhichItemIndex]
+	ld [wWhichPokemon], a
+	push af
+	ld a, [wCurItem]
+	push af
+	ld a, USE_ITEM_PARTY_MENU
+	ld [wPartyMenuTypeOrMessageID], a
+	jp .restart
 .canceledItemUse
 	xor a
 	ld [wActionResultOrTookBattleTurn], a ; item use failed
@@ -1492,7 +1509,10 @@ ItemUseMedicine:
 	rst _PlaySound
 	ld hl, VitaminStatRoseText
 	rst _PrintText
-	jp RemoveUsedItem
+	ld a, [wCurItem]
+	ld b, a
+	jp .checkItemCountThenReloadAfterUsage
+	;;jp RemoveUsedItem
 ;;;;;;;;;; PureRGBnote: CHANGED: text for rare candy and vitamin "had no effect" differ now, with the vitamin one indicating it can't be raised further via items specifically.
 .rareCandyNoEffect
 	pop hl
@@ -1504,7 +1524,11 @@ ItemUseMedicine:
 .printNoEffect
 ;;;;;;;;;;
 	rst _PrintText
-	jp GBPalWhiteOut
+	ld a, [wWhichPokemon]
+	push af
+	ld a, [wCurItem]
+	push af
+	jp .reloadMenuAfterNoItemUsage
 .recalculateStats
 	ld bc, MON_STATS
 	add hl, bc
@@ -1594,12 +1618,48 @@ ItemUseMedicine:
 	xor a
 	ld [wForceEvolution], a
 	callfar TryEvolvingMon ; evolve pokemon, if appropriate
+	pop af
+	ld [wCurItem], a
+	ld b, a
+	pop af
+	ld [wWhichPokemon], a
+	push af
+	push bc
+	ld b, RARE_CANDY
+	predef GetQuantityOfItemInBag
+	ld a, b
+	cp 2
+	jp c, .exitRareCandy
+.reloadMenuAfterUsageRemoveItem
+	call RemoveUsedItem
+.reloadMenuAfterNoItemUsage
+	call ClearScreenNoDelay
+	ld a, USE_ITEM_PARTY_MENU
+	ld [wPartyMenuTypeOrMessageID], a
+	call DisableSpriteUpdates
+	jp .restart
+.exitRareCandy
 	call EnableSpriteUpdates
 	pop af
 	ld [wCurItem], a
 	pop af
 	ld [wWhichPokemon], a
 	jp RemoveUsedItem
+.checkItemCountThenReloadAfterUsage
+	predef GetQuantityOfItemInBag
+	ld a, b
+	cp 2
+	jp c, RemoveUsedItem
+.ifNotInBattleCheckForReload
+	ld a, [wIsInBattle]
+	and a
+	jp nz, RemoveUsedItem
+.reloadMenuAfterUsage
+	ld a, [wWhichPokemon]
+	push af
+	ld a, [wCurItem]
+	push af
+	jr .reloadMenuAfterUsageRemoveItem
 ;;;;;;;;;; PureRGBnote: ADDED: code for maximizing DVs after using an apex chip and displaying the usage text.
 .useApexChip	
 	push hl
@@ -1638,37 +1698,50 @@ ItemUseMedicine:
 	rst _PrintText
 	ld hl, ApexChipDVsMaxedText
 	rst _PrintText
-	jp RemoveUsedItem
+	ld b, APEX_CHIP
+	jr .checkItemCountThenReloadAfterUsage
 .alreadyUsedApex
 	pop hl
 	ld hl, ApexChipAlreadyUsedText
 	rst _PrintText
-	jp GBPalWhiteOut
+	ld a, [wWhichPokemon]
+	push af
+	ld a, [wCurItem]
+	push af
+	jp .reloadMenuAfterNoItemUsage
+
+
+ClearScreenNoDelay:
+	ld bc, SCREEN_AREA
+	inc b
+	hlcoord 0, 0
+	ld a, ' '
+.loop
+	ld [hli], a
+	dec c
+	jr nz, .loop
+	dec b
+	jr nz, .loop
+	ret
 
 ApexChipPutOnPokeballText:
-	text_far _ApexChipPutOnPokeballText
-	text_end
+	text_far_end _ApexChipPutOnPokeballText
 
 ApexChipDVsMaxedText:
-	text_far _ApexChipDVsMaxedText
-	text_end
+	text_far_end _ApexChipDVsMaxedText
 
 ApexChipAlreadyUsedText:
-	text_far _ApexChipAlreadyUsedText
-	text_end
+	text_far_end _ApexChipAlreadyUsedText
 ;;;;;;;;;;
 
 VitaminStatRoseText:
-	text_far _VitaminStatRoseText
-	text_end
+	text_far_end _VitaminStatRoseText
 
 VitaminNoEffectText:
-	text_far _VitaminNoEffectText
-	text_end
+	text_far_end _VitaminNoEffectText
 
 RareCandyNoEffectText:
-	text_far _RareCandyNoEffectText
-	text_end
+	text_far_end _RareCandyNoEffectText
 
 INCLUDE "data/battle/stat_names.asm"
 
@@ -1726,12 +1799,10 @@ BaitRockCommon:
 	jp DelayFrames
 
 ThrewBaitText:
-	text_far _ThrewBaitText
-	text_end
+	text_far_end _ThrewBaitText
 
 ThrewRockText:
-	text_far _ThrewRockText
-	text_end
+	text_far_end _ThrewRockText
 
 ;;;;;;;;;; PureRGBnote: CHANGED: this was separated off into a separate function for reusability
 IsEscapeRopeUsable:
@@ -1782,12 +1853,11 @@ ItemUseEscapeRope:
 	ret nz ; if so, return
 	call ItemUseReloadOverworldData
 	ld c, 30
-	rst _DelayFrames
+	rst DelayFrames
 	jp RemoveUsedItem
 .escapeText
 	text_far _EscapeText
-	text_far _ToLastPkmnCenterText
-	text_end
+	text_far_end _ToLastPkmnCenterText
 
 
 INCLUDE "data/tilesets/escape_rope_tilesets.asm"
@@ -1819,54 +1889,41 @@ ItemUsePocketAbra:
 	callfar ClearSafariFlags
 	call ItemUseReloadOverworldData
 	call Random
-	cp 200
-	jr nc, .flavor1
-	cp 150
-	jr nc, .flavor2
-	cp 100
-	jr nc, .flavor3
-	cp 50
-	jr nc, .flavor4
-	ld hl, .pocketAbraFlavorText5
+	and %111
+	ld d, 0
+	add a
+	add a ; multiply by TEXT_FAR_TABLE_ENTRY_SIZE
+	ld e, a
+	ld hl, .pocketAbraFlavorList
+	add hl, de 
 .done
 	rst _PrintText
 	call StopMusic
 	ld a, ABRA
 	jp PlayCry
-.flavor1
-	ld hl, .pocketAbraFlavorText1
-	jr .done
-.flavor2
-	ld hl, .pocketAbraFlavorText2
-	jr .done
-.flavor3
-	ld hl, .pocketAbraFlavorText3
-	jr .done
-.flavor4
-	ld hl, .pocketAbraFlavorText4
-	jr .done
 .wantToTeleportText
 	text_far _WarpText
-	text_far _ToLastPkmnCenterText
-	text_end
+	text_far_end _ToLastPkmnCenterText
 .pocketAbraNo
-	text_far _PocketAbraNo
-	text_end
+	text_far_end _PocketAbraNo
+
+.pocketAbraFlavorList
 .pocketAbraFlavorText1
-	text_far _PocketAbraFlavorText1
-	text_end
+	text_far_end _PocketAbraFlavorText1
 .pocketAbraFlavorText2
-	text_far _PocketAbraFlavorText2
-	text_end
+	text_far_end _PocketAbraFlavorText2
 .pocketAbraFlavorText3
-	text_far _PocketAbraFlavorText3
-	text_end
+	text_far_end _PocketAbraFlavorText3
 .pocketAbraFlavorText4
-	text_far _PocketAbraFlavorText4
-	text_end
+	text_far_end _PocketAbraFlavorText4
 .pocketAbraFlavorText5
-	text_far _PocketAbraFlavorText5
-	text_end
+	text_far_end _PocketAbraFlavorText5
+.pocketAbraFlavorText6
+	text_far_end _PocketAbraFlavorText6
+.pocketAbraFlavorText7
+	text_far_end _PocketAbraFlavorText7
+.pocketAbraFlavorText8
+	text_far_end _PocketAbraFlavorText8
 
 ItemUseRepel:
 	ld b, 100
@@ -1910,12 +1967,12 @@ ItemUsePokeDoll:
 	call RemoveUsedItem
 	call WaitForSoundToFinish
 	ld c, 10
-	rst _DelayFrames
+	rst DelayFrames
 	ld a, POKE_DOLL_ANIM
 	ld [wAnimationID], a
 	call ItemEffectsDoMoveAnimation
 	ld c, 30
-	rst _DelayFrames
+	rst DelayFrames
 	ld a, $01
 	ld [wEscapedFromBattle], a
 	ret
@@ -2126,12 +2183,10 @@ Route16SnorlaxFluteCoords:
 	db -1 ; end
 
 PlayedFluteNoEffectText:
-	text_far _PlayedFluteNoEffectText
-	text_end
+	text_far_end _PlayedFluteNoEffectText
 
 FluteWokeUpText:
-	text_far _FluteWokeUpText
-	text_end
+	text_far_end _FluteWokeUpText
 
 PlayedFluteHadEffectText:
 	text_far _PlayedFluteHadEffectText
@@ -2163,8 +2218,7 @@ ItemUseCoinCase:
 	jp PrintText
 
 CoinCaseNumCoinsText:
-	text_far _CoinCaseNumCoinsText
-	text_end
+	text_far_end _CoinCaseNumCoinsText
 
 ; PureRGBnote: CHANGED: now has 50% chance of landing goldeen and 50% chance of landing magikarp.
 ItemUseOldRod: 
@@ -2277,7 +2331,7 @@ FishingInit:
 	ld a, SFX_HEAL_AILMENT
 	rst _PlaySound
 	ld c, 20 ; PureRGBnote: CHANGED: reduce the artificial delay on initiating fishing.
-	rst _DelayFrames
+	rst DelayFrames
 	and a
 	ret
 .surfing
@@ -2351,12 +2405,10 @@ ItemUseItemfinder:
 	ret
 
 ItemfinderFoundItemText:
-	text_far _ItemfinderFoundItemText
-	text_end
+	text_far_end _ItemfinderFoundItemText
 
 ItemfinderFoundNothingText:
-	text_far _ItemfinderFoundNothingText
-	text_end
+	text_far_end _ItemfinderFoundNothingText
 
 ItemUsePPUp:
 	ld a, [wIsInBattle]
@@ -2367,33 +2419,40 @@ ItemUsePPRestore:
 	ld a, [wWhichPokemon]
 	push af
 	ld a, [wCurItem]
-	ld [wPPRestoreItem], a
+	ld [wPartyItemID], a
 .chooseMon
 	xor a
 	ld [wUpdateSpritesEnabled], a
+	ld a, [wIsInBattle]
+	and a
 	ld a, USE_ITEM_PARTY_MENU
+	jr z, .gotMessageType
+	ld a, USE_ITEM_PARTY_MENU_BATTLE
+.gotMessageType
 	ld [wPartyMenuTypeOrMessageID], a
 	call DisplayPartyMenu
+.restart
 	jp c, .itemNotUsed
 .chooseMove
-	ld a, [wPPRestoreItem]
+	ld a, [wPartyItemID]
 	cp ELIXER
 	jp nc, .useElixir ; if Elixir or Max Elixir
 	ld a, $02
 	ld [wMoveMenuType], a
 	ld hl, RaisePPWhichTechniqueText
-	ld a, [wPPRestoreItem]
+	ld a, [wPartyItemID]
 	cp ETHER ; is it a PP Up?
 	jr c, .printWhichTechniqueMessage ; if so, print the raise PP message
 	ld hl, RestorePPWhichTechniqueText ; otherwise, print the restore PP message
 .printWhichTechniqueMessage
 	rst _PrintText
+	call EnableTextDelay
 	xor a
 	ld [wPlayerMoveListIndex], a
 	callfar MoveSelectionMenu ; move selection menu
 	ld a, 0
 	ld [wPlayerMoveListIndex], a
-	jr nz, .chooseMon
+	jr nz, .restartTriggered
 	ld hl, wPartyMon1Moves
 	ld bc, PARTYMON_STRUCT_LENGTH
 	call GetSelectedMoveOffset
@@ -2403,7 +2462,7 @@ ItemUsePPRestore:
 	call GetMoveName
 	call CopyToStringBuffer
 	pop hl
-	ld a, [wPPRestoreItem]
+	ld a, [wPartyItemID]
 	cp ETHER
 	jr nc, .useEther ; if Ether or Max Ether
 ; use PP Up
@@ -2414,6 +2473,7 @@ ItemUsePPRestore:
 	jr c, .PPNotMaxedOut
 	ld hl, PPMaxedOutText
 	rst _PrintText
+	call DisableTextDelay
 	jr .chooseMove
 .PPNotMaxedOut
 	ld a, [hl]
@@ -2427,6 +2487,19 @@ ItemUsePPRestore:
 	ld hl, PPIncreasedText
 	rst _PrintText
 .done
+	call .checkShouldRestart
+	jr c, .noRestart
+	pop af
+	push af
+	ld [wWhichPokemon], a
+	call RemoveUsedItem
+.restartTriggered
+	call ClearScreenNoDelay
+	call GoBackToPartyMenu
+	ld a, [wPartyItemID]
+	ld [wCurItem], a
+	jp .restart
+.noRestart
 	pop af
 	ld [wWhichPokemon], a
 	call GBPalWhiteOut
@@ -2467,7 +2540,7 @@ ItemUsePPRestore:
 	add hl, bc ; hl now points to move's PP
 	ld a, [wMaxPP]
 	ld b, a
-	ld a, [wPPRestoreItem]
+	ld a, [wPartyItemID]
 	cp MAX_ETHER
 	jr z, .fullyRestorePP
 	ld a, [hl] ; move PP
@@ -2499,7 +2572,7 @@ ItemUsePPRestore:
 	jr .storeNewAmount
 .useElixir
 ; decrement the item ID so that ELIXER becomes ETHER and MAX_ELIXER becomes MAX_ETHER
-	ld hl, wPPRestoreItem
+	ld hl, wPartyItemID
 	dec [hl]
 	dec [hl]
 	xor a
@@ -2527,11 +2600,17 @@ ItemUsePPRestore:
 	pop bc
 	dec b
 	jr nz, .elixirLoop
+	; set item ID back to ELIXER or MAX ELIXER properly
+	ld hl, wPartyItemID
+	inc [hl]
+	inc [hl]
 	ld a, [wTileBehindCursor]
 	and a ; did any moves have their PP restored?
 	jp nz, .afterRestoringPP
 .noEffect
 	call ItemUseNoEffect
+	call .checkShouldRestartItemNotUsed
+	jp nc, .restartTriggered
 .itemNotUsed
 	call GBPalWhiteOut
 	call RunDefaultPaletteCommand
@@ -2539,26 +2618,35 @@ ItemUsePPRestore:
 	xor a
 	ld [wActionResultOrTookBattleTurn], a ; item use failed
 	ret
+.checkShouldRestart
+	ld a, [wPartyItemID]
+	ld [wCurItem], a
+	ld b, a
+	predef GetQuantityOfItemInBag
+	ld a, b
+	cp 2
+	ret c
+.checkShouldRestartItemNotUsed
+	ld a, [wIsInBattle]
+	and a
+	ret z
+	scf
+	ret
 
 RaisePPWhichTechniqueText:
-	text_far _RaisePPWhichTechniqueText
-	text_end
+	text_far_end _RaisePPWhichTechniqueText
 
 RestorePPWhichTechniqueText:
-	text_far _RestorePPWhichTechniqueText
-	text_end
+	text_far_end _RestorePPWhichTechniqueText
 
 PPMaxedOutText:
-	text_far _PPMaxedOutText
-	text_end
+	text_far_end _PPMaxedOutText
 
 PPIncreasedText:
-	text_far _PPIncreasedText
-	text_end
+	text_far_end _PPIncreasedText
 
 PPRestoredText:
-	text_far _PPRestoredText
-	text_end
+	text_far_end _PPRestoredText
 
 ; for items that can't be used from the Item menu
 UnusableItem:
@@ -2684,20 +2772,16 @@ ItemUseTMHM:
 	jp RemoveUsedItem
 
 BootedUpTMText:
-	text_far _BootedUpTMText
-	text_end
+	text_far_end _BootedUpTMText
 
 BootedUpHMText:
-	text_far _BootedUpHMText
-	text_end
+	text_far_end _BootedUpHMText
 
 TeachMachineMoveText:
-	text_far _TeachMachineMoveText
-	text_end
+	text_far_end _TeachMachineMoveText
 
 MonCannotLearnMachineMoveText:
-	text_far _MonCannotLearnMachineMoveText
-	text_end
+	text_far_end _MonCannotLearnMachineMoveText
 
 PrintItemUseTextAndRemoveItem:
 	ld hl, ItemUseText00
@@ -2771,78 +2855,61 @@ ItemUseFailed:
 	jp PrintText
 
 ItemUseNotTimeText:
-	text_far _ItemUseNotTimeText
-	text_end
+	text_far_end _ItemUseNotTimeText
 
 ItemUseValuableText:
-	text_far _ItemUseValuableText
-	text_end
+	text_far_end _ItemUseValuableText
 
 ItemUseFossilText:
-	text_far _ItemUseFossilText
-	text_end
+	text_far_end _ItemUseFossilText
 
 ItemUseInBattleText:
-	text_far _ItemUseInBattleText
-	text_end
+	text_far_end _ItemUseInBattleText
 
 ItemUseCameraInBattleText:
-	text_far _ItemUseCameraInBattleText
-	text_end
+	text_far_end _ItemUseCameraInBattleText
 
 ItemUseWildMonText:
-	text_far _ItemUseWildMonText
-	text_end
+	text_far_end _ItemUseWildMonText
 
 NoPokeDollsOnSpiritsText:
-	text_far _NoPokeDollsOnSpiritsText
-	text_end
+	text_far_end _NoPokeDollsOnSpiritsText
 
 ItemUseNotYoursToUseText:
-	text_far _ItemUseNotYoursToUseText
-	text_end
+	text_far_end _ItemUseNotYoursToUseText
 
 ItemUseNoEffectText:
-	text_far _ItemUseNoEffectText
-	text_end
+	text_far_end _ItemUseNoEffectText
 
 ThrowBallAtTrainerMonText1:
-	text_far _ThrowBallAtTrainerMonText1
-	text_end
+	text_far_end _ThrowBallAtTrainerMonText1
 
 ThrowBallAtTrainerMonText2:
-	text_far _ThrowBallAtTrainerMonText2
-	text_end
+	text_far_end _ThrowBallAtTrainerMonText2
 
 NoCyclingAllowedHereText:
-	text_far _NoCyclingAllowedHereText
-	text_end
+	text_far_end _NoCyclingAllowedHereText
 
 NoSurfingHereText:
-	text_far _NoSurfingHereText
-	text_end
+	text_far_end _NoSurfingHereText
 
 BoxFullCannotThrowBallText:
-	text_far _BoxFullCannotThrowBallText
-	text_end
+	text_far_end _BoxFullCannotThrowBallText
 
 ItemUseText00:
 	text_far _ItemUseText001
 	text_low
-	text_far _ItemUseText002
-	text_end
+	text_far_end _ItemUseText002
 
 GotOnBicycleText:
 	text_far _GotOnBicycleText1
 	text_low
-	text_far _GotOnBicycleText2
-	text_end
+	text_far_end _GotOnBicycleText2
 
 GotOffBicycleText:
 	text_far _GotOffBicycleText1
 	text_low
-	text_far _GotOffBicycleText2
-	text_end
+	text_far_end _GotOffBicycleText2
 
 ; restores bonus PP (from PP Ups) when healing at a pokemon center
 ; also, when a PP Up is used, it increases the current PP by one PP Up bonus
@@ -3074,16 +3141,13 @@ TossItem_::
 	ret
 
 ThrewAwayItemText:
-	text_far _ThrewAwayItemText
-	text_end
+	text_far_end _ThrewAwayItemText
 
 IsItOKToTossItemText:
-	text_far _IsItOKToTossItemText
-	text_end
+	text_far_end _IsItOKToTossItemText
 
 TooImportantToTossText:
-	text_far _TooImportantToTossText
-	text_end
+	text_far_end _TooImportantToTossText
 
 ; checks if an item is a key item
 ; INPUT:
@@ -3524,8 +3588,7 @@ UseTopSecretKey:
 	jp ItemUseFailed
 
 TopSecretKeyText:
-	text_far _TopSecretKeyText
-	text_end
+	text_far_end _TopSecretKeyText
 
 ClearParaBurnBattleFlagsOnHeal:
 ;;;;;;;;;; shinpokerednote: FIXED: reset burn and paralyze stat drops on healing via full restore
@@ -3582,3 +3645,101 @@ UseCamera:
 	jp nz, ItemUseCameraInBattle
 	call ItemUseReloadOverworldData
 	jpfar UseCameraItem
+
+
+; When using a healing item out of battle, we will allow
+; the player to repeatedly use them from the party menu
+; as long as they have some.
+; But if they still have some, and no pokemon could have the item used on them,
+; it would be pointless to keep the party menu open, so we will check for those cases here
+; (no pokemon can be healed by your SUPER POTION, or no pokemon poisoned while using ANTIDOTE, for example)
+CheckIfUsingHealingItemAgainWouldBeUseless:
+	ld a, [wPartyItemID]
+	cp ANTIDOTE
+	ld b, 1 << PSN
+	jr z, .status
+	cp BURN_HEAL
+	ld b, 1 << BRN
+	jr z, .status
+	cp ICE_HEAL
+	ld b, 1 << FRZ
+	jr z, .status
+	cp AWAKENING
+	ld b, SLP_MASK
+	jr z, .status
+	cp PARLYZ_HEAL
+	ld b, 1 << PAR
+	jr z, .status
+	cp FULL_HEAL
+	ld b, $FF
+	jr z, .status
+	cp REVIVE
+	jr z, .anyFainted
+	cp MAX_REVIVE
+	jr z, .anyFainted
+	; otherwise it's just a normal healing item.
+	ld hl, wPartyMon1HP
+	ld a, [wPartyCount]
+	ld c, a
+.loopHealingCheck
+	push hl
+	ld a, [hli]
+	ld d, a
+	ld a, [hld]
+	ld e, a
+	push de
+	ld de, wPartyMon1MaxHP - wPartyMon1HP
+	add hl, de
+	pop de
+	ld a, [hli]
+	cp d
+	jr nz, .foundNotMaxHP
+	ld a, [hl]
+	cp e
+	jr nz, .foundNotMaxHP
+	pop hl
+	ld de, wPartyMon2 - wPartyMon1
+	add hl, de
+	dec c
+	jr nz, .loopHealingCheck
+	jr .notFound
+.foundNotMaxHP
+	pop hl
+	jr .found
+.status
+	ld hl, wPartyMon1Status
+	ld de, wPartyMon2Status - wPartyMon1Status
+	ld a, [wPartyCount]
+	ld c, a
+.loopStatuses
+	ld a, [hl]
+	and b
+	jr nz, .found
+	add hl, de
+	dec c
+	jr nz, .loopStatuses
+	jr .notFound
+.anyFainted
+	ld hl, wPartyMon1HP
+	ld de, wPartyMon2HP - wPartyMon1HP
+	ld a, [wPartyCount]
+	ld c, a
+.loopFainted
+	ld a, [hl]
+	and a
+	jr nz, .continue2
+	inc hl
+	ld a, [hld]
+	and a
+	jr z, .found
+.continue2
+	add hl, de
+	dec c
+	jr nz, .loopFainted
+	jr .notFound
+.notFound
+	and a
+	ret
+.found
+	scf
+	ret

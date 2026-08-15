@@ -381,7 +381,7 @@ BattleOccurred::
 	jr z, .allPokemonFainted
 .noFaintCheck
 	ld c, 10
-	rst _DelayFrames
+	rst DelayFrames
 	jp EnterMap
 .allPokemonFainted
 	ld a, $ff
@@ -614,7 +614,7 @@ CheckMapConnections::
 	call LoadMapHeader
 	call PlayDefaultMusicFadeOutCurrent
 	ld d, SET_PAL_OVERWORLD
-	call RunPaletteCommand
+	call RunPaletteCommandWithoutGBCDelay
 ; Since the sprite set shouldn't change, this will just update VRAM slots at
 ; x#SPRITESTATEDATA2_IMAGEBASEOFFSET without loading any tile patterns.
 	farcall InitMapSprites
@@ -911,7 +911,7 @@ LoadTileBlockMap::
 .noCarry
 	dec b
 	jr nz, .rowLoop
-.northConnection
+; north connection
 	ld a, [wNorthConnectedMap]
 	cp $ff
 	jr z, .southConnection
@@ -1082,7 +1082,7 @@ IsSpriteInFrontOfPlayer::
 IsSpriteInFrontOfPlayer2::
 	lb bc, $3c, $40 ; Y and X position of player sprite
 	ld a, [wSpritePlayerStateData1FacingDirection]
-.checkIfPlayerFacingUp
+; check if player facing up
 	cp SPRITE_FACING_UP
 	jr nz, .checkIfPlayerFacingDown
 ; facing up
@@ -1381,7 +1381,7 @@ ENDR
 	jr nz, .rowLoop
 	ld hl, wSurroundingTiles
 	ld bc, 0
-.adjustForYCoordWithinTileBlock
+; adjust for Y coord within tile block
 	ld a, [wYBlockCoord]
 	and a
 	jr z, .adjustForXCoordWithinTileBlock
@@ -1862,12 +1862,11 @@ CollisionCheckOnWater::
 	call LoadPlayerSpriteGraphics
 	jr .noCollision
 
-; function to run the current map's script
 RunMapScript::
 	homecall BoulderMapScript
 	call RunNPCMovementScript
-	ld a, [wCurMap] ; current map number
-	call SwitchToMapRomBank ; change to the ROM bank the map's data is in
+	ld a, [wCurMap]
+	call SwitchToMapRomBank
 	ld hl, wCurMapScriptPtr
 	ld a, [hli]
 	ld h, [hl]
@@ -1919,7 +1918,7 @@ LoadPlayerSpriteGraphicsArbitrary::
 	ld hl, vNPCSprites
 	push de
 	push hl
-	call CopyVideoData
+	call CopyVideoDataHBlank
 	pop hl
 	pop de
 	ld a, $c0
@@ -1930,7 +1929,7 @@ LoadPlayerSpriteGraphicsArbitrary::
 .noCarry
 	set 3, h
 	pop bc
-	jp CopyVideoData
+	jp CopyVideoDataHBlank
 
 ; function to load data from the map header
 LoadMapHeader::
@@ -2276,7 +2275,7 @@ LoadMapData::
 	ld hl, hFlagsFFFA
 	res 3, [hl]
 	ld d, SET_PAL_OVERWORLD
-	call RunPaletteCommand
+	call RunPaletteCommandWithoutGBCDelay
 	call LoadPlayerSpriteGraphics
 	ld a, [wStatusFlags6]
 	and (1 << BIT_FLY_WARP) | (1 << BIT_DUNGEON_WARP)

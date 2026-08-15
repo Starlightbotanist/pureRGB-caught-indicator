@@ -53,7 +53,7 @@ DisplayPokemartDialogue_::
 	rst _PrintText
 	call SaveScreenTilesToBuffer1 ; save screen
 .sellMenuLoop
-	ld a, 1
+	ld a, TM_HOVER_TEXT
 	ld [wListMenuHoverTextType], a ; we're in a list that might have TMs to read out
 	call LoadScreenTilesFromBuffer1 ; restore saved screen
 	ld a, MONEY_BOX
@@ -71,7 +71,7 @@ DisplayPokemartDialogue_::
 	call DisplayListMenuID
 	jp c, .returnToMainPokemartMenu ; if the player closed the menu
 	call BackupItemListIndex
-.confirmItemSale ; if the player is trying to sell a specific item
+; if the player is trying to sell a specific item, confirm the sale
 	call IsKeyItem
 	ld a, [wIsKeyItem]
 	and a
@@ -136,7 +136,7 @@ DisplayPokemartDialogue_::
 	rst _PrintText
 	call SaveScreenTilesToBuffer1
 .buyMenuLoop
-	ld a, 1
+	ld a, TM_HOVER_TEXT
 	ld [wListMenuHoverTextType], a ; we're in a list that might have TMs to read out
 	call LoadScreenTilesFromBuffer1
 	ld a, MONEY_BOX
@@ -232,45 +232,34 @@ DisplayPokemartDialogue_::
 	ret
 
 PokemartBuyingGreetingText:
-	text_far _PokemartBuyingGreetingText
-	text_end
+	text_far_end _PokemartBuyingGreetingText
 
 PokemartTellBuyPriceText:
-	text_far _PokemartTellBuyPriceText
-	text_end
+	text_far_end _PokemartTellBuyPriceText
 
 PokemartBoughtItemText:
-	text_far _PokemartBoughtItemText
-	text_end
+	text_far_end _PokemartBoughtItemText
 
 PokemartNotEnoughMoneyText:
-	text_far _PokemartNotEnoughMoneyText
-	text_end
+	text_far_end _PokemartNotEnoughMoneyText
 
 PokemartItemBagFullText:
-	text_far _PokemartItemBagFullText
-	text_end
+	text_far_end _PokemartItemBagFullText
 
 PokemonSellingGreetingText:
-	text_far _PokemonSellingGreetingText
-	text_end
+	text_far_end _PokemonSellingGreetingText
 
 PokemartTellSellPriceText:
-	text_far _PokemartTellSellPriceText
-	text_end
+	text_far_end _PokemartTellSellPriceText
 
 PokemartItemBagEmptyText:
-	text_far _PokemartItemBagEmptyText
-	text_end
+	text_far_end _PokemartItemBagEmptyText
 
 PokemartUnsellableItemText:
-	text_far _PokemartUnsellableItemText
-	text_end
+	text_far_end _PokemartUnsellableItemText
 
 PokemartThankYouText:
-	text_far _PokemartThankYouText
-	text_end
+	text_far_end _PokemartThankYouText
 
 PokemartAnythingElseText:
-	text_far _PokemartAnythingElseText
-	text_end
+	text_far_end _PokemartAnythingElseText

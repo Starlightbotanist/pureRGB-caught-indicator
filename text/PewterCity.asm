@@ -102,11 +102,7 @@ _PewterCityMuseumSignText::
 	done
 
 _PewterCityGymSignText::
-	text "PEWTER CITY"
-	line "#MON GYM"
-	cont "LEADER: BROCK"
-
-	para "The Rock Solid"
+	text "The Rock Solid"
 	line "#MON Trainer!"
 	done
 

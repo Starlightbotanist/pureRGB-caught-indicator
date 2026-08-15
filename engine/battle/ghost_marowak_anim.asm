@@ -23,7 +23,7 @@ MarowakAnim:
 	call FlashSprite8Times
 .fadeOutGhostLoop
 	ld c, 10
-	rst _DelayFrames
+	rst DelayFrames
 	ldh a, [rOBP1]
 	add a
 	add a
@@ -35,7 +35,7 @@ MarowakAnim:
 	ld b, $e4
 .fadeInMarowakLoop
 	ld c, 10
-	rst _DelayFrames
+	rst DelayFrames
 	ldh a, [rOBP1]
 	srl b
 	rra
@@ -56,7 +56,7 @@ CopyMonPicFromBGToSpriteVRAM:
 	ld de, vFrontPic
 	ld hl, vSprites
 	ld bc, PIC_SIZE
-	call CopyVideoData
+	call CopyVideoDataHBlank
 	ld a, $10
 	ld [wBaseCoordY], a
 	ld a, $70

@@ -58,63 +58,45 @@ _FuchsiaCitySafariZoneSignText::
 	done
 
 _FuchsiaCityGymSignText::
-	text "FUCHSIA CITY"
-	line "#MON GYM"
-	cont "LEADER: KOGA"
-
-	para "The Poisonous"
+	text "The Poisonous"
 	line "Ninja Master"
 	done
 
-_FuchsiaCityChanseySignText::
-	text "Name: CHANSEY"
+_GenericFuchsiaZooNameText::
+	text "Name: @"
+	text_ram_namebuffer
+	text "<PROMPT>"
+	text_end
 
-	para "Catching one is"
+_FuchsiaCityChanseySignText::
+	text "Catching one is"
 	line "all up to chance."
 	prompt
 
 _FuchsiaCityVoltorbSignText::
-	text "Name: VOLTORB"
-
-	para "The very image of"
+	text "The very image of"
 	line "a # BALL."
 	prompt
 
 _FuchsiaCityKangaskhanSignText::
-	text "Name: KANGASKHAN"
-
-	para "A maternal #MON"
+	text "A maternal #MON"
 	line "that raises its"
 	cont "young in a pouch"
 	cont "on its belly."
 	prompt
 
 _FuchsiaCitySlowpokeSignText::
-	text "Name: SLOWPOKE"
-
-	para "Friendly and very"
+	text "Friendly and very"
 	line "slow moving."
 	prompt
 
 _FuchsiaCityLaprasSignText::
-	text "Name: LAPRAS"
-
-	para "A.K.A. the king"
+	text "A.K.A. the king"
 	line "of the seas."
 	prompt
 
-_FuchsiaCityFossilSignOmanyteText::
-	text "Name: OMANYTE"
-
-	para "A #MON that"
-	line "was resurrected"
-	cont "from a fossil."
-	prompt
-
-_FuchsiaCityFossilSignKabutoText::
-	text "Name: KABUTO"
-
-	para "A #MON that"
+_FuchsiaCityFossilSignText::
+	text "A #MON that"
 	line "was resurrected"
 	cont "from a fossil."
 	prompt

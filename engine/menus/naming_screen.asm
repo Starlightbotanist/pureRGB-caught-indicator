@@ -49,8 +49,7 @@ ForceLoadNickname::
 	jp CopyData
 
 DoYouWantToNicknameText:
-	text_far _DoYouWantToNicknameText
-	text_end
+	text_far_end _DoYouWantToNicknameText
 
 DisplayNameRaterScreen::
 	ld hl, wBuffer
@@ -341,7 +340,7 @@ LoadEDTile:
 	ld de, ED_Tile
 	ld hl, vFont tile $70
 	lb bc, BANK(ED_Tile), (ED_TileEnd - ED_Tile) / TILE_1BPP_SIZE
-	jp CopyVideoDataDouble
+	jp CopyVideoDataHBlankDouble
 
 ED_Tile:
 	INCBIN "gfx/font/ED.1bpp"

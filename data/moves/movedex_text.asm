@@ -1,5 +1,12 @@
 ; PureRGBnote: ADDED: text pointers for the descriptions that show up in the movedex.
 
+; input de = which text below to print
+PrintMovedexText::
+	ld h, d
+	ld l, e
+	bccoord 1, 11
+	jp TextCommandProcessor
+
 _PoundDexEntry::
 	text "Pounds the foe"
 	next "with a leg, tail"
@@ -82,12 +89,9 @@ _Generic10PercentBurnText::
 _IcePunchDexEntry::
 	text "Punches the foe"
 	next "with a freezing"
-	next "fist."
+	next "fist.@"
 
-	bage "10% chance of"
-	next "freezing the foe"
-	next "solid"
-	dex
+	text_jump _Generic10PercentFreezeText
 
 _ThunderPunchDexEntry::
 	text "Zaps the foe with"
@@ -609,11 +613,12 @@ _SurfDexEntry::
 _IceBeamDexEntry::
 	text "A frigid beam"
 	next "of glacial ice"
-	next "is shot at the"
+	next "blasts the foe."
 
-	bage "<opponent>."
-	next "10% chance of"
+_Generic10PercentFreezeText::
+	bage "10% chance of"
 	next "freezing the foe"
+	next "solid"
 	dex
 
 _BlizzardDexEntry::
@@ -621,10 +626,11 @@ _BlizzardDexEntry::
 	next "a powerful winter"
 	next "storm that"
 
-	bage "batters the foe."
-	next "10% chance of"
-	next "freezing the foe"
-	dex
+	bage "batters the foe"
+	next "with countless ice"
+	next "shards.@"
+
+	text_jump _Generic10PercentFreezeText
 
 _PsybeamDexEntry::
 	text "Psychic power"
@@ -1512,10 +1518,9 @@ _KinesisDexEntry::
 
 _SoftboiledDexEntry::
 	text "A delicious egg"
-	next "heals the <user>."
+	next "heals the <user>.@"
 
-	bage "Heals half of"
-	next "<user>'s max HP."
+	text_call _GenericHealsHalfText
 
 	bage "Usable outside"
 	next "battle to heal"
@@ -1559,11 +1564,10 @@ _DreamEaterDexEntry::
 _PoisonGasDexEntry::
 	text "Releases a cloud"
 	next "of corrosive"
-	next "choking gas."
+	next "choking gas.@"
 
-	bage "Often lands"
-	next "critical hits.@"
-
+	text_call _GenericOftenLandsCriticalHitsText
+	text_end
 	text_jump _Generic20PercentPoisonText
 
 _BarrageDexEntry::

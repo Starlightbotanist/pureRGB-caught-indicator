@@ -437,7 +437,7 @@ wNPCMovementDirections:: ds 180
 NEXTU
 wDexRatingNumMonsSeen:: db
 wDexRatingNumMonsOwned:: db
-wDexRatingText:: ; PureRGBnote: actually uses 5 bytes from here, not just 1
+wDexRatingText:: ; PureRGBnote: actually uses 4 bytes from here, not just 1
 wTrainerCardBadgeAttributes:: db
 ; shinpokerednote: gbcnote: modified to match yellow
 
@@ -917,15 +917,11 @@ wEmotionBubbleSpriteIndex:: db
 wWhichEmotionBubble:: db
 
 NEXTU
-wChangeBoxSavedMapTextPointer:: dw
-
-NEXTU
 wSavedY::
 wTempSCX::
 wDexMaxSeenMove::
 wDexMaxSeenMon::
 wDexLearnsetListCount::
-wPPRestoreItem::
 wWereAnyMonsAsleep::
 wNumShakes::
 wWhichBadge::
@@ -1146,9 +1142,7 @@ wNPCNumScriptedSteps:: db
 ; wNPCMovementScriptPointerTableNum
 wNPCMovementScriptFunctionNum:: db
 
-; bit 0: set when printing a text predef so that DisplayTextID doesn't switch
-;        to the current map's bank
-wTextPredefFlag:: db
+wTextPredefID:: db
 
 ds 1 ; used to be wPredefParentBank but this wasn't needed
 
@@ -1203,7 +1197,6 @@ wPalPacket::
 ; This union spans 49 bytes.
 UNION
 wPartyMenuBlkPacket::
-; $30 bytes
 	ds 9
 ;shinpokerednote: gbcnote: modified to match yellow
 wPartyHPBarAttributes::	
@@ -1627,7 +1620,6 @@ wFlashScreenLongCounter::
 wNumShootingBalls::
 ; $01 if mon is moving from left gameboy to right gameboy; $00 if vice versa
 wTradedMonMovingRight::
-wOptionsInitialized::
 wNewSlotMachineBallTile::
 ; how much to add to the X/Y coord
 wCoordAdjustmentAmount::
@@ -1949,11 +1941,13 @@ wStepCounter:: db
 ; after a battle, you have at least 3 steps before a random battle can occur
 wNumberOfNoRandomBattleStepsLeft:: db
 
+wPartyWhichItemIndex::
 wWhichCustomBallSelected::
 wLearnsetIndex::
 wPrize1:: db
 wLearnsetPage::
 wPrize2:: db
+wPartyItemID::
 wPrize3:: db
 
 	ds 1 ; unused lone byte
@@ -2112,7 +2106,7 @@ wYBlockCoord:: db
 wXBlockCoord:: db
 
 wLastMap:: db
-wUnusedLastMapWidth:: db ; unused save file byte
+wOptionsInitialized:: db
 
 wCurMapHeader::
 wCurMapTileset:: db

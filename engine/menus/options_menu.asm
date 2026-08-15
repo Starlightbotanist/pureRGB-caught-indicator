@@ -5,6 +5,7 @@ DEF HOW_MANY_MAIN_OPTIONS_PAGES EQU 5 ; must be 1 digit
 DEF NEXT_BUTTON_X_COORD EQU 1
 DEF BACK_BUTTON_X_COORD EQU 7
 DEF PAGE_CONTROLS_Y_COORD EQU 17
+DEF OPTIONS_INITIALIZED_VALUE EQU 88
 
 ; first byte = y coord
 ; second byte = which option on the page it is (cancel always = max option value)
@@ -140,15 +141,15 @@ OptionsLoadExtraTiles:
 	ld de, EditPrompt
 	ld hl, vChars1 tile $40
 	lb bc, BANK(EditPrompt), 3
-	call CopyVideoDataDouble
+	call CopyVideoDataHBlankDouble
 	ld de, PokedexPromptGraphics
 	ld hl, vChars1 tile $43
 	lb bc, BANK(PokedexPromptGraphics), 3
-	call CopyVideoData
+	call CopyVideoDataHBlank
 	ld de, InfoPromptGraphics
 	ld hl, vChars1 tile $46
 	lb bc, BANK(InfoPromptGraphics), 2
-	jp CopyVideoData
+	jp CopyVideoDataHBlank
 
 OptionMenu1Header:
 	dw DrawOptionMenu
@@ -301,6 +302,8 @@ OptionsMenuLoop:
 .exitMenu
 	ld a, SFX_PRESS_AB
 	rst _PlaySound
+	ld a, OPTIONS_INITIALIZED_VALUE
+	ld [wOptionsInitialized], a
 	pop hl
 	ret
 .checkDirectionKeys
@@ -584,13 +587,10 @@ OptionsMenu1InfoTextJumpTable:
 	dw BattleStyleInfoText
 
 TextSpeedInfoText:
-	text_far _TextSpeedInfoText
-	text_end
+	text_far_end _TextSpeedInfoText
 
 BattleAnimationInfoText:
-	text_far _BattleAnimationInfoText
-	text_end	
+	text_far_end _BattleAnimationInfoText	
 
 BattleStyleInfoText:
-	text_far _BattleStyleInfoText
-	text_end
+	text_far_end _BattleStyleInfoText

@@ -30,7 +30,7 @@ EvolveMon:
 	ld de, vFrontPic
 	ld hl, vBackPic
 	ld bc, PIC_SIZE
-	call CopyVideoData
+	call CopyVideoDataHBlank
 	ld a, [wEvoOldSpecies]
 	ld [wCurPartySpecies], a
 	ld [wCurSpecies], a
@@ -44,7 +44,7 @@ EvolveMon:
 	ld a, MUSIC_EVOLUTION
 	call PlayMusic
 	ld c, 80
-	rst _DelayFrames
+	rst DelayFrames
 	ld e, $FF ; set PAL_BLACK instead of mon palette
 	call EvolutionSetWholeScreenPalette
 	lb bc, $1, $10

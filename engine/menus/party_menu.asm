@@ -86,7 +86,7 @@ RedrawPartyMenu_::
 	jr .printLevel
 .teachMoveMenu
 	push hl
-	callfar CanLearnTM ; check if the pokemon can learn the move
+	call CanLearnTM ; check if the pokemon can learn the move
 	pop hl
 	ld de, .ableToLearnMoveOrEvolveText
 	jr nz, .placeMoveLearnabilityString
@@ -159,7 +159,7 @@ RedrawPartyMenu_::
 ; if it does match
 	ld de, .ableToLearnMoveOrEvolveText
 .placeEvolutionStoneString
-	ld bc, 20 + 9 ; down 1 row and right 9 columns
+	ld bc, SCREEN_WIDTH + 9 ; down 1 row and right 9 columns
 	pop hl
 	push hl
 	add hl, bc
@@ -168,7 +168,7 @@ RedrawPartyMenu_::
 	jr .printLevel
 .afterDrawingMonEntries
 	ld d, SET_PAL_PARTY_MENU
-	call RunPaletteCommand
+	call RunPaletteCommandWithoutGBCDelay
 .printMessage
 	ld hl, wStatusFlags5
 	ld a, [hl]
@@ -178,15 +178,41 @@ RedrawPartyMenu_::
 	ld a, [wPartyMenuTypeOrMessageID] ; message ID
 	cp FIRST_PARTY_MENU_TEXT_ID
 	jr nc, .printItemUseMessage
+	cp USE_ITEM_PARTY_MENU
+	jr z, .itemNameNeeded
+	cp USE_ITEM_PARTY_MENU_BATTLE
+	jr nz, .noItemNameNeeded
+.itemNameNeeded
+	push af
+	ld a, [wPartyItemID]
+	ld [wNamedObjectIndex], a
+	call GetItemName
+	pop af
+.noItemNameNeeded
 	add a
+	add a ; multiply by TEXT_FAR_TABLE_ENTRY_SIZE
 	ld hl, PartyMenuMessagePointers
 	ld b, 0
 	ld c, a
 	add hl, bc
-	ld a, [hli]
-	ld h, [hl]
-	ld l, a
 	rst _PrintText
+	ld a, [wPartyMenuTypeOrMessageID]
+	cp USE_ITEM_PARTY_MENU
+	jr nz, .done
+	hlcoord 15, 15
+	lb bc, 1, 3
+	call TextBoxBorder
+	hlcoord 16, 16
+	ld [hl], '×'
+	ld a, [wPartyItemID]
+	ld b, a
+	predef GetQuantityOfItemInBag
+	ld a, b
+	ld de, w2CharStringBuffer
+	ld [de], a
+	hlcoord 17, 16
+	lb bc, 1 | LEADING_ZEROES, 2
+	call PrintNumber
 .done
 	pop hl
 	pop af
@@ -199,12 +225,10 @@ RedrawPartyMenu_::
 	and $0F
 	ld hl, PartyMenuItemUseMessagePointers
 	add a
+	add a ; multiply by TEXT_FAR_TABLE_ENTRY_SIZE
 	ld c, a
 	ld b, 0
 	add hl, bc
-	ld a, [hli]
-	ld h, [hl]
-	ld l, a
 	push hl
 	ld a, [wUsedItemOnWhichPokemon]
 	ld hl, wPartyMonNicks
@@ -214,86 +238,43 @@ RedrawPartyMenu_::
 	jr .done
 
 PartyMenuItemUseMessagePointers:
-	dw AntidoteText
-	dw BurnHealText
-	dw IceHealText
-	dw AwakeningText
-	dw ParlyzHealText
-	dw PotionText
-	dw FullHealText
-	dw ReviveText
-	dw RareCandyText
+AntidoteText:
+	text_far_end _AntidoteText
+BurnHealText:
+	text_far_end _BurnHealText
+IceHealText:
+	text_far_end _IceHealText
+AwakeningText:
+	text_far_end _AwakeningText
+ParlyzHealText:
+	text_far_end _ParlyzHealText
+PotionText:
+	text_far_end _PotionText
+FullHealText:
+	text_far_end _FullHealText
+ReviveText:
+	text_far_end _ReviveText
+RareCandyText:
+	text_far_end _RareCandyText
 
 PartyMenuMessagePointers:
-	dw PartyMenuNormalText
-	dw PartyMenuItemUseText
-	dw PartyMenuBattleText
-	dw PartyMenuUseTMText
-	dw PartyMenuSwapMonText
-	dw PartyMenuItemUseText
-	dw PartyMenuEmptyText
-
 PartyMenuNormalText:
-	text_far _PartyMenuNormalText
-	text_end
-
+	text_far_end _PartyMenuNormalText
 PartyMenuItemUseText:
-	text_far _PartyMenuItemUseText
-	text_end
-
+	text_far_end _PartyMenuItemUseText
 PartyMenuBattleText:
-	text_far _PartyMenuBattleText
-	text_end
-
+	text_far_end _PartyMenuBattleText
 PartyMenuUseTMText:
-	text_far _PartyMenuUseTMText
-	text_end
-
+	text_far_end _PartyMenuUseTMText
 PartyMenuSwapMonText:
-	text_far _PartyMenuSwapMonText
-	text_end
-
+	text_far_end _PartyMenuSwapMonText
+PartyMenuItemUseText2:
+	text_far_end _PartyMenuItemUseText
 PartyMenuEmptyText:
-	text_far _PartyMenuEmptyText
-	text_end
+	text_far_end _PartyMenuEmptyText
+PartyMenuItemUseBattleText:
+	text_far_end _PartyMenuItemUseBattleText
 
-PotionText:
-	text_far _PotionText
-	text_end
-
-AntidoteText:
-	text_far _AntidoteText
-	text_end
-
-ParlyzHealText:
-	text_far _ParlyzHealText
-	text_end
-
-BurnHealText:
-	text_far _BurnHealText
-	text_end
-
-IceHealText:
-	text_far _IceHealText
-	text_end
-
-AwakeningText:
-	text_far _AwakeningText
-	text_end
-
-FullHealText:
-	text_far _FullHealText
-	text_end
-
-ReviveText:
-	text_far _ReviveText
-	text_end
-
-RareCandyText:
-	text_far _RareCandyText
-	sound_get_item_1 ; probably supposed to play SFX_LEVEL_UP but the wrong music bank is loaded
-	text_promptbutton
-	text_end
 
 SetPartyMenuHPBarColor:
 	ld hl, wPartyMenuHPBarColors
