@@ -2,6 +2,16 @@
 
 Want to leave a review? Go [here](https://github.com/Vortyne/pureRGB/issues/new?assignees=&labels=review&projects=&template=review.yml&title=%5BReview%5D%3A+Summarize+your+review+here).
 
+### Review by H4T3M4CH1N3 on 2.7.6 - The ultimate way to experience first-generation games.
+
+I started playing RGB when I was 9. I’m 34 now and my love for Gen 1 Pokémon games hasn’t faded at all with time. If anything it’s gotten stronger. I’m not usually into custom or modded games, but this one caught my eye. It rekindled that old spark I’ve always kept for these games. Definitely giving it a shot. Thanks in advance for the work!
+
+Update #1: Sooo guys, I’m currently playing PureRed and I’m about to head through Rock Tunnel into Lavender Town. I’d really recommend giving these patches a try. The improvements and extra dynamics are totally worth it. Looking forward to finishing R/G/B all over again. Stuff like the Apex Chips makes leveling your team feel smoother and more rewarding. I also love the better variety of wild Pokémon. It’s got me catching and training them again the same way I did when I first started my Pokémon journey. A lot of small changes just hit the right balance. Feels like the definitive way to experience R/G/B.
+
+Update #2: Just became Kanto Champion and already caught Mewtwo. Working through the side quests now and hunting down all 151. It’s been a really fun run and worth every minute spent on this upgrade to the original Pokémon Red. The difficulty ramps up in a smart, dynamic way so you can’t just brute-force your way past rivals. There are also some cool new ways to train your team (won’t spoil them).
+
+Huge thanks to Vortyne and everyone involved for making this the best way to replay the Pokémon games or introduce it to a new generation.
+
 ### Review by 2jaimz1994 on 2.7.4
 
 What a trip! PureRGB was absolutely fantastic. QoL improvements, Pokemon/stat improvements, move/movepool improvements, access, difficulty (only slightly because of Pokemon improvements), and more! This is everything I imagined Gen 1 should have been, and stayed pretty true to Gen 1 mechanics.

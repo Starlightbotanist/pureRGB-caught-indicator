@@ -2383,6 +2383,9 @@ SetLastBlackoutMap::
 SetSpecificBlackoutMap::
 	call IsPlayerAtCoords
 	jr nz, .notAtCoords
+	ld a, [wPlayerDirection]
+	cp PLAYER_DIR_UP
+	jr nz, .notAtCoords
 	CheckEvent EVENT_NURSE_TEXT_LOOP_BLOCKER
 	call nz, DisableAutoTextBoxDrawing
 	jr SetOnlyLastBlackoutMap

@@ -49,7 +49,7 @@ SafariZoneCenterTrainerTipsSignText:
 	text_asm
 	ld hl, .default
 	ld a, [wSafariType]
-	ld bc, 5
+	ld bc, TEXT_FAR_TABLE_ENTRY_SIZE
 	call AddNTimes
 	rst _PrintText
 	rst TextScriptEnd
