@@ -24,11 +24,12 @@ UpdatePlayerSprite:
 	ld [wSpritePlayerStateData1ImageIndex], a
 	ret
 .lowerLeftTileIsMapTile
-	call DetectCollisionBetweenSprites
 	ld h, HIGH(wSpriteStateData1)
 	ld a, [wWalkCounter]
 	and a
-	jr nz, .moving
+	jr nz, .moving ; PureRGBnote: OPTIMIZED: player collision data is only read at the start of a step, so skip detecting it mid-step
+	call DetectCollisionBetweenSprites
+	ld h, HIGH(wSpriteStateData1)
 	ld a, [wPlayerMovingDirection]
 ; check if down
 	bit PLAYER_DIR_BIT_DOWN, a
@@ -360,7 +361,8 @@ UpdateSpriteInWalkingAnimation:
 	ld a, [hl]                       ; x#SPRITESTATEDATA1_INTRAANIMFRAMECOUNTER
 	inc a
 ;shinpokerednote: 60fps - updated xy every other tick
-	call sprite60fps	
+	call sprite60fps
+	call CheckScriptedNPCRunStep ; PureRGBnote: ADDED: scripted "run" steps update every tick and move 2 pixels per tick
 	push bc
 	sub b
 ;
@@ -386,9 +388,17 @@ UpdateSpriteInWalkingAnimation:
 	jr nz, .xydone
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
 	ld a, [hli]                      ; x#SPRITESTATEDATA1_YSTEPVECTOR
+	bit 0, c ; PureRGBnote: ADDED: scripted run step moves 2 pixels per tick
+	jr z, .notRunningY
+	add a
+.notRunningY
 	add [hl]
 	ld [hli], a                      ; update [x#SPRITESTATEDATA1_YPIXELS]
 	ld a, [hli]                      ; x#SPRITESTATEDATA1_XSTEPVECTOR
+	bit 0, c ; PureRGBnote: ADDED: scripted run step moves 2 pixels per tick
+	jr z, .notRunningX
+	add a
+.notRunningX
 	add [hl]
 	ld [hl], a                       ; update [x#SPRITESTATEDATA1_XPIXELS]
 .xydone
@@ -397,10 +407,17 @@ UpdateSpriteInWalkingAnimation:
 	inc h
 	ld a, [hl]                       ; x#SPRITESTATEDATA2_WALKANIMATIONCOUNTER
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;shinpokerednote: 60fps - make the delay decounter update every other tick	
+;shinpokerednote: 60fps - make the delay decounter update every other tick
 	add b	;60fps
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	dec a
+;;;;;;;;;; PureRGBnote: ADDED: scripted run step moved 2 pixels this tick (the counter starts at 16 so it always lands on 0)
+	bit 0, c
+	jr z, .notRunningCounter
+	dec a
+.notRunningCounter
+	and a
+;;;;;;;;;;
 	ld [hl], a                       ; update walk animation counter
 	ret nz
 	ld a, $6                         ; walking finished, update state
@@ -451,6 +468,43 @@ sprite60fps:
 	xor $01
 	ld [hl], a
 	ld b, a
+	pop af
+	pop hl
+	ret
+
+; PureRGBnote: ADDED: in scripted NPC movement data (see MoveSprite), a direction ORed with NPC_RUN makes the NPC
+; run that step: it updates every tick instead of every other tick and moves 2 pixels per tick,
+; so 4x as fast as an NPC walking (the same speed as the player running).
+; if the current sprite is in the middle of a scripted run step, sets b to 0 (update this tick) and c to 1 (2 pixels),
+; otherwise sets c to 0. preserves af and hl.
+CheckScriptedNPCRunStep:
+	ld c, 0
+	push hl
+	push af
+	ld h, HIGH(wSpriteStateData2)
+	ldh a, [hCurrentSpriteOffset]
+	add SPRITESTATEDATA2_MOVEMENTBYTE1
+	ld l, a
+	ld a, [hl] ; movement data index of the NEXT step, or WALK/STAY if the sprite isn't doing scripted movement
+	cp WALK
+	jr nc, .done
+	and a
+	jr z, .done
+	dec a ; movement data index of the current step
+	ld hl, wNPCMovementDirections
+	add l
+	ld l, a
+	jr nc, .noCarry
+	inc h
+.noCarry
+	ld a, [hl]
+	cp NPC_CHANGE_FACING
+	jr nc, .done ; not a direction
+	bit BIT_NPC_RUN, a
+	jr z, .done
+	ld b, 0
+	inc c
+.done
 	pop af
 	pop hl
 	ret
@@ -548,6 +602,7 @@ InitializeSpriteScreenPosition:
 	ld a, [hl]      ; x#SPRITESTATEDATA2_MAPY
 	sub b           ; relative to player position
 	swap a          ; * 16
+	and $f0         ; PureRGBnote: FIXED: without this, swap a isn't * 16 for negative values (scripted NPCs 1 tile above the screen would appear on screen)
 	sub $4          ; - 4
 	dec h
 	ld [hli], a     ; [x#SPRITESTATEDATA1_YPIXELS]
@@ -557,6 +612,7 @@ InitializeSpriteScreenPosition:
 	ld a, [hli]     ; x#SPRITESTATEDATA2_MAPX
 	sub b           ; relative to player position
 	swap a          ; * 16
+	and $f0         ; PureRGBnote: FIXED: same as above (scripted NPCs 1 tile left of the screen would appear on screen)
 	dec h
 	ld [hl], a      ; [x#SPRITESTATEDATA1_XPIXELS]
 	ret
@@ -564,19 +620,18 @@ InitializeSpriteScreenPosition:
 ; tests if sprite is off screen or otherwise unable to do anything
 CheckSpriteAvailability:
 ;;;; IsObjectHidden: ; tests if current object is toggled off/has been hidden ; was moved here because it was only used once anyway
+;;;;;;;;;; PureRGBnote: OPTIMIZED: read the sprite's toggleable object index from a table built on map load instead of searching a list
 	ldh a, [hCurrentSpriteOffset]
 	swap a
-	ld b, a
-	ld hl, wToggleableObjectList
-.loop
-	ld a, [hli]
+	ld c, a
+	ld b, 0
+	ld hl, wSpriteToggleableObjectIndices
+	add hl, bc
+	ld a, [hl]
 	cp -1
 	jr z, .notHidden ; not toggleable -> not hidden
-	cp b
-	ld a, [hli]
-	jr nz, .loop
 	ld c, a
-	ld b, FLAG_TEST
+;;;;;;;;;;
 ;;;;;;;;;; PureRGBnote: ADDED: when in certain maps we use a different set of flags for hiding/showing objects.
 	CheckEvent EVENT_IN_EXTRA_TOGGLEABLE_OBJECTS_MAP
 	ld hl, wToggleableObjectFlags
@@ -585,7 +640,7 @@ CheckSpriteAvailability:
 	ld hl, wExtraToggleableObjectFlags
 .doAction
 ;;;;;;;;;;
-	call FlagAction
+	call TestFlag ; PureRGBnote: OPTIMIZED: read-only flag test is faster than FlagAction (runs every frame per sprite)
 	and a
 	jr nz, .hidden
 .notHidden

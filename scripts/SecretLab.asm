@@ -1,3 +1,5 @@
+; TODO: make chief walk out slowly instead of run like the others.
+
 SecretLab_Script:
 	call ReplaceDoor
 	call CheckOpponentLeaves
@@ -93,7 +95,7 @@ CheckOpponentWalkIn:
 	CheckEvent EVENT_BEAT_SECRET_LAB_CHIEF
 	ret nz
 	ld a, [wIsInBattle]
-	cp $FF
+	cp LOST_BATTLE
 	ret z
 	CheckEvent EVENT_SECRET_LAB_NPC_WALK_IN_HAPPENING
 	jp nz, WaitForWalkFinish
@@ -198,14 +200,14 @@ WaitForWalkFinish:
 	ret
 
 SoldierLeaveMovementDefault:
-	db NPC_MOVEMENT_RIGHT
-	db NPC_MOVEMENT_DOWN
-	db NPC_MOVEMENT_DOWN
-	db NPC_MOVEMENT_DOWN
+	db NPC_RUN_RIGHT
+	db NPC_RUN_DOWN
+	db NPC_RUN_DOWN
+	db NPC_RUN_DOWN
 SoldierWalkInMovement:
-	db NPC_MOVEMENT_DOWN
-	db NPC_MOVEMENT_DOWN
-	db NPC_MOVEMENT_DOWN
+	db NPC_RUN_DOWN
+	db NPC_RUN_DOWN
+	db NPC_RUN_DOWN
 	db -1
 
 CheckOpponentLeaves:
@@ -215,7 +217,7 @@ CheckOpponentLeaves:
 	ret z
 	ResetEvent EVENT_SECRET_LAB_BATTLE_COMPLETED
 	ld a, [wIsInBattle]
-	cp $FF
+	cp LOST_BATTLE
 	ret z
 	ld hl, wStatusFlags3
 	res BIT_PRINT_END_BATTLE_TEXT, [hl]
@@ -257,11 +259,41 @@ CheckOpponentLeaves:
 .walkAway
 	pop af
 	ldh [hSpriteIndex], a
+	cp SECRETLAB_CHIEF
+	jr nz, .moveSprite
+	; the chief walks away slowly instead of running like the soldiers
+	ld a, [wXCoord]
+	cp 7
+	ld de, ChiefLeaveMovementDefault
+	jr nz, .moveSprite
+	ld de, ChiefLeaveMovementAlternative
+.moveSprite
 	call MoveSprite
 	SetEvent EVENT_SECRET_LAB_NPC_WALK_OUT_HAPPENING
 	ret
 
 SoldierLeaveMovementAlternative:
+	db NPC_RUN_LEFT
+	db NPC_RUN_DOWN
+	db NPC_RUN_DOWN
+	db NPC_RUN_DOWN
+	db NPC_RUN_DOWN
+	db NPC_RUN_DOWN
+	db NPC_RUN_DOWN
+	db -1
+
+; same paths as SoldierLeaveMovementDefault/SoldierLeaveMovementAlternative, but walking
+ChiefLeaveMovementDefault:
+	db NPC_MOVEMENT_RIGHT
+	db NPC_MOVEMENT_DOWN
+	db NPC_MOVEMENT_DOWN
+	db NPC_MOVEMENT_DOWN
+	db NPC_MOVEMENT_DOWN
+	db NPC_MOVEMENT_DOWN
+	db NPC_MOVEMENT_DOWN
+	db -1
+
+ChiefLeaveMovementAlternative:
 	db NPC_MOVEMENT_LEFT
 	db NPC_MOVEMENT_DOWN
 	db NPC_MOVEMENT_DOWN

@@ -1682,7 +1682,7 @@ CheckIfVolcanoBattleOccurred:
 	res BIT_MAP_LOADED_AFTER_BATTLE, [hl]
 	ret z
 	ld a, [wIsInBattle]
-	cp -1 ; lost battle
+	cp LOST_BATTLE ; lost battle
 	ret z ; do nothing when you lost the battle
 	call GBFadeInFromWhite
 	CheckAndResetEvent EVENT_BATTLING_VOLCANO_MAGMAR
@@ -2267,11 +2267,11 @@ VolcanoHelpMenu:
 	next "Blockages@"
 
 BlaineWalksOut:
-	db NPC_MOVEMENT_DOWN
-	db NPC_MOVEMENT_LEFT
-	db NPC_MOVEMENT_LEFT
-	db NPC_MOVEMENT_LEFT
-	db NPC_MOVEMENT_LEFT
+	db NPC_RUN_DOWN
+	db NPC_RUN_LEFT
+	db NPC_RUN_LEFT
+	db NPC_RUN_LEFT
+	db NPC_RUN_LEFT
 	db -1
 
 BlaineLeavesVolcano:

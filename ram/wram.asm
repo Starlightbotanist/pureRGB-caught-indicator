@@ -1663,7 +1663,8 @@ NEXTU
 wSlotMachineAllowMatchesCounter:: db
 ENDU
 
-	ds 2 ; unused 2 bytes
+; PureRGBnote: ADDED: engine state that isn't saved (after wBoxDataEnd, so not part of the saved box data)
+wHBlankCopySourceTemp:: ds 2
 
 wOutwardSpiralTileMapPointer:: db
 
@@ -1950,7 +1951,7 @@ wPrize2:: db
 wPartyItemID::
 wPrize3:: db
 
-	ds 1 ; unused lone byte
+wCurMapROMBank:: db
 
 ; This union spans 17 bytes.
 UNION
@@ -2278,13 +2279,14 @@ wToggleableObjectFlagsEnd::
 ; saved copy of SPRITESTATEDATA1_IMAGEINDEX (used for sprite facing/anim)
 wSavedSpriteImageIndex:: db
 
-; each entry consists of 2 bytes
-; * the sprite ID (depending on the current map)
-; * the toggleable object index (global, used for wToggleableObjectFlags)
-; terminated with $FF
-wToggleableObjectList:: ds 16 * 2 + 1
+; PureRGBnote: CHANGED: used to be wToggleableObjectList, a $ff-terminated list of 2-byte entries
+; (sprite ID, global toggleable object index) that had to be searched.
+; Now indexed directly by sprite ID: holds the toggleable object index (global, used for wToggleableObjectFlags)
+; of each sprite on the current map, or $ff if the sprite isn't toggleable. Rebuilt every time a map loads.
+wSpriteToggleableObjectIndices:: ds NUM_SPRITESTATEDATA_STRUCTS
 
-	ds 1 ; unused save file byte
+	ds 18 ; unused save file bytes (first 17 used to be used by wToggleAbleObjectFlags, save file updater necessary to use)
+
 ; PureRGBnote: ADDED: additional new script variables replaced previously empty space for maps that now need script tracking
 wGameProgressFlags::
 wOaksLabCurScript:: db
@@ -2791,7 +2793,7 @@ wBoxMonNicksEnd::
 
 wBoxDataEnd::
 
-; ds 11 ; used to be exp bar space here, could use this many bytes without issue possibly
+ds 11 ; used to be exp bar space here, could use this many bytes without issue possibly
 
 SECTION "Stack", WRAMX
 
