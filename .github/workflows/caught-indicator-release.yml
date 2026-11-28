@@ -1,0 +1,121 @@
+name: Caught indicator release
+
+on:
+  schedule:
+    - cron: '17,47 * * * *'
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Update master and publish the next missing release
+        type: boolean
+        default: false
+
+permissions: {}
+
+concurrency:
+  group: caught-indicator-release
+  cancel-in-progress: false
+
+jobs:
+  mirror:
+    if: github.ref == 'refs/heads/release-automation' && (github.event_name == 'schedule' || inputs.publish)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    environment:
+      name: release-publishing
+      deployment: false
+    permissions:
+      actions: write
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Keep the scheduled workflow enabled
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api -X PUT "repos/$GITHUB_REPOSITORY/actions/workflows/caught-indicator-release.yml/enable"
+      - name: Fast-forward master to Vortyne/pureRGB
+        env:
+          DEPLOY_KEY: ${{ secrets.PURERGB_RELEASE_DEPLOY_KEY }}
+        run: bash tools/release.sh mirror
+
+  build:
+    if: github.ref == 'refs/heads/release-automation'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    outputs:
+      tag: ${{ steps.prepare.outputs.tag }}
+      upstream: ${{ steps.prepare.outputs.upstream }}
+      base: ${{ steps.prepare.outputs.base }}
+      tree: ${{ steps.prepare.outputs.tree }}
+      archive: ${{ steps.prepare.outputs.archive }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Find and merge the next upstream release
+        id: prepare
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash tools/release.sh prepare
+      - name: Install the tagged RGBDS version
+        if: steps.prepare.outputs.tag != ''
+        run: |
+          version=$(tr -d '\r\n' < "$RUNNER_TEMP/stock/.rgbds-version")
+          [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          rgbds="$RUNNER_TEMP/rgbds"
+          mkdir "$rgbds"
+          curl --fail --silent --show-error --location --retry 3 \
+            "https://github.com/gbdev/rgbds/releases/download/v$version/rgbds-linux-x86_64.tar.xz" \
+            --output "$rgbds/release.tar.xz"
+          tar -xJf "$rgbds/release.tar.xz" -C "$rgbds"
+          assembler=$(find "$rgbds" -type f -name rgbasm -print -quit)
+          [[ -x "$assembler" ]]
+          dirname "$assembler" >> "$GITHUB_PATH"
+      - name: Build and package the patches
+        if: steps.prepare.outputs.tag != ''
+        env:
+          TAG: ${{ steps.prepare.outputs.tag }}
+        run: |
+          make -C "$RUNNER_TEMP/stock" -j"$(nproc)" pokeblue.gbc pokegreen.gbc pokered.gbc
+          make -C "$RUNNER_TEMP/caught" -j"$(nproc)" pokeblue.gbc pokegreen.gbc pokered.gbc
+          python3 tools/package_release.py "$TAG" "$RUNNER_TEMP/upstream-assets" \
+            "$RUNNER_TEMP/stock" "$RUNNER_TEMP/caught" "$RUNNER_TEMP/package"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        if: steps.prepare.outputs.tag != ''
+        with:
+          name: caught-indicator-patches
+          path: ${{ runner.temp }}/package/${{ steps.prepare.outputs.archive }}
+          if-no-files-found: error
+
+  publish:
+    needs: [mirror, build]
+    if: needs.build.outputs.tag != ''
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    environment:
+      name: release-publishing
+      deployment: false
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          name: caught-indicator-patches
+          path: ${{ runner.temp }}/package
+      - name: Publish the verified patch ZIP
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DEPLOY_KEY: ${{ secrets.PURERGB_RELEASE_DEPLOY_KEY }}
+          TAG: ${{ needs.build.outputs.tag }}
+          UPSTREAM_SHA: ${{ needs.build.outputs.upstream }}
+          BASE_SHA: ${{ needs.build.outputs.base }}
+          BUILT_TREE: ${{ needs.build.outputs.tree }}
+          ARCHIVE: ${{ needs.build.outputs.archive }}
+        run: bash tools/release.sh publish
