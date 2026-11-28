@@ -384,7 +384,7 @@ BattleOccurred::
 	rst DelayFrames
 	jp EnterMap
 .allPokemonFainted
-	ld a, $ff
+	ld a, LOST_BATTLE
 	ld [wIsInBattle], a
 	call RunMapScript
 	jp HandleBlackOut
@@ -2382,6 +2382,9 @@ SetLastBlackoutMap::
 	lb de, 3, 3 ; this relies on pokecenters having the same layout!
 SetSpecificBlackoutMap::
 	call IsPlayerAtCoords
+	jr nz, .notAtCoords
+	ld a, [wPlayerDirection]
+	cp PLAYER_DIR_UP
 	jr nz, .notAtCoords
 	CheckEvent EVENT_NURSE_TEXT_LOOP_BLOCKER
 	call nz, DisableAutoTextBoxDrawing

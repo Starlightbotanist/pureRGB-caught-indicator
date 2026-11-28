@@ -2,6 +2,40 @@
 
 Want to leave a review? Go [here](https://github.com/Vortyne/pureRGB/issues/new?assignees=&labels=review&projects=&template=review.yml&title=%5BReview%5D%3A+Summarize+your+review+here).
 
+### Review by lucas3500-lab on 2.7.6 - Wonderful
+
+I played your game for 50 hours and I’d like to share a few thoughts.
+
+First of all, this is one of the best first-generation ROM hacks I've ever experienced. I'm not a "purist" type, and I actually like it when creators take certain liberties with their versions of the games that many of us spent hours and hours playing during our childhood. I especially like it when they manage to preserve the game's core identity with a few extra touches—and I’m not just talking about "quality of life" mechanics, but having the courage to add genuinely new mechanics instead of simply importing types or attacks from later generations. I believe your hack fits these criteria, and that said, I'll set aside those minor tweaks we can find in others, like "running with B," etc.
+
+I liked the color selection and sprites—not just a generic "colored" version of RGB. It’s a minor detail, but besides preserving the coloration present in the originals, it brings new ways of looking at those games. Back then, everyone had a different experience with the same game: some remember it in black and white, others in shades of green, others in color. Here, we get to experience something we never had, but that was always there, much like the Super Game Boy functions and their own palettes.
+
+The music you composed pleased me. I’m not a guy who pays much attention or cares much about that sort of thing, but I played the entire game on the "OG+" option and I liked what I heard. They synchronize well with the game itself, no further comments.
+
+I didn't mess with the sprites, but I know some people consider that a good feature. I left them as they were because I figured that would be the "author's vision" of the hack—also no further comments.
+
+The "side quests" are good and genuinely add to the gameplay. Things like that, which expand the imagination, are what draw me to a ROM hack. Blame in a volcano, Dragonite researchers... I won't mention the last one because I don't know if it counts as a spoiler, but they are very interesting, and I'd love to see more things like that in future updates. They will always be what sets one hack apart from another. PS: It took me longer than it should have to complete the camera missions.
+
+Complementing the side quests, I believe what drew me most to your hack were not just the changes to some Pokémon's types, but special boosts for "weak" Pokémon that are now viable in battle and on a minimally "competitive" team. A shoutout to Magneton, which I used all the way until beating everyone in the final arena; it is absolute monster and a Pokémon I never thought of using before, but with your touch, it becomes highly viable without ever feeling "broken."
+
+About the attacks: This is the part I was most interested in. I play a lot of Gen 2 and Gen 1 online, and your changes shook up the competitive meta we were used to, which is very welcome. Stat buffs for Pokémon and especially move alterations made Pokémon that weren't used much—like Fire, Grass, and even Bug—become practically meta, I'd say. The fact that Bug affects Psychic and vice versa helped a lot, too.
+
+Given this last point, I’d also like to give a suggestion regarding one specific move: Screech. You were brilliant in inventing this thing about waking up sleeping Pokémon. The first generation is well known for "annoying" moves, like Sleep lasting around 6 turns, wrap and clamp spam, etc. And that was put to rest both by the changes to restriction moves and by Screech itself. My suggestion is that Screech should also have a turn duration, like Sleep. Because by lasting "forever," you traded one annoying thing for another. If before everyone carried one or two Pokémon to put the opponent to sleep, now every team carries one with Screech—mainly Onix—which makes any sleep move useless.
+
+Another thing that bothers me in Gen 1 is Freeze. I know it doesn't always happen, and with the new Fire Pokémon being used like Magmar and Arcanine, there is a "strategy" to switch Pokémon and get them out of it. Even though I also carry a Pokémon like Venusaur to use the new move and thaw out frozen Pokémon, a mechanic where you stay frozen forever is really annoying.
+
+Other than that, that's it. I'll be right here following your excellent work. Thank you so much for the hack—it's one of my favorites, if not my absolute favorite way to experience the first generation.
+
+### Review by H4T3M4CH1N3 on 2.7.6 - The ultimate way to experience first-generation games.
+
+I started playing RGB when I was 9. I’m 34 now and my love for Gen 1 Pokémon games hasn’t faded at all with time. If anything it’s gotten stronger. I’m not usually into custom or modded games, but this one caught my eye. It rekindled that old spark I’ve always kept for these games. Definitely giving it a shot. Thanks in advance for the work!
+
+Update #1: Sooo guys, I’m currently playing PureRed and I’m about to head through Rock Tunnel into Lavender Town. I’d really recommend giving these patches a try. The improvements and extra dynamics are totally worth it. Looking forward to finishing R/G/B all over again. Stuff like the Apex Chips makes leveling your team feel smoother and more rewarding. I also love the better variety of wild Pokémon. It’s got me catching and training them again the same way I did when I first started my Pokémon journey. A lot of small changes just hit the right balance. Feels like the definitive way to experience R/G/B.
+
+Update #2: Just became Kanto Champion and already caught Mewtwo. Working through the side quests now and hunting down all 151. It’s been a really fun run and worth every minute spent on this upgrade to the original Pokémon Red. The difficulty ramps up in a smart, dynamic way so you can’t just brute-force your way past rivals. There are also some cool new ways to train your team (won’t spoil them).
+
+Huge thanks to Vortyne and everyone involved for making this the best way to replay the Pokémon games or introduce it to a new generation.
+
 ### Review by 2jaimz1994 on 2.7.4
 
 What a trip! PureRGB was absolutely fantastic. QoL improvements, Pokemon/stat improvements, move/movepool improvements, access, difficulty (only slightly because of Pokemon improvements), and more! This is everything I imagined Gen 1 should have been, and stayed pretty true to Gen 1 mechanics.
