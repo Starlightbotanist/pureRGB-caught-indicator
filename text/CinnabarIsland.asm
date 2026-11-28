@@ -28,11 +28,7 @@ _CinnabarIslandPokemonLabSignText::
 	done
 
 _CinnabarIslandGymSignText::
-	text "CINNABAR ISLAND"
-	line "#MON GYM"
-	cont "LEADER: BLAINE"
-
-	para "The Hot-Headed"
+	text "The Hot-Headed"
 	line "Quiz Master!"
 	done
 

@@ -1,6 +1,5 @@
 GiveFossilToCinnabarLab::
-	ld hl, wStatusFlags5
-	set BIT_NO_TEXT_DELAY, [hl]
+	call DisableTextDelay
 	xor a
 	ld [wCurrentMenuItem], a
 	ld a, PAD_A | PAD_B
@@ -23,8 +22,7 @@ GiveFossilToCinnabarLab::
 	hlcoord 0, 0
 	call TextBoxBorderUpdateSprites
 	call PrintFossilsInBag
-	ld hl, wStatusFlags5
-	res BIT_NO_TEXT_DELAY, [hl]
+	call EnableTextDelay
 	call HandleMenuInput
 	bit B_PAD_B, a
 	jr nz, .cancelledGivingFossil
@@ -66,20 +64,16 @@ GiveFossilToCinnabarLab::
 	ret
 
 .ScientistSeesFossilText:
-	text_far _CinnabarLabFossilRoomScientist1SeesFossilText
-	text_end
+	text_far_end _CinnabarLabFossilRoomScientist1SeesFossilText
 
 .ScientistTakesFossilText:
-	text_far _CinnabarLabFossilRoomScientist1TakesFossilText
-	text_end
+	text_far_end _CinnabarLabFossilRoomScientist1TakesFossilText
 
 .GoForAWalkText:
-	text_far _CinnabarLabFossilRoomScientist1GoForAWalkText2
-	text_end
+	text_far_end _CinnabarLabFossilRoomScientist1GoForAWalkText2
 
 .ComeAgainText:
-	text_far _CinnabarLabFossilRoomScientist1ComeAgainText
-	text_end
+	text_far_end _CinnabarLabFossilRoomScientist1ComeAgainText
 
 PrintFossilsInBag:
 ; Prints each fossil in the player's bag on a separate line in the menu.

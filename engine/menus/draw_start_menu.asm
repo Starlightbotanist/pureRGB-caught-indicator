@@ -19,8 +19,7 @@ DrawStartMenu::
 	call CheckSavedStartMenuIndex
 	xor a
 	ld [wMenuWatchMovingOutOfBounds], a
-	ld hl, wStatusFlags5
-	set BIT_NO_TEXT_DELAY, [hl]
+	call DisableTextDelay
 	hlcoord 12, 2
 	CheckEvent EVENT_GOT_POKEDEX
 ; case for not having pokedex
@@ -48,8 +47,7 @@ DrawStartMenu::
 	ld de, StartMenuResetText
 	call PlaceString
 .skipResetText
-	ld hl, wStatusFlags5
-	res BIT_NO_TEXT_DELAY, [hl]
+	call EnableTextDelay
 	call GetStartMenuPrompt
 	callfar PrintSafariZoneSteps ; print Safari Zone info, if in Safari Zone
 	call LoadGBPal ; shinpokerednote: gbcnote: moved to redisplaystartmenu for better visual effect

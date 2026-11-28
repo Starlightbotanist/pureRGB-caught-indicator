@@ -1,13 +1,11 @@
 ; Note: don't try to display missingno with this
 _DisplayPokedex::
-	ld hl, wStatusFlags5
-	set BIT_NO_TEXT_DELAY, [hl]
+	call DisableTextDelay
 	callfar ShowPokedexData
-	ld hl, wStatusFlags5
-	res BIT_NO_TEXT_DELAY, [hl]
+	call EnableTextDelay
 	call ReloadMapData
 	ld c, 10
-	rst _DelayFrames
+	rst DelayFrames
 	call IndexToPokedex
 	ld a, [wPokedexNum]
 	dec a

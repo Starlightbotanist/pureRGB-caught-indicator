@@ -28,10 +28,10 @@ MakePokemonAppearInOverworld::
 	callfar FarLoadSmokeTileFourTimes
 	call UpdateSprites
 	ld c, 8
-	rst _DelayFrames
+	rst DelayFrames
 	pop de
 	pop bc
-	callfar FarLoadPartyMonSpriteIntoVRAMScreenOn
+	callfar FarLoadSinglePartyMonSpriteIntoVRAM
 	jp UpdateSprites
 
 ; Makes a sprite disappear in a poof and moves it to the provided coordinates
@@ -49,7 +49,7 @@ MakePokemonDisappearInOverworld::
 	callfar FarLoadSmokeTileFourTimes
 	call UpdateSprites
 	ld c, 8
-	rst _DelayFrames
+	rst DelayFrames
 	pop bc
 	; c = which pokemon
 	pop de ; pop hl into de

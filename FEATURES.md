@@ -2,10 +2,10 @@
 
 ![covers](/box_art/PureRGB_Covers.png?raw=true)
 
-The only version differences between PureRed / PureBlue / PureGreen are visual. Play whatever color you like the most.
+The only version differences between PureRed / PureBlue / PureGreen are visual. Play whatever color you like the most. All 151 Pokemon are obtainable without trading.
 
 ## New Options in the Options Menu
-Many options have been added to the game's options menu. To be clear, there are **4 pages of options** now. **Use the Next button on the options page** to cycle through the pages when in-game.
+Many options have been added to the game's options menu. To be clear, there are **5 pages of options** now. **Use the Next button on the options page** to cycle through the pages when in-game.
 
 You can press SELECT to get an explanation of the current option in any option menu.
 
@@ -19,24 +19,24 @@ The second page contains new big features related to general gameplay.
   - The first option, `COLORS` will cycle between color palette options of the game. These only apply if you're playing on a system that supports color, like GBC, GBA, Super Gameboy, etc. Important to note: On Super Gameboy after changing this setting you will need to save and restart the game to apply the change. On GBC and GBA it's instant.
     - `OG`: Default color setting. The game will use whatever colors it originally would have had on the system you're playing on. In the case of GBC or GBA, this is a hardcoded limited dual-color palette. On SGB, this is the default SGB color palettes.
     
-    ![Blue Title GBC Default](/screenshots/blue_title_default_gbc_color.png?raw=true) ![Red Title GBC Default](/screenshots/red_title_default_gbc_color.png?raw=true) ![Green Title GBC Default](/screenshots/green_title_default_gbc_color.png?raw=true)
+    ![Blue Title GBC Default](/screenshots/og_title/blue_title_default_gbc_color.png?raw=true) ![Red Title GBC Default](/screenshots/og_title/red_title_default_gbc_color.png?raw=true) ![Green Title GBC Default](/screenshots/og_title/green_title_default_gbc_color.png?raw=true)
     - `SGB1`: Force SGB color palettes. This is no different than the "OG" setting if playing on SGB. On GBC or GBA, this changes the game to use the same color palettes as on SGB, and enables full color mode. Attack animations will have color in this mode when on GBC or GBA, along with some other color enhancements.
   
-    ![Blue Title SGB](/screenshots/blue_title_sgb_colors_on_gbc.png?raw=true) ![Red Title SGB](/screenshots/red_title_sgb_colors_on_gbc.png?raw=true) ![Green Title SGB](/screenshots/green_title_sgb_colors_on_gbc.png?raw=true)
+    ![Blue Title SGB](/screenshots/og_title/blue_title_sgb_colors_on_gbc.png?raw=true) ![Red Title SGB](/screenshots/og_title/red_title_sgb_colors_on_gbc.png?raw=true) ![Green Title SGB](/screenshots/og_title/green_title_sgb_colors_on_gbc.png?raw=true)
     
     ![Attack Color Fire Blast SGB](/screenshots/attack_color_fire_blast.png?raw=true) ![Attack Color Ice Beam SGB](/screenshots/attack_color_ice_beam.png?raw=true) ![Attack Color Solar Beam SGB](/screenshots/attack_color_solarbeam.png?raw=true) ![Attack Color Surf SGB](/screenshots/attack_color_surf.png?raw=true)
     - `SGB2`: Force alternate SGB color palettes. Access this option by pressing A on SGB1 in this options menu. This is the same as SGB1 with a couple minor differences in colors based on japanese pokemon green. A more greenish white color for all the palettes. Other minor color differences include: Pallet Town is purplish instead of light green. Pewter City, Lavender Town, Celadon City, Saffron City, and Indigo Plateau have slightly different main colors in comparison to SGB1. Other than these slight color differences it is the same as SGB1 in features. 
 
-    ![Blue Title SGB2](/screenshots/blue_title_sgb2_colors_on_gbc.png?raw=true) ![Red Title SGB2](/screenshots/red_title_sgb2_colors_on_gbc.png?raw=true) ![Green Title SGB2](/screenshots/green_title_sgb2_colors_on_gbc.png?raw=true)
+    ![Blue Title SGB2](/screenshots/og_title/blue_title_sgb2_colors_on_gbc.png?raw=true) ![Red Title SGB2](/screenshots/og_title/red_title_sgb2_colors_on_gbc.png?raw=true) ![Green Title SGB2](/screenshots/og_title/green_title_sgb2_colors_on_gbc.png?raw=true)
 
     Pictured Below: Left = SGB1, Right = SGB2
 
     ![sgb1 sgb2 comparison 1](/screenshots/sgb1_sgb2_comparison_pallet.png?raw=true) ![sgb1 sgb2 comparison 2](/screenshots/sgb1_sgb2_comparison_pewter.png?raw=true) ![sgb1 sgb2 comparison 3](/screenshots/sgb1_sgb2_comparison_lavender.png?raw=true) ![sgb1 sgb2 comparison 4](/screenshots/sgb1_sgb2_comparison_saffron.png?raw=true)  ![sgb1 sgb2 comparison 5](/screenshots/sgb1_sgb2_comparison_indigo.png?raw=true)
     - `Y1 or Y2`: Force GBC color palettes. On Super Gameboy, it'll now have Pokemon Yellow's GBC more intense color palettes. Same with GBC and GBA. On GBC and GBA, enables full color mode. Attack animations will have color in this mode when on GBC or GBA, along with some other color enhancements. Y1 are the original palettes for pokemon yellow. Y2 are the same colors as Y1 with reduced intensity, to look like you are playing on an original GBC's screen when you are emulating the game.
     
-    ![Blue Title GBC](/screenshots/blue_title_gbc_colors_on_gbc.png?raw=true) ![Red Title GBC](/screenshots/red_title_gbc_colors_on_gbc.png?raw=true) ![Green Title GBC](/screenshots/green_title_gbc_colors_on_gbc.png?raw=true)
+    ![Blue Title GBC](/screenshots/og_title/blue_title_gbc_colors_on_gbc.png?raw=true) ![Red Title GBC](/screenshots/og_title/red_title_gbc_colors_on_gbc.png?raw=true) ![Green Title GBC](/screenshots/og_title/green_title_gbc_colors_on_gbc.png?raw=true)
 
-    ![Blue Title GBC2](/screenshots/blue_title_y2_colors_on_gbc.png?raw=true) ![Red Title GBC2](/screenshots/red_title_y2_colors_on_gbc.png?raw=true) ![Green Title GBC2](/screenshots/green_title_y2_colors_on_gbc.png?raw=true)
+    ![Blue Title GBC2](/screenshots/og_title/blue_title_y2_colors_on_gbc.png?raw=true) ![Red Title GBC2](/screenshots/og_title/red_title_y2_colors_on_gbc.png?raw=true) ![Green Title GBC2](/screenshots/og_title/green_title_y2_colors_on_gbc.png?raw=true)
   - The second option, `ALT PKMN COLORS` will enable or disable pokemon from being able to have special color palettes (Default: OFF). When turned on, features related to alternate color pokemon are enabled. In certain regions, you will find differently colored pokemon, like blue nidorinos and purple nidorinas. Think of them as regional color variants. This is just an amusing feature to allow for additional enjoyment in finding unique pokemon by exploring different places.
 
 ![Alt Colors Off](/screenshots/alt_pokemon_colors_off.png?raw=true) ![Alt Colors On](/screenshots/alt_pokemon_colors_on.png?raw=true)
@@ -89,6 +89,7 @@ The fourth page contains Sprite-related options.
 The fifth page contains some additional options.
 
 ![Options Fifth Page](/screenshots/options_page_5.png?raw=true)
+- Turn on or off song pause/resume between battles. If you want the route or cave song to not restart after every wild battle you run from, you can turn this OFF and it will pause/resume the area music instead.
 - Turn on or off the learnset feature in the game. On by default. You can unlock learnsets for pokemon in various ways (discussed in the "New Features" section if this is turned on)
 - Turn on a new title screen created for PureRGB. By default, it displays the original game's title screen for the version you are playing.
   
@@ -181,6 +182,15 @@ The fifth page contains some additional options.
 - Reduced the weirdly long artificial delay when swapping items in the item menu
 - Improved the speed and responsiveness of the main menu (CONTINUE / NEW GAME / OPTIONS) menu
 - In Elevator menus, the current floor is now displayed.
+- You can rename PC boxes to 5 letter custom names.
+- By pressing select while your cursor is on the "ITEM" option in the start menu, you can automatically sort your bag items.
+- By pressing select while viewing "Player's PC", you can automatically sort your PC items.
+- Celadon Mart's directory now uses a menu, so it's less obtuse. The 1st floor clerk will also give you the same info with her own flair.
+- Re-talking to the pokemon center nurse will not re-trigger her dialog after you have already healed until you move off of the "Talk to her" position. Prevents triggering her dialog accidentally when you've already healed.
+- Added a "Currently selected pokemon" info box to the PC withdraw/deposit/release menus. Includes species name, party icon, and pokemon's types. Now you can nickname your pokemon without forgetting which pokemon it is.
+- Enhanced the speed of the tile loading function of the game so many views load 2x as fast as they did before. Like the start menu, talking to an NPC, opening the party menu, etc.
+- When using items on your party, the menu will stay open if you have more of that item you can still use. Like if you have many rare candies, you don't have to keep opening up the party menu to use them over and over.
+- Small prompts in the start menu/pc menu will indicate special select button actions you can do (change box from start menu, sort items from start menu, view PC box from pc menu, sort items from player's pc menu)
 
 ## New Gameplay Features
 - Mew is under the truck!!! Use strength on it from the right side. If the SS Anne has left, it returns after obtaining the Soul Badge.
@@ -381,6 +391,7 @@ The fifth page contains some additional options.
 - After healing Paralysis/Burn with an item, speed or attack stats will be correctly reset to their original values
 - Nidorino's cry plays correctly in Oak's introduction instead of nidorina's
 - Healing moves like Recover won't fail incorrectly when restoring exactly 255 HP.
+- Changing the game's options from the Main Menu (Continue/New Game/Options) will save the changes to your save file immediately on exiting the options menu. (Before it wouldn't save unless you saved game in-game after changing them)
 - The evolution stone item bypass glitch was removed - you must use evolution stones to evolve stone evolution pokemon.
 - Skipping a level due to gaining a lot of experience won't skip the move you could have learned on the skipped level anymore
 - Learning moves after evolution works correctly now.
@@ -412,6 +423,8 @@ The fifth page contains some additional options.
 - Doing the same thing as the above on unidentified GHOSTS would reveal what pokemon they are. Now it doesn't.
 - After saving in rock tunnel, going title screen -> continue screen -> title screen -> continue screen will cause the continue screen to take on darker colors. Now it stays normal colors.
 - Draining moves now miss on substituted pokemon as originally intended in the code.
+- Using mimic after an opponent switched pokemon won't always copy the move to move slot 2 regardless of the player's choice.
+- Using mimic after an opponent switched pokemon won't mess up the battle HUD temporarily.
 
 ## Tweaks
 - Trainers in general have a bit less type-specific parties and more varied pokemon. 
@@ -445,6 +458,8 @@ The fifth page contains some additional options.
 - Mr Psychic now requires you to defeat the FIGHTING DOJO before he gives you the PSYCHIC TM.
 - In-game trade trainers will now have unique OT names instead of just TRAINER for all of them.
 - The SAFARI ZONE warden will say different things to you if you've gotten HM03 instead of telling you to get it when you already have.
+- The SAFARI BALL was given a ball factor of 1, making it better at catching pokemon at full health.
+- When walking to leave, your rival in Silph Co will visibly "Warp away" when he hits the warp tile instead of just disappearing.
 
 ## Move changes
 - Disable disables the previously selected move of the opponent. If they haven't selected a move yet, it chooses a random move. It has 85% accuracy. It lasts 2-7 turns.
@@ -540,6 +555,7 @@ Additionally, GHOST type was made a "Dynamic type". What this means, is it can d
 
 ## Audio Changes
 - If you set Audio mode to OG+ in the options, an entirely new 2-minute-long song I composed for the Safari Zone based on the original short evolution song will play.
+- On the 5th page of options, you can turn on an option to pause/resume overworld music between battles instead of restarting the music after every wild encounter or battle.
 - The ghosts in pokemon tower now have a sound effect on encountering
 - Booting up a TM or HM has a little sound effect
 - Pushing a boulder down a hole in Seafoam / Victory road has a sound and feedback with it now

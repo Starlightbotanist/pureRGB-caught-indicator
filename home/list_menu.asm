@@ -19,8 +19,7 @@ DisplayListMenuID::
 	and a
 	call nz, CheckSaveHoverTextScreenTiles
 ;;;;;;;;;;
-	ld hl, wStatusFlags5
-	set BIT_NO_TEXT_DELAY, [hl] ; turn off letter printing delay
+	call DisableTextDelay
 	xor a
 	ld [wMenuItemToSwap], a ; 0 means no item is currently being swapped
 	ld [wListCount], a
@@ -159,8 +158,7 @@ DisplayListMenuIDLoop::
 	xor a
 	ldh [hJoy7], a ; joypad state update flag
 	ld [wListMenuNewFlags], a ; PureRGBnote: ADDED: once we pick a list entry, we consider TM text not shown so we will re-render it after finishing
-	ld hl, wStatusFlags5
-	res BIT_NO_TEXT_DELAY, [hl] ; turn on letter printing delay
+	call EnableTextDelay
 	jp BankswitchBack
 .checkOtherKeys ; check B, SELECT, Up, and Down keys
 	bit B_PAD_B, a
@@ -376,8 +374,7 @@ ExitListMenu::
 	ld a, CANCELLED_MENU
 	ld [wMenuExitMethod], a
 	ld [wMenuWatchMovingOutOfBounds], a
-	ld hl, wStatusFlags5
-	res BIT_NO_TEXT_DELAY, [hl]
+	call EnableTextDelay
 	call BankswitchBack
 	xor a
 	ld [wListMenuNewFlags], a ; PureRGBnote: ADDED: when we leave a list menu we are no longer displaying any TM text

@@ -1,30 +1,11 @@
 VermilionPokecenter_Script:
 	call SetLastBlackoutMap ; PureRGBnote: ADDED: set blackout map on entering pokemon center
-	call Serial_TryEstablishingExternallyClockedConnection
-	jp EnableAutoTextBoxDrawing
-
+	jp Serial_TryEstablishingExternallyClockedConnection
+	
 VermilionPokecenter_TextPointers:
 	def_text_pointers
-	dw_const VermilionPokecenterNurseText,            TEXT_VERMILIONPOKECENTER_NURSE
-	dw_const VermilionPokecenterFishingGuruText,      TEXT_VERMILIONPOKECENTER_FISHING_GURU
-	dw_const VermilionPokecenterSailorText,           TEXT_VERMILIONPOKECENTER_SAILOR
-	dw_const VermilionPokecenterLinkReceptionistText, TEXT_VERMILIONPOKECENTER_LINK_RECEPTIONIST
-	dw_const VermilionPokecenterBenchGuyText,         TEXT_VERMILIONPOKECENTER_BENCH_GUY
-
-VermilionPokecenterNurseText:
-	script_pokecenter_nurse
-
-VermilionPokecenterFishingGuruText:
-	text_far _VermilionPokecenterFishingGuruText
-	text_end
-
-VermilionPokecenterSailorText:
-	text_far _VermilionPokecenterSailorText
-	text_end
-
-VermilionPokecenterLinkReceptionistText:
-	script_cable_club_receptionist
-
-VermilionPokecenterBenchGuyText:
-	text_far _VermilionPokecenterGuyText
-	text_end
+	dba_const GenericPokecenterNurseText,               TEXT_VERMILIONPOKECENTER_NURSE
+	dba_const _VermilionPokecenterFishingGuruText,      TEXT_VERMILIONPOKECENTER_FISHING_GURU
+	dba_const _VermilionPokecenterSailorText,           TEXT_VERMILIONPOKECENTER_SAILOR
+	dba_const GenericLinkReceptionistText,              TEXT_VERMILIONPOKECENTER_LINK_RECEPTIONIST
+	dba_const _VermilionPokecenterBenchGuyText,         TEXT_VERMILIONPOKECENTER_BENCH_GUY

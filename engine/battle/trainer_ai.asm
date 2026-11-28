@@ -1512,7 +1512,11 @@ SwitchEnemyMonCommon2:
 	; switching in a new mon in response to this switch.
 	ld a, 1
 	ld [wFirstMonsNotOutYet], a
+	ld a, [wCurrentMenuItem] ; PureRGBnote: FIXED: need to back this up to keep MIMIC working properly after an enemy switches out.
+	push af
 	callfar EnemySendOut
+	pop af
+	ld [wCurrentMenuItem], a
 	xor a
 	ld [wFirstMonsNotOutYet], a
 
@@ -1527,8 +1531,7 @@ SwitchEnemyMonCommon2:
 	ret
 
 AIBattleWithdrawText:
-	text_far _AIBattleWithdrawText
-	text_end
+	text_far_end _AIBattleWithdrawText
 
 AIUseFullHeal:
 	call AIPlayRestoringSFX
@@ -1699,8 +1702,7 @@ AIPrintItemUse_:
 	jp PrintText
 
 AIBattleUseItemText:
-	text_far _AIBattleUseItemText
-	text_end
+	text_far_end _AIBattleUseItemText
 
 ;;;;;;;;;; PureRGBnote: ADDED: these wram properties are used to make sure the 
 ;;;;;;;;;;                     AI doesn't instantly read the player's current pokemon type after a player switches.

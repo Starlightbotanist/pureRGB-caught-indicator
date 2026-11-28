@@ -172,8 +172,7 @@ LoadTradingGFXAndMonNames:
 	call FillMemory
 	call ClearSprites
 	call DisableSpriteUpdates
-	ld hl, wStatusFlags5
-	set BIT_NO_TEXT_DELAY, [hl]
+	call DisableTextDelay
 	ld a, [wOnSGB]
 	and a
 	ld a, $e4 ; non-SGB OBP0
@@ -219,9 +218,7 @@ Trade_SwapNames:
 Trade_Cleanup:
 	xor a
 	call LoadGBPal
-	ld hl, wStatusFlags5
-	res BIT_NO_TEXT_DELAY, [hl]
-	ret
+	jp EnableTextDelay
 
 Trade_ShowPlayerMon:
 	ld a, LCDC_ON | LCDC_WIN_9800 | LCDC_WIN_ON | LCDC_BLOCK21 | LCDC_BG_9C00 | LCDC_OBJ_8 | LCDC_OBJ_ON | LCDC_BG_ON
@@ -300,7 +297,7 @@ Trade_AnimateBallEnteringLinkCable:
 	ld a, TRADE_BALL_SHAKE_ANIM
 	call Trade_ShowAnimation
 	ld c, 10
-	rst _DelayFrames
+	rst DelayFrames
 	ld a, %11100100
 	ldh [rOBP0], a
 	call UpdateGBCPal_OBP0 ; shinpokerednote: gbcnote: gbc color code from yellow 
@@ -695,7 +692,7 @@ Trade_AnimMonMoveVertical:
 	call Trade_AddOffsetsToOAMCoords
 	call Trade_AnimCircledMon
 	ld c, 8
-	rst _DelayFrames
+	rst DelayFrames
 	dec d
 	jr nz, .loop
 	ret
@@ -802,7 +799,7 @@ Trade_SlideTextBoxOffScreen:
 ; after Trade_ShowEnemyMon in the external clock sequence, there is a mon pic
 ; above the text box and it is also scrolled off the screen.
 	ld c, 50
-	rst _DelayFrames
+	rst DelayFrames
 .loop
 	rst _DelayFrame
 	ldh a, [rWX]
@@ -813,7 +810,7 @@ Trade_SlideTextBoxOffScreen:
 	jr nz, .loop
 	call Trade_ClearTileMap
 	ld c, 10
-	rst _DelayFrames
+	rst DelayFrames
 	ld a, $7
 	ldh [rWX], a
 	ret
@@ -822,12 +819,11 @@ PrintTradeWentToText:
 	ld hl, TradeWentToText
 	rst _PrintText
 	ld c, 200
-	rst _DelayFrames
+	rst DelayFrames
 	jp Trade_SlideTextBoxOffScreen
 
 TradeWentToText:
-	text_far _TradeWentToText
-	text_end
+	text_far_end _TradeWentToText
 
 PrintTradeForSendsText:
 	ld hl, TradeForText
@@ -838,12 +834,10 @@ PrintTradeForSendsText:
 	jp Trade_Delay80
 
 TradeForText:
-	text_far _TradeForText
-	text_end
+	text_far_end _TradeForText
 
 TradeSendsText:
-	text_far _TradeSendsText
-	text_end
+	text_far_end _TradeSendsText
 
 PrintTradeFarewellText:
 	ld hl, TradeWavesFarewellText
@@ -855,12 +849,10 @@ PrintTradeFarewellText:
 	jp Trade_SlideTextBoxOffScreen
 
 TradeWavesFarewellText:
-	text_far _TradeWavesFarewellText
-	text_end
+	text_far_end _TradeWavesFarewellText
 
 TradeTransferredText:
-	text_far _TradeTransferredText
-	text_end
+	text_far_end _TradeTransferredText
 
 PrintTradeTakeCareText:
 	ld hl, TradeTakeCareText
@@ -868,8 +860,7 @@ PrintTradeTakeCareText:
 	jp Trade_Delay80
 
 TradeTakeCareText:
-	text_far _TradeTakeCareText
-	text_end
+	text_far_end _TradeTakeCareText
 
 PrintTradeWillTradeText:
 	ld hl, TradeWillTradeText
@@ -880,12 +871,10 @@ PrintTradeWillTradeText:
 	jp Trade_Delay80
 
 TradeWillTradeText:
-	text_far _TradeWillTradeText
-	text_end
+	text_far_end _TradeWillTradeText
 
 TradeforText:
-	text_far _TradeforText
-	text_end
+	text_far_end _TradeforText
 
 Trade_ShowAnimation:
 	ld [wAnimationID], a

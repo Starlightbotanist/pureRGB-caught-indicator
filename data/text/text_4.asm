@@ -152,6 +152,7 @@ _PoofText::
 
 _ForgotAndText::
 	text_start
+
 	para "@"
 	text_ram wLearnMoveMonName
 	text " forgot"
@@ -224,6 +225,7 @@ _CableClubNPCPleaseApplyHereHaveToSaveText::
 
 _CableClubNPCPleaseWaitText::
 	text "Please wait.@"
+	text_pause
 	text_end
 
 _CableClubNPCLinkClosedBecauseOfInactivityText::

@@ -101,11 +101,7 @@ _SaffronCityFightingDojoSignText::
 	done
 
 _SaffronCityGymSignText::
-	text "SAFFRON CITY"
-	line "#MON GYM"
-	cont "LEADER: SABRINA"
-
-	para "The Master of"
+	text "The Master of"
 	line "Psychic #MON!"
 	done
 

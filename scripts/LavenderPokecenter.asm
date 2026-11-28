@@ -1,30 +1,11 @@
 LavenderPokecenter_Script:
 	call SetLastBlackoutMap ; PureRGBnote: ADDED: set blackout map on entering pokemon center
-	call Serial_TryEstablishingExternallyClockedConnection
-	jp EnableAutoTextBoxDrawing
+	jp Serial_TryEstablishingExternallyClockedConnection
 
 LavenderPokecenter_TextPointers:
 	def_text_pointers
-	dw_const LavenderPokecenterNurseText,            TEXT_LAVENDERPOKECENTER_NURSE
-	dw_const LavenderPokecenterGentlemanText,        TEXT_LAVENDERPOKECENTER_GENTLEMAN
-	dw_const LavenderPokecenterLittleGirlText,       TEXT_LAVENDERPOKECENTER_LITTLE_GIRL
-	dw_const LavenderPokecenterLinkReceptionistText, TEXT_LAVENDERPOKECENTER_LINK_RECEPTIONIST
-	dw_const LavenderPokecenterBenchGuyText,         TEXT_LAVENDERPOKECENTER_BENCH_GUY
-
-LavenderPokecenterLinkReceptionistText:
-	script_cable_club_receptionist
-
-LavenderPokecenterNurseText:
-	script_pokecenter_nurse
-
-LavenderPokecenterGentlemanText:
-	text_far _LavenderPokecenterGentlemanText
-	text_end
-
-LavenderPokecenterLittleGirlText:
-	text_far _LavenderPokecenterLittleGirlText
-	text_end
-
-LavenderPokecenterBenchGuyText:
-	text_far _LavenderPokecenterGuyText
-	text_end
+	dba_const GenericPokecenterNurseText,              TEXT_LAVENDERPOKECENTER_NURSE
+	dba_const _LavenderPokecenterGentlemanText,        TEXT_LAVENDERPOKECENTER_GENTLEMAN
+	dba_const _LavenderPokecenterLittleGirlText,       TEXT_LAVENDERPOKECENTER_LITTLE_GIRL
+	dba_const GenericLinkReceptionistText,             TEXT_LAVENDERPOKECENTER_LINK_RECEPTIONIST
+	dba_const _LavenderPokecenterBenchGuyText,         TEXT_LAVENDERPOKECENTER_BENCH_GUY

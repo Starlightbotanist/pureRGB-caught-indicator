@@ -49,8 +49,7 @@ ForceLoadNickname::
 	jp CopyData
 
 DoYouWantToNicknameText:
-	text_far _DoYouWantToNicknameText
-	text_end
+	text_far_end _DoYouWantToNicknameText
 
 DisplayNameRaterScreen::
 	ld hl, wBuffer
@@ -92,8 +91,7 @@ DisplayNamingScreen:
 
 DisplayNamingScreenWrap:
 	push hl
-	ld hl, wStatusFlags5
-	set BIT_NO_TEXT_DELAY, [hl]
+	call DisableTextDelay
 	call GBPalWhiteOutWithDelay3
 	call ClearScreen
 	call UpdateSprites
@@ -184,8 +182,7 @@ DisplayNamingScreenWrap:
 	call GBPalNormal
 	xor a
 	ld [wAnimCounter], a
-	ld hl, wStatusFlags5
-	res BIT_NO_TEXT_DELAY, [hl]
+	call EnableTextDelay
 	ld a, [wIsInBattle]
 	and a
 	jp z, LoadTextBoxTilePatterns
@@ -343,7 +340,7 @@ LoadEDTile:
 	ld de, ED_Tile
 	ld hl, vFont tile $70
 	lb bc, BANK(ED_Tile), (ED_TileEnd - ED_Tile) / TILE_1BPP_SIZE
-	jp CopyVideoDataDouble
+	jp CopyVideoDataHBlankDouble
 
 ED_Tile:
 	INCBIN "gfx/font/ED.1bpp"

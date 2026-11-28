@@ -28,13 +28,10 @@ ForceStepFromDoor::
 	ld hl, wMovementFlags
 	res BIT_STANDING_ON_DOOR, [hl]
 	res BIT_EXITING_DOOR, [hl]
-	ld hl, wStatusFlags5
-	res BIT_SCRIPTED_MOVEMENT_STATE, [hl]
-	ret
+	jp StopPlayerAutoMoving
 
 _EndNPCMovementScript::
-	ld hl, wStatusFlags5
-	res BIT_SCRIPTED_MOVEMENT_STATE, [hl]
+	call StopPlayerAutoMoving
 	ld hl, wStatusFlags4
 	res BIT_INIT_SCRIPTED_MOVEMENT, [hl]
 	ld hl, wMovementFlags
@@ -90,8 +87,7 @@ PalletMovementScript_OakMoveLeft:
 	ret
 
 PalletMovementScript_PlayerMoveLeft:
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_NPC_MOVEMENT, a
+	call IsNPCAutoMoving
 	ret nz ; return if Oak is still moving
 	ld a, [wNumStepsToTake]
 	ld [wSimulatedJoypadStatesIndex], a
@@ -125,8 +121,7 @@ PalletMovementScript_WalkToLab:
 	call DecodeRLEList
 	ld hl, wStatusFlags4
 	res BIT_INIT_SCRIPTED_MOVEMENT, [hl]
-	ld hl, wStatusFlags5
-	set BIT_SCRIPTED_MOVEMENT_STATE, [hl]
+	call SetPlayerAutoMoving
 	ld a, $4
 	ld [wNPCMovementScriptFunctionNum], a
 	ret
@@ -154,8 +149,7 @@ PalletMovementScript_Done:
 	ret nz
 	ld c, TOGGLE_PALLET_TOWN_OAK
 	call HideObject
-	ld hl, wStatusFlags5
-	res BIT_SCRIPTED_MOVEMENT_STATE, [hl]
+	call StopPlayerAutoMoving
 	ld hl, wStatusFlags4
 	res BIT_INIT_SCRIPTED_MOVEMENT, [hl]
 	jp EndNPCMovementScript
@@ -211,8 +205,7 @@ PewterMovementScript_Done:
 	ld a, [wSimulatedJoypadStatesIndex]
 	and a
 	ret nz
-	ld hl, wStatusFlags5
-	res BIT_SCRIPTED_MOVEMENT_STATE, [hl]
+	call StopPlayerAutoMoving
 	ld hl, wStatusFlags4
 	res BIT_INIT_SCRIPTED_MOVEMENT, [hl]
 	jp EndNPCMovementScript
@@ -247,8 +240,7 @@ PewterMovementScript_WalkToGym:
 	call DecodeRLEList
 	ld hl, wStatusFlags4
 	res BIT_INIT_SCRIPTED_MOVEMENT, [hl]
-	ld hl, wStatusFlags5
-	set BIT_SCRIPTED_MOVEMENT_STATE, [hl]
+	call SetPlayerAutoMoving
 	ld a, $1
 	ld [wNPCMovementScriptFunctionNum], a
 	ret

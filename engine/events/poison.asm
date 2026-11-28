@@ -1,6 +1,5 @@
 ApplyOutOfBattlePoisonDamage::
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_MOVEMENT_STATE, a
+	call IsPlayerAutoMoving
 	jp nz, .noBlackOut ; no black out if joypad states are being simulated
 	ld a, [wPartyCount]
 	and a
@@ -117,7 +116,7 @@ ChangeBGPalColor0_4Frames:
 	ldh [rBGP], a
 	call UpdateGBCPal_BGP ; shinpokerednote: gbcnote: gbc color code from pokemon yellow
 	ld c, 4
-	rst _DelayFrames
+	rst DelayFrames
 	ldh a, [rBGP]
 	and %11111100
 	ldh [rBGP], a

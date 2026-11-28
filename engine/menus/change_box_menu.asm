@@ -3,15 +3,15 @@ LoadBillsPCExtraTiles::
 	ld hl, vChars1 tile $55
 	ld de, PokeballTileGraphics ; pokeball tile
 	lb bc, BANK(PokeballTileGraphics), 1
-	call CopyVideoData
+	call CopyVideoDataHBlank
 	ld hl, vChars1 tile $56
 	ld de, PokeballTileGraphics tile 2 ; pokeball with x tile
 	lb bc, BANK(PokeballTileGraphics), 1
-	call CopyVideoData
+	call CopyVideoDataHBlank
 	ld de, ExtraMenuBorderConnectors
 	ld hl, vChars1 tile $40
 	lb bc, BANK(ExtraMenuBorderConnectors), 21
-	jp CopyVideoDataDouble
+	jp CopyVideoDataHBlankDouble
 
 ; PureRGBnote: MOVED: moved from save.asm to here since it didn't rely on much from the other file
 ; this function was updated a bunch to display extra information about boxes and reformat the layout
@@ -134,12 +134,10 @@ DisplayChangeBoxMenu:
 	ret
 
 ChooseABoxText:
-	text_far _ChooseABoxText
-	text_end
+	text_far_end _ChooseABoxText
 
 ChooseABoxDataWillSaveText:
-	text_far _ChooseABoxDataWillSaveText
-	text_end
+	text_far_end _ChooseABoxDataWillSaveText
 
 ; draws a box that says info about the current box (used in pc and change box menus)
 ; input = de, top left coord of the prompt box
@@ -316,8 +314,7 @@ _RenameCurrentBox::
 .reload
 	jp LoadBillsPCExtraTiles
 .renameBoxQuestion
-	text_far _RenameCurrentBoxText
-	text_end
+	text_far_end _RenameCurrentBoxText
 
 GetCurrentBoxNum:
 	ld a, [wCurrentBoxNum]

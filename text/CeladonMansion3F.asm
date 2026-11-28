@@ -38,9 +38,13 @@ _CeladonMansion3FGameDesignerCompletedDexText::
 	text "Wow! Excellent!"
 	line "You completed"
 	cont "your #DEX!"
-	cont "Congratulations!"
 	cont "<...>@"
 	text_end
+	
+_GenericCongratulationsText:
+_CeladonMansion3FGameDesignerCongratsText::
+	text "Congratulations!"
+	done
 
 _CeladonMansion3FGameProgramPCText::
 	text "It's the game"

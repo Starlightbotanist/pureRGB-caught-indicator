@@ -35,7 +35,7 @@
 	const EVENT_BATTLED_RIVAL_IN_OAKS_LAB
 	const EVENT_GOT_POKEBALLS_FROM_OAK
 	const EVENT_GOT_POKEDEX
-	const EVENT_PALLET_AFTER_GETTING_POKEBALLS_2
+	const_skip ; used to be EVENT_PALLET_AFTER_GETTING_POKEBALLS_2 which seemed pointless
 	const EVENT_OAK_APPEARED_IN_PALLET
 
 	; pureRGBnote: no free event space?
@@ -45,8 +45,9 @@
 	const EVENT_VIRIDIAN_GYM_OPEN
 	const EVENT_GOT_TM42
 	const EVENT_USING_MAX_REPEL
-	const_skip 13
-	const EVENT_OAK_GOT_PARCEL
+	const EVENT_NURSE_TEXT_LOOP_BLOCKER
+	const_skip 12
+	const_skip ; used to be EVENT_OAK_GOT_PARCEL but it's no different from EVENT_GOT_POKEDEX
 	const EVENT_GOT_OAKS_PARCEL
 	const EVENT_CHECKED_AROUND_SCHOOLHOUSE
 	const EVENT_GOT_MOVEDEX

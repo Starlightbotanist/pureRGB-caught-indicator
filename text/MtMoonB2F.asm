@@ -1,11 +1,8 @@
-_MtMoonB2FDomeFossilYouWantText::
+_MtMoonB2FFossilYouWantText::
 	text "You want the"
-	line "DOME FOSSIL?"
-	done
-
-_MtMoonB2FHelixFossilYouWantText::
-	text "You want the"
-	line "HELIX FOSSIL?"
+	line "@"
+	text_ram_namebuffer
+	text "?"
 	done
 
 _MtMoonB2FReceivedFossilText::
@@ -13,11 +10,14 @@ _MtMoonB2FReceivedFossilText::
 	line "@"
 	text_ram_stringbuffer
 	text "!@"
+	sound_get_key_item
+	text_waitbutton
 	text_end
 
 _MtMoonB2FYouHaveNoRoomText::
 	text "Look, you've got"
 	line "no room for this.@"
+	text_waitbutton
 	text_end
 
 _MtMoonB2FSuperNerdTheyreBothMineText::
@@ -73,17 +73,20 @@ _MtMoon3TextSuperNerdNoFossil::
 	cont "bag. Go get it!"
 	done	
 
+; TODO: parameterize
 _MtMoon3TextSuperNerdGaveHelix::
 	text "<PLAYER> gave the"
 	line "HELIX FOSSIL to"
-	cont "the SUPER NERD!"
-	done
+	cont "the SUPER NERD!@"
+	sound_get_item_1
+	text_end
 
 _MtMoon3TextSuperNerdGaveDome::
 	text "<PLAYER> gave the"
 	line "DOME FOSSIL to"
-	cont "the SUPER NERD!"
-	done
+	cont "the SUPER NERD!@"
+	sound_get_item_1
+	text_end
 
 _MtMoon3TextSuperNerdGaveFossil::
 	text "Great! I'll try"
@@ -119,6 +122,7 @@ _MtMoon3TextSuperNerdLookingForMoreFossils::
 _MtMoonB2FSuperNerdThenThisIsMineText::
 	text "All right. Then"
 	line "this is mine!@"
+	sound_get_key_item
 	text_end
 
 _MtMoonB2FRocket1BattleText::

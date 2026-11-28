@@ -80,6 +80,7 @@ _VermilionCityMachopText::
 
 _VermilionCityMachopStompingTheLandFlatText::
 	text_start
+
 	para "A MACHOP is"
 	line "stomping the land"
 	cont "flat."
@@ -121,11 +122,7 @@ _VermilionCityPokemonFanClubSignText::
 	done
 
 _VermilionCityGymSignText::
-	text "VERMILION CITY"
-	line "#MON GYM"
-	cont "LEADER: LT.SURGE"
-
-	para "The Lightning"
+	text "The Lightning"
 	line "American!"
 	done
 

@@ -102,7 +102,7 @@ DisplayPartyMenu::
 	push af
 	xor a
 	ldh [hTileAnimations], a
-	call GBPalWhiteOutWithDelay3
+	call GBPalWhiteOut
 	call ClearSprites
 	call PartyMenuInit
 	call DrawPartyMenu
@@ -121,8 +121,7 @@ PartyMenuInit::
 	ld a, 1 ; hardcoded bank
 	call BankswitchHome
 	call LoadHpBarAndStatusTilePatterns
-	ld hl, wStatusFlags5
-	set BIT_NO_TEXT_DELAY, [hl]
+	call DisableTextDelay
 	xor a ; PLAYER_PARTY_DATA
 	ld [wMonDataLocation], a
 	ld [wMenuWatchMovingOutOfBounds], a
@@ -180,8 +179,7 @@ HandlePartyMenuInput::
 .swap
 	pop af
 .notSelect
-	ld hl, wStatusFlags5
-	res BIT_NO_TEXT_DELAY, [hl]
+	call EnableTextDelay
 	ld a, [wMenuItemToSwap]
 	and a
 	jp nz, .swappingPokemon
@@ -210,8 +208,8 @@ HandlePartyMenuInput::
 	ret
 .swappingPokemon
 	bit B_PAD_B, b
-	jr z, .handleSwap ; if not, handle swapping the pokemon
-.cancelSwap ; if the B button was pressed
+	jr z, .handleSwap
+; cancel swap if the B button was pressed
 	farcall ErasePartyMenuCursors
 	xor a
 	ld [wMenuItemToSwap], a

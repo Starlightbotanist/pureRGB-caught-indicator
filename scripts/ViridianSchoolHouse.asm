@@ -3,28 +3,12 @@ ViridianSchoolHouse_Script:
 
 ViridianSchoolHouse_TextPointers:
 	def_text_pointers
-	dw_const ViridianSchoolHouseBrunetteGirlText, TEXT_VIRIDIANSCHOOLHOUSE_BRUNETTE_GIRL
-	dw_const ViridianSchoolHouseCooltrainerFText, TEXT_VIRIDIANSCHOOLHOUSE_COOLTRAINER_F
-	dw_const SchoolText3,                         TEXT_VIRIDIANSCHOOLHOUSE_ROCKER
-	dw_const SchoolText4,                         TEXT_VIRIDIANSCHOOLHOUSE_DETENTION_SIGN
-	dw_const ViridianSchoolNotebook,              TEXT_VIRIDIANSCHOOLHOUSE_NOTEBOOK
-	dw_const ViridianSchoolBlackboard,            TEXT_VIRIDIANSCHOOLHOUSE_BLACKBOARD
-
-ViridianSchoolHouseBrunetteGirlText:
-	text_far _ViridianSchoolHouseBrunetteGirlText
-	text_end
-
-ViridianSchoolHouseCooltrainerFText:
-	text_far _ViridianSchoolHouseCooltrainerFText
-	text_end
-
-SchoolText3:
-	text_far _SchoolText3
-	text_end
-
-SchoolText4:
-	text_far _SchoolText4
-	text_end
+	dba_const _ViridianSchoolHouseBrunetteGirlText, TEXT_VIRIDIANSCHOOLHOUSE_BRUNETTE_GIRL
+	dba_const _ViridianSchoolHouseCooltrainerFText, TEXT_VIRIDIANSCHOOLHOUSE_COOLTRAINER_F
+	dba_const _SchoolText3,                         TEXT_VIRIDIANSCHOOLHOUSE_ROCKER
+	dba_const _SchoolText4,                         TEXT_VIRIDIANSCHOOLHOUSE_DETENTION_SIGN
+	dba_const ViridianSchoolNotebook,              TEXT_VIRIDIANSCHOOLHOUSE_NOTEBOOK
+	dba_const ViridianSchoolBlackboard,            TEXT_VIRIDIANSCHOOLHOUSE_BLACKBOARD
 
 ViridianSchoolNotebook::
 	text_asm
@@ -42,7 +26,7 @@ ViridianSchoolNotebook::
 	ld hl, ViridianSchoolNotebookPages
 	ld a, b
 	push bc
-	ld bc, 5
+	ld bc, 4
 	call AddNTimes
 	rst _PrintText
 	pop bc
@@ -61,8 +45,7 @@ ViridianSchoolNotebook::
 	jp TextScriptEndNoButtonPress
 
 TurnPageText:
-	text_far _TurnPageText
-	text_end
+	text_far_end _TurnPageText
 
 ViridianSchoolNotebookText5:
 	text_far _ViridianSchoolNotebookText5
@@ -75,18 +58,14 @@ ViridianSchoolNotebookTextGus:
 	text_end
 
 ViridianSchoolNotebookText1:
-	text_far _ViridianSchoolNotebookText1
-	text_end
+	text_far_end _ViridianSchoolNotebookText1
 ViridianSchoolNotebookPages:
 ViridianSchoolNotebookText2:
-	text_far _ViridianSchoolNotebookText2
-	text_end
+	text_far_end _ViridianSchoolNotebookText2
 ViridianSchoolNotebookText3:
-	text_far _ViridianSchoolNotebookText3
-	text_end
+	text_far_end _ViridianSchoolNotebookText3
 ViridianSchoolNotebookText4:
-	text_far _ViridianSchoolNotebookText4
-	text_end
+	text_far_end _ViridianSchoolNotebookText4
 
 ViridianSchoolBlackboard::
 	text_asm
@@ -105,8 +84,7 @@ ViridianSchoolBlackboard::
 .blackboardLoop
 	xor a
 	ldh [hAutoBGTransferEnabled], a
-	ld hl, wStatusFlags5
-	set BIT_NO_TEXT_DELAY, [hl]
+	call DisableTextDelay
 	hlcoord 0, 0
 	lb bc, 6, 10
 	call TextBoxBorder
@@ -140,6 +118,7 @@ ViridianSchoolBlackboard::
 	ld [wMenuItemOffset], a
 	jr .blackboardLoop
 .didNotPressLeftOrRight
+	call EnableTextDelay
 	ld a, [wCurrentMenuItem]
 	ld b, a
 	ld a, [wMenuItemOffset]
@@ -148,16 +127,12 @@ ViridianSchoolBlackboard::
 	jr z, .exitBlackboard
 	; we must have pressed a on a status condition
 	; so print the text
-	ld hl, wStatusFlags5
-	res BIT_NO_TEXT_DELAY, [hl]
 	ld hl, ViridianStatusTextData
-	ld bc, 5
+	ld bc, 4
 	call AddNTimes
 	rst _PrintText
 	jr .blackboardLoop
 .exitBlackboard
-	ld hl, wStatusFlags5
-	res BIT_NO_TEXT_DELAY, [hl]
 	call LoadScreenTilesFromBuffer1
 	jp TextScriptEndNoButtonPress
 .loadDefaultMenuData
@@ -170,12 +145,10 @@ ViridianSchoolBlackboard::
 	ret
 
 ViridianSchoolBlackboardText1:
-	text_far _ViridianSchoolBlackboardText1
-	text_end
+	text_far_end _ViridianSchoolBlackboardText1
 
 ViridianSchoolBlackboardText2:
-	text_far _ViridianSchoolBlackboardText2
-	text_end
+	text_far_end _ViridianSchoolBlackboardText2
 
 StatusAilmentText1:
 	db   " SLP"
@@ -189,17 +162,12 @@ StatusAilmentText2:
 
 ViridianStatusTextData:
 ViridianBlackboardSleepText:
-	text_far _ViridianBlackboardSleepText
-	text_end
+	text_far_end _ViridianBlackboardSleepText
 ViridianBlackboardPoisonText:
-	text_far _ViridianBlackboardPoisonText
-	text_end
+	text_far_end _ViridianBlackboardPoisonText
 ViridianBlackboardPrlzText:
-	text_far _ViridianBlackboardPrlzText
-	text_end
+	text_far_end _ViridianBlackboardPrlzText
 ViridianBlackboardBurnText:
-	text_far _ViridianBlackboardBurnText
-	text_end
+	text_far_end _ViridianBlackboardBurnText
 ViridianBlackboardFrozenText:
-	text_far _ViridianBlackboardFrozenText
-	text_end
+	text_far_end _ViridianBlackboardFrozenText

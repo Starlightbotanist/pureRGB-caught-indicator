@@ -55,8 +55,7 @@ FossilsList::
 	db 0 ; end
 
 CeladonMartRoofScript_GiveDrinkToGirl:
-	ld hl, wStatusFlags5
-	set BIT_NO_TEXT_DELAY, [hl]
+	call DisableTextDelay
 	ld hl, CeladonMartRoofLittleGirlGiveHerWhichDrinkText
 	rst _PrintText
 	xor a
@@ -82,8 +81,7 @@ CeladonMartRoofScript_GiveDrinkToGirl:
 	call TextBoxBorder
 	call UpdateSprites
 	call CeladonMartRoofScript_PrintDrinksInBag
-	ld hl, wStatusFlags5
-	res BIT_NO_TEXT_DELAY, [hl]
+	call EnableTextDelay
 	call HandleMenuInput
 	bit B_PAD_B, a
 	ret nz
@@ -154,8 +152,7 @@ RemoveItemByIDBank12:
 	farjp RemoveItemByID
 
 CeladonMartRoofLittleGirlGiveHerWhichDrinkText:
-	text_far _CeladonMartRoofLittleGirlGiveHerWhichDrinkText
-	text_end
+	text_far_end _CeladonMartRoofLittleGirlGiveHerWhichDrinkText
 
 CeladonMartRoofLittleGirlYayText:
 	text_far _CeladonMartRoofLittleGirlYayText
@@ -163,22 +160,19 @@ CeladonMartRoofLittleGirlYayText:
 	text_end
 
 CeladonMartRoofLittleGirlReceivedTM13Text:
-	text_far _CeladonMartRoofLittleGirlReceivedTM13Text
-	sound_get_item_1
+	text_far _GenericPlayerReceivedTextSFX1
 	text_far _CeladonMartRoofLittleGirlTM13ExplanationText
 	text_waitbutton
 	text_end
 
 CeladonMartRoofLittleGirlReceivedTM48Text:
-	text_far _CeladonMartRoofLittleGirlReceivedTM48Text
-	sound_get_item_1
+	text_far _GenericPlayerReceivedTextSFX1
 	text_far _CeladonMartRoofLittleGirlTM48ExplanationText
 	text_waitbutton
 	text_end
 
 CeladonMartRoofLittleGirlReceivedTM49Text:
-	text_far _CeladonMartRoofLittleGirlReceivedTM48Text
-	sound_get_item_1
+	text_far _GenericPlayerReceivedTextSFX1
 	text_far _CeladonMartRoofLittleGirlTM49ExplanationText
 	text_waitbutton
 	text_end
@@ -217,16 +211,12 @@ CeladonMartRoofScript_PrintDrinksInBag:
 
 CeladonMartRoof_TextPointers:
 	def_text_pointers
-	dw_const CeladonMartRoofSuperNerdText,        TEXT_CELADONMARTROOF_SUPER_NERD
-	dw_const CeladonMartRoofLittleGirlText,       TEXT_CELADONMARTROOF_LITTLE_GIRL
-	dw_const CeladonMartRoofVendingMachineText,   TEXT_CELADONMARTROOF_VENDING_MACHINE1
-	dw_const CeladonMartRoofVendingMachineText,   TEXT_CELADONMARTROOF_VENDING_MACHINE2
-	dw_const CeladonMartRoofVendingMachineText,   TEXT_CELADONMARTROOF_VENDING_MACHINE3
-	dw_const CeladonMartRoofCurrentFloorSignText, TEXT_CELADONMARTROOF_CURRENT_FLOOR_SIGN
-
-CeladonMartRoofSuperNerdText:
-	text_far _CeladonMartRoofSuperNerdText
-	text_end
+	dba_const _CeladonMartRoofSuperNerdText,        TEXT_CELADONMARTROOF_SUPER_NERD
+	dba_const CeladonMartRoofLittleGirlText,       TEXT_CELADONMARTROOF_LITTLE_GIRL
+	dba_const CeladonMartRoofVendingMachineText,   TEXT_CELADONMARTROOF_VENDING_MACHINE1
+	dba_const CeladonMartRoofVendingMachineText,   TEXT_CELADONMARTROOF_VENDING_MACHINE2
+	dba_const CeladonMartRoofVendingMachineText,   TEXT_CELADONMARTROOF_VENDING_MACHINE3
+	dba_const _CeladonMartRoofCurrentFloorSignText, TEXT_CELADONMARTROOF_CURRENT_FLOOR_SIGN
 
 CeladonMartRoofLittleGirlText:
 	text_asm
@@ -247,18 +237,12 @@ CeladonMartRoofLittleGirlText:
 	rst TextScriptEnd
 
 .ImThirstyText:
-	text_far _CeladonMartRoofLittleGirlImThirstyText
-	text_end
+	text_far_end _CeladonMartRoofLittleGirlImThirstyText
 
 .GiveHerADrinkText:
-	text_far _CeladonMartRoofLittleGirlGiveHerADrinkText
-	text_end
+	text_far_end _CeladonMartRoofLittleGirlGiveHerADrinkText
 
 CeladonMartRoofVendingMachineText:
 	text_asm
 	callfar VendingMachineMenu
 	rst TextScriptEnd
-
-CeladonMartRoofCurrentFloorSignText:
-	text_far _CeladonMartRoofCurrentFloorSignText
-	text_end

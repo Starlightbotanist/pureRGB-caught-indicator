@@ -2,6 +2,41 @@
 
 Want to leave a review? Go [here](https://github.com/Vortyne/pureRGB/issues/new?assignees=&labels=review&projects=&template=review.yml&title=%5BReview%5D%3A+Summarize+your+review+here).
 
+### Review by 2jaimz1994 on 2.7.4
+
+What a trip! PureRGB was absolutely fantastic. QoL improvements, Pokemon/stat improvements, move/movepool improvements, access, difficulty (only slightly because of Pokemon improvements), and more! This is everything I imagined Gen 1 should have been, and stayed pretty true to Gen 1 mechanics.
+
+Yes, there are “new” types, like Crystal for ‘Hardened’ Onix, but it’s only after a quest to improve a normal Rock/Ground Onix. But it’s not something every Onix has, or something you have to do. I think the game had to have a new type to help code its improved defensive resistances, but it functions as Rock offensively. He was my absolute favorite here, right in front of the newly reworked Ground/Ghost Marowak. There’s a few others that are equally as awesome, they just couldn’t all work into the team I wanted. I will be trying some of them next time! Onix, Magneton, Magmar, Weezing, and Dragonair all get side quests to improve them in some way.
+
+Highly recommend!!!! 12/10! If you haven’t played it, yet, stop the game you’re playing and try this one out!
+
+### Review by Sandokhan9 on 2.7.4 - A sublime authentic gen 1 experience
+
+PureRGB perfectly preserves the spirit of gen 1 and improves upon it in every conceivable way. Didn't feel the same way since I played pokemon on GBA 20 years ago.
+Insane amount of customization, smarter and harder enemies, rebalanced stats of both Pokémon and moves, optional hard mode, just great. But the new content is where the hack completely takes the cake. Customizable pokeballs, new areas and sidequests, Pokédex with base stats and learnsets, Movedex, signature moves, alt formes and colors... All of it perfectly fits the vibe of early pokemon games and anime and massively expands on the charm of RGB.
+
+Whether you want to replay gen 1 or to experience it for the first time, PureRGB is (currently) the definitive and best way to do it. Still, there are some issues that I believe need to be addressed.
+
+In my opinion, the balancing and difficulty need could be improved, but it's largely nitpicking.
+
+- Random trainers hit the perfect level of difficulty for me, but the gym leaders felt a lot easier than they were supposed to be. They felt like standard trainers with better music and narrow teams with easily exploitable weaknesses. They could use a bit more power. Considering gen 1 limitations, better movesets are probably out of the question, but higher levels or some off type but still fitting Pokémon, especially on hard mode would be nice.
+
+- The stat buffs make Pokemon too bland and similar to each other. Most of Pokemon have most stats in the 70-90 range, with too little variation to make most of them stand out. Especially when you combine it with the stat exp. A bit more varied and extreme values would make teambuilding more exciting
+
+- Everyone and their mother gets powerful fighting and bug moves and a stupidly wide movepool in general. Sure, this is authentic gen 1 move distribution, so I guess I have no problems with that, but it feels weird that Tauros, Rhydon and Exeggutor are a lot worse than they were, while Onix, Hitmons and Pinsir, for example, are borderline overpowered.
+
+Rant over, still the best gen 1 Kanto hack there is.
+
+
+### Review by Toshiba-3 on 2.7.4 - Had a blast
+
+Really had such a blast playing RGB once again with this mod. Did a 40 hour playthrough and did all (I think) the post-elite4 content too, enjoyed it all. I find this mod very inspiring in how it breathes life into a game already played to death all the while staying true to its original design. Even all the additional content was tastefully managed.
+Impressive stuff, thanks for your hard work.
+
+### Review by samuellaw178 on 2.7.4
+
+I just wanted to leave a comment and review to say that you did a fantastic job! I thoroughly enjoyed the game, and I could see how much attention to detail went into it. This game gave me a sense of closure I didn’t know I needed!
+
 ### Review by OmegaHadangeki on 2.7.0
 
 Hello I would like to begin off saying this real quick. I started playing pokemon when I was 3 years old. I am now 33. I also have played and beaten Radical Red once, Blue Kaizo and Crystal Kaizo twice. I also use to play competetive pokemon starting way back in gen 4. So I have much pokemon experience under my belt.

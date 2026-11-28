@@ -106,8 +106,7 @@ BoulderMapScript::
 	ret z
 	; fall through
 DoBoulderDustAnimation::
-	ld a, [wStatusFlags5]
-	bit BIT_SCRIPTED_NPC_MOVEMENT, a
+	call IsNPCAutoMoving
 	ret nz
 	callfar AnimateBoulderDust
 	call DiscardButtonPresses

@@ -7,17 +7,13 @@ CeladonMansionRoofHouse_Script:
 
 CeladonMansionRoofHouse_TextPointers:
 	def_text_pointers
-	dw_const CeladonMansionRoofHouseHikerText,         TEXT_CELADONMANSION_ROOF_HOUSE_HIKER
-	dw_const CeladonRuffianHouseHooliganText,          TEXT_CELADON_RUFFIAN_HOUSE_HOOLIGAN
-	dw_const CeladonRuffianHouseRockerText,            TEXT_CELADON_RUFFIAN_HOUSE_ROCKER
-	dw_const CeladonRuffianHouseBikerText,             TEXT_CELADON_RUFFIAN_HOUSE_BIKER
-	dw_const CeladonMansionRoofHouseEeveePokeballText, TEXT_CELADONMANSION_ROOF_HOUSE_EEVEE_POKEBALL
-	dw_const TMNotebook,                               TEXT_CELADONMANSION_ROOF_HOUSE_NOTEBOOK
-	dw_const LinkCableHelp,                            TEXT_CELADONMANSION_ROOF_HOUSE_BLACKBOARD
-
-CeladonMansionRoofHouseHikerText:
-	text_far _CeladonMansionRoofHouseHikerText
-	text_end
+	dba_const _CeladonMansionRoofHouseHikerText,        TEXT_CELADONMANSION_ROOF_HOUSE_HIKER
+	dba_const _CeladonRuffianHouseHooliganText,         TEXT_CELADON_RUFFIAN_HOUSE_HOOLIGAN
+	dba_const _CeladonRuffianHouseRockerText,           TEXT_CELADON_RUFFIAN_HOUSE_ROCKER
+	dba_const _CeladonRuffianHouseBikerText,            TEXT_CELADON_RUFFIAN_HOUSE_BIKER
+	dba_const CeladonMansionRoofHouseEeveePokeballText, TEXT_CELADONMANSION_ROOF_HOUSE_EEVEE_POKEBALL
+	dba_const TMNotebookText,                           TEXT_CELADONMANSION_ROOF_HOUSE_NOTEBOOK
+	dba_const LinkCableHelp,                            TEXT_CELADONMANSION_ROOF_HOUSE_BLACKBOARD
 
 CeladonMansionRoofHouseEeveePokeballText:
 	text_asm
@@ -29,22 +25,6 @@ CeladonMansionRoofHouseEeveePokeballText:
 	call c, HideObject
 .party_full
 	rst TextScriptEnd
-
-CeladonRuffianHouseHooliganText:
-	text_far _CeladonRuffianHouseHooliganText
-	text_end
-
-CeladonRuffianHouseRockerText:
-	text_far _CeladonRuffianHouseRockerText
-	text_end
-
-CeladonRuffianHouseBikerText:
-	text_far _CeladonRuffianHouseBikerText
-	text_end
-
-TMNotebook::
-	text_far TMNotebookText
-	text_end
 
 LinkCableHelp::
 	text_asm
@@ -64,8 +44,7 @@ LinkCableHelp::
 	ld a, 1
 	ld [wTopMenuItemX], a
 .linkHelpLoop
-	ld hl, wStatusFlags5
-	set BIT_NO_TEXT_DELAY, [hl]
+	call DisableTextDelay
 	hlcoord 0, 0
 	lb bc, 8, 13
 	call TextBoxBorder
@@ -75,31 +54,26 @@ LinkCableHelp::
 	ld hl, LinkCableHelpText2
 	rst _PrintText
 	call HandleMenuInput
+	call EnableTextDelay
 	bit B_PAD_B, a
 	jr nz, .exit
 	ld a, [wCurrentMenuItem]
 	cp 3 ; pressed a on "STOP READING"
 	jr z, .exit
-	ld hl, wStatusFlags5
-	res BIT_NO_TEXT_DELAY, [hl]
 	ld hl, LinkCableInfoTexts
-	ld bc, 5
+	ld bc, TEXT_FAR_TABLE_ENTRY_SIZE
 	call AddNTimes
 	rst _PrintText
 	jp .linkHelpLoop
 .exit
-	ld hl, wStatusFlags5
-	res BIT_NO_TEXT_DELAY, [hl]
 	call LoadScreenTilesFromBuffer1
 	jp TextScriptEndNoButtonPress
 
 LinkCableHelpText1:
-	text_far _LinkCableHelpText1
-	text_end
+	text_far_end _LinkCableHelpText1
 
 LinkCableHelpText2:
-	text_far _LinkCableHelpText2
-	text_end
+	text_far_end _LinkCableHelpText2
 
 HowToLinkText:
 	db   "HOW TO LINK"
@@ -109,11 +83,8 @@ HowToLinkText:
 
 LinkCableInfoTexts:
 LinkCableInfoText1:
-	text_far _LinkCableInfoText1
-	text_end
+	text_far_end _LinkCableInfoText1
 LinkCableInfoText2:
-	text_far _LinkCableInfoText2
-	text_end
+	text_far_end _LinkCableInfoText2
 LinkCableInfoText3:
-	text_far _LinkCableInfoText3
-	text_end
+	text_far_end _LinkCableInfoText3

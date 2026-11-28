@@ -35,9 +35,9 @@ DisplayTextBoxID_::
 	call GetTextBoxIDText
 	ld a, [wStatusFlags5]
 	push af
-	ld a, [wStatusFlags5]
-	set BIT_NO_TEXT_DELAY, a
-	ld [wStatusFlags5], a
+	push hl
+	call DisableTextDelay
+	pop hl
 	call PlaceString
 	pop af
 	ld [wStatusFlags5], a
@@ -106,7 +106,7 @@ GetTextBoxIDText:
 GetAddressOfScreenCoords:
 	push bc
 	hlcoord 0, 0
-	ld bc, 20
+	ld bc, SCREEN_WIDTH
 .loop ; loop to add d rows to the base address
 	ld a, d
 	and a
@@ -122,8 +122,7 @@ GetAddressOfScreenCoords:
 INCLUDE "data/text_boxes.asm"
 
 DisplayMoneyBox:
-	ld hl, wStatusFlags5
-	set BIT_NO_TEXT_DELAY, [hl]
+	call DisableTextDelay
 	ld a, MONEY_BOX_TEMPLATE
 	ld [wTextBoxID], a
 	call DisplayTextBoxID
@@ -134,17 +133,14 @@ DisplayMoneyBox:
 	ld de, wPlayerMoney
 	ld c, 3 | LEADING_ZEROES | MONEY_SIGN
 	call PrintBCDNumber
-	ld hl, wStatusFlags5
-	res BIT_NO_TEXT_DELAY, [hl]
-	ret
+	jp EnableTextDelay
 
 CurrencyString:
 	db "      ¥@"
 
 ; PureRGBnote: ADDED: new text box type - this one's for displaying how many color changes are left when talking to the color change NPC.
 DisplayAmountLeftBox:
-	ld hl, wStatusFlags5
-	set BIT_NO_TEXT_DELAY, [hl]
+	call DisableTextDelay
 	ld a, AMOUNT_LEFT_BOX_TEMPLATE
 	ld [wTextBoxID], a
 	call DisplayTextBoxID
@@ -158,17 +154,13 @@ DisplayAmountLeftBox:
 	hlcoord 12, 1
 	ld de, AmountLeftString
 	call PlaceString
-	ld hl, wStatusFlags5
-	res BIT_NO_TEXT_DELAY, [hl]
-	ret
+	jp EnableTextDelay
 
 AmountLeftString:
 	db "× Left@"
 
 DoBuySellQuitMenu:
-	ld a, [wStatusFlags5]
-	set BIT_NO_TEXT_DELAY, a
-	ld [wStatusFlags5], a
+	call DisableTextDelay
 	xor a
 	ld [wChosenMenuItem], a
 	ld a, BUY_SELL_QUIT_MENU_TEMPLATE
@@ -186,9 +178,7 @@ DoBuySellQuitMenu:
 	ld [wCurrentMenuItem], a
 	ld [wLastMenuItem], a
 	ld [wMenuWatchMovingOutOfBounds], a
-	ld a, [wStatusFlags5]
-	res BIT_NO_TEXT_DELAY, a
-	ld [wStatusFlags5], a
+	call EnableTextDelay
 	call HandleMenuInput
 	call PlaceUnfilledArrowMenuCursor
 	bit B_PAD_A, a
@@ -221,9 +211,8 @@ DoBuySellQuitMenu:
 ; hl = address where the text box border should be drawn
 DisplayTwoOptionMenu:
 	push hl
-	ld a, [wStatusFlags5]
-	set BIT_NO_TEXT_DELAY, a
-	ld [wStatusFlags5], a
+	push hl
+	call DisableTextDelay
 
 ; pointless because both values are overwritten before they are read
 	xor a
@@ -241,7 +230,6 @@ DisplayTwoOptionMenu:
 	xor a
 	ld [wLastMenuItem], a
 	ld [wMenuWatchMovingOutOfBounds], a
-	push hl
 	ld hl, wTwoOptionMenuID
 	bit BIT_SECOND_MENU_OPTION_DEFAULT, [hl]
 	res BIT_SECOND_MENU_OPTION_DEFAULT, [hl]
@@ -282,9 +270,9 @@ DisplayTwoOptionMenu:
 	pop hl
 	ld a, [hli]
 	and a ; put blank line before first menu item?
-	ld bc, 20 + 2
+	ld bc, SCREEN_WIDTH + 2
 	jr z, .noBlankLine
-	ld bc, 2 * 20 + 2
+	ld bc, 2 * SCREEN_WIDTH + 2
 .noBlankLine
 	ld a, [hli]
 	ld e, a
@@ -293,8 +281,7 @@ DisplayTwoOptionMenu:
 	pop hl
 	add hl, bc
 	call PlaceString
-	ld hl, wStatusFlags5
-	res BIT_NO_TEXT_DELAY, [hl]
+	call EnableTextDelay
 	ld a, [wTwoOptionMenuID]
 	cp NO_YES_MENU
 	jr nz, .notNoYesMenu
@@ -388,7 +375,7 @@ TwoOptionMenu_SaveScreenTiles:
 
 TwoOptionMenu_RestoreScreenTiles:
 	ld c, 15
-	rst _DelayFrames
+	rst DelayFrames
 	ld de, wBuffer
 	lb bc, 5, 6
 .loop

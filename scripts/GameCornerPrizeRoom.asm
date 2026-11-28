@@ -3,21 +3,13 @@ GameCornerPrizeRoom_Script:
 
 GameCornerPrizeRoom_TextPointers:
 	def_text_pointers
-	dw_const GameCornerPrizeRoomBaldingGuyText,  TEXT_GAMECORNERPRIZEROOM_BALDING_GUY
-	dw_const GameCornerPrizeRoomGamblerText,     TEXT_GAMECORNERPRIZEROOM_GAMBLER
-	dw_const GameCornerPrizeRoomPrizeKingText,     TEXT_GAMECORNERPRIZEROOM_PRIZE_KING
-	dw_const GameCornerPRizeRoomPrizeVendorText, TEXT_GAMECORNERPRIZEROOM_PRIZE_VENDOR_1
-	dw_const GameCornerPRizeRoomPrizeVendorText, TEXT_GAMECORNERPRIZEROOM_PRIZE_VENDOR_2
-	dw_const GameCornerPRizeRoomPrizeVendorText, TEXT_GAMECORNERPRIZEROOM_PRIZE_VENDOR_3
+	dba_const _GameCornerPrizeRoomBaldingGuyText,  TEXT_GAMECORNERPRIZEROOM_BALDING_GUY
+	dba_const _GameCornerPrizeRoomGamblerText,     TEXT_GAMECORNERPRIZEROOM_GAMBLER
+	dba_const GameCornerPrizeRoomPrizeKingText,     TEXT_GAMECORNERPRIZEROOM_PRIZE_KING
+	dba_const GameCornerPRizeRoomPrizeVendorText, TEXT_GAMECORNERPRIZEROOM_PRIZE_VENDOR_1
+	dba_const GameCornerPRizeRoomPrizeVendorText, TEXT_GAMECORNERPRIZEROOM_PRIZE_VENDOR_2
+	dba_const GameCornerPRizeRoomPrizeVendorText, TEXT_GAMECORNERPRIZEROOM_PRIZE_VENDOR_3
 	EXPORT TEXT_GAMECORNERPRIZEROOM_PRIZE_VENDOR_1 ; used by engine/events/prize_menu.asm
-
-GameCornerPrizeRoomBaldingGuyText:
-	text_far _GameCornerPrizeRoomBaldingGuyText
-	text_end
-
-GameCornerPrizeRoomGamblerText:
-	text_far _GameCornerPrizeRoomGamblerText
-	text_end
 
 GameCornerPrizeRoomPrizeKingText:
 	text_asm
@@ -33,8 +25,7 @@ GameCornerPrizeRoomPrizeKingText:
 	rst _PrintText
 .choice
 	call YesNoChoice
-	ld hl, .suitYourself
-	jr nz, .printDone
+	jr nz, .doneNoPress
 	ld hl, .woohoo
 	rst _PrintText
 	call ClearTextBox
@@ -49,8 +40,7 @@ GameCornerPrizeRoomPrizeKingText:
 	call RestoreScreenTilesAndReloadTilePatterns
 	call LoadGBPal
 	pop af
-	ld hl, .suitYourself
-	jr c, .printDone
+	jr c, .doneNoPress
 	callfar IsMonAPrizePokemon
 	ld hl, .wrongMon
 	jr nc, .printDone
@@ -58,11 +48,15 @@ GameCornerPrizeRoomPrizeKingText:
 	ld [wPokedexNum], a
 	call GetMonName
 	ld a, [wPokedexNum]
-	ld hl, PrizeKingTextPointers
-	ld de, 3
-	call IsInArray
-	inc hl
-	hl_deref
+	ld hl, PrizeKingTextOrder
+	call IsInSingleByteArray
+	ld c, b
+	ld b, 0
+	ld hl, PrizeKingTextList
+	add hl, bc
+	add hl, bc
+	add hl, bc
+	add hl, bc
 	rst _PrintText
 	call IndexToPokedex
 	ld a, [wPokedexNum]
@@ -78,63 +72,48 @@ GameCornerPrizeRoomPrizeKingText:
 .printDone
 	rst _PrintText
 	rst TextScriptEnd
+.doneNoPress
+	jp TextScriptEndNoButtonPress
 
 .firstMeeting
-	text_far _GameCornerPrizeRoomPrizeMasterText
-	text_end
+	text_far_end _GameCornerPrizeRoomPrizeMasterText
 .normalIntro
-	text_far _GameCornerPrizeRoomPrizeMasterAgainText
-	text_end
+	text_far_end _GameCornerPrizeRoomPrizeMasterAgainText
 .info
-	text_far _GameCornerPrizeRoomInfoText
-	text_end
+	text_far_end _GameCornerPrizeRoomInfoText
 .suitYourself
-	text_far _GenericSuitYourselfText
-	text_end
+	text_far_end _GenericSuitYourselfText
 .woohoo
-	text_far _GameCornerPrizeRoomLetsSeeText
-	text_end
+	text_far_end _GameCornerPrizeRoomLetsSeeText
 .wrongMon
-	text_far _SecretLabMewtwoReactionText4
-	text_end
+	text_far_end _SecretLabMewtwoReactionText4
 .gotAnother
-	text_far _PrizeKingGotAnotherText
-	text_end
+	text_far_end _PrizeKingGotAnotherText
 
 PrizeKingName:
 	db "PRIZE PRO@"
 
-PrizeKingTextPointers:
-	dbw JYNX, JynxPrizeKingText
-	dbw ELECTABUZZ, ElectabuzzPrizeKingText
-	dbw TANGELA, TangelaPrizeKingText
-	dbw DRATINI, DratiniPrizeKingText
-	dbw DITTO, DittoPrizeKingText
-	dbw PORYGON, PorygonPrizeKingText
+PrizeKingTextOrder:
+	db JYNX
+	db ELECTABUZZ
+	db TANGELA
+	db DRATINI
+	db DITTO
+	db PORYGON
 
+PrizeKingTextList:
 JynxPrizeKingText:
-	text_far _JynxPrizeKingText
-	text_end
-
+	text_far_end _JynxPrizeKingText
 ElectabuzzPrizeKingText:
-	text_far _ElectabuzzPrizeKingText
-	text_end
-
+	text_far_end _ElectabuzzPrizeKingText
 TangelaPrizeKingText:
-	text_far _TangelaPrizeKingText
-	text_end
-
+	text_far_end _TangelaPrizeKingText
 DratiniPrizeKingText:
-	text_far _DratiniPrizeKingText
-	text_end
-
+	text_far_end _DratiniPrizeKingText
 DittoPrizeKingText:
-	text_far _DittoPrizeKingText
-	text_end
-
+	text_far_end _DittoPrizeKingText
 PorygonPrizeKingText:
-	text_far _PorygonPrizeKingText
-	text_end
+	text_far_end _PorygonPrizeKingText
 
 GameCornerPRizeRoomPrizeVendorText:
 	text_asm

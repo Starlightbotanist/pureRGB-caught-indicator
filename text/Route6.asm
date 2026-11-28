@@ -161,15 +161,19 @@ _Route6UndergroundPathSignText::
 	cont "VERMILION CITY"
 	done
 
+; PureRGBnote: CHANGED: this trainer tips text to be on route 13, but it's pretty useful info, so moved it earlier in the game.
 _Route6TrainerTipsText::
 	text "<TIPS>"
-	para "In the PC, scroll"
-	line "to WITHDRAW, then"
-	cont "press SELECT."
-	para "You can view info"
-	line "of #MON in the"
-	cont "current box."
-	para "This can be done"
-	line "even with a full"
-	cont "party!"
+
+	para "Use SELECT to"
+	line "switch items in"
+	cont "the ITEM window!"
+
+	para "This also works"
+	line "in battle with"
+	cont "#MON attacks!"
+
+	para "It even works"
+	line "with <PK><MN> order"
+	cont "swapping, try it!"
 	done

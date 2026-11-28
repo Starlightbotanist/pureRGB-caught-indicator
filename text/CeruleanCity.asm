@@ -245,11 +245,7 @@ _CeruleanCityBikeShopSign::
 	done
 
 _CeruleanCityGymSign::
-	text "CERULEAN CITY"
-	line "#MON GYM"
-	cont "LEADER: MISTY"
-
-	para "The Tomboyish"
+	text "The Tomboyish"
 	line "Mermaid!"
 	done
 
@@ -339,4 +335,5 @@ _OakFirstLoseText::
 	para "<...>"
 	para "PROF.OAK wrote"
 	line "a note for you!@"
+	sound_pokedex_rating
 	text_end
