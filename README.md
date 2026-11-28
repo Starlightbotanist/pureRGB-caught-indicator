@@ -1,11 +1,13 @@
-# pureRGB caught indicator
+# Pokémon PureRGB (PureRed, PureGreen, PureBlue)
 
-This fork adds a caught Poké Ball icon to wild battles. Download the BPS patch ZIP for PureBlue, PureGreen, or PureRed from [Releases](https://github.com/Starlightbotanist/pureRGB-caught-indicator/releases).
+Please see the original github page for information about this hack: https://github.com/Vortyne/pureRGB
 
-- [`master`](https://github.com/Starlightbotanist/pureRGB-caught-indicator/tree/master) mirrors [Vortyne/pureRGB](https://github.com/Vortyne/pureRGB).
-- [`caught-indicator`](https://github.com/Starlightbotanist/pureRGB-caught-indicator/tree/caught-indicator) carries the fork's gameplay changes and supplies the release tags.
-- `release-automation` is the default branch so GitHub can run the scheduled workflow. Open source changes against `caught-indicator`.
+## Fork Changes
 
-The [release workflow](https://github.com/Starlightbotanist/pureRGB-caught-indicator/actions/workflows/caught-indicator-release.yml) checks every 30 minutes for stable upstream releases. It fast-forwards `master` and processes one missing release at a time in publication order. The build uses the tagged RGBDS version and upstream BPS assets to produce one ZIP with three patches for the original games. A manual run previews the next release unless **publish** is selected.
+The goal of this fork is only to add the caught pokeball indicator when in a battle with a wild mon.
 
-If the release merge conflicts, merge that exact upstream tag into `caught-indicator`, resolve the conflicts, and push the resolution. Run the workflow with **publish** selected or wait for the next scheduled check. The failed run identifies the tag and conflicted files.
+## Fork Credits
+
+Vortyne and everyone who contrubuted to pureRGB, a simple amazing gen 1 hack. This fork is only one tiny change to their massive, incredible romhack.
+
+cRz-Shadows and SmithPlayPokemon for Pokemon Yellow Legacy, code and graphics for the caught ball indicator were taken from their romhack.
